@@ -4,20 +4,29 @@ from datetime import datetime, date
 from typing import Iterator
 
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
+from django.urls import reverse
+from django.views import generic
 
 from .models import CommerzbankStatements, StatementCategory, StatementKeyword
-from .forms import CSVUploadForm, AddCategoryForm, AddKeywordForm
+from .forms import CSVUploadForm, AddCategoryForm, AddKeywordForm, DeleteCategoryForm
 
 
-def index(request):
-    context = {"statements": CommerzbankStatements.objects.all()}
-    return render(request, "statements/index.html", context)
+# def index(request):
+#     context = {"statements": CommerzbankStatements.objects.all()}
+#     return render(request, "statements/index.html", context)
+class IndexView(generic.ListView):
+    template_name = "statements/index.html"
+    context_object_name = "statements"
+
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return CommerzbankStatements.objects.all()
 
 
-def render_statement(request, statement_id: int):
-    statement = get_object_or_404(CommerzbankStatements, pk=statement_id)
-    return render(request, "statements/statement.html", {"statement": statement})
+class StatementView(generic.DetailView):
+    model = CommerzbankStatements
+    template_name = "statements/statement.html"
 
 
 def parse_commerzbank_date(date_string: str) -> date:
@@ -59,38 +68,73 @@ def import_statements(request):
 
 
 def categories(request: HttpRequest):
+    """View for managing categories and keywords."""
     current_categories = StatementCategory.objects.all()
     context = {
         "categories": current_categories,
-        "category_form": AddCategoryForm(),
-        "keyword_form": AddKeywordForm(),
+        "add_category_form": AddCategoryForm(),
+        "delete_category_form": DeleteCategoryForm(),
+        "add_keyword_form": AddKeywordForm(),
+        "add_category_message": request.session.get("add_category_message", ""),
+        "delete_category_message": request.session.get("delete_category_message", ""),
+        "add_keyword_message": request.session.get("add_keyword_message", ""),
+        "delete_keyword_message": request.session.get("delete_keyword_message", ""),
+        "matching_message": request.session.get("start_matching_message", ""),
     }
 
     if request.method == "POST":
-        if request.POST["add_category"]:
-            form = AddCategoryForm(request.POST)
-            if not form.is_valid():
-                ...  # TODO add error handling
+        if request.POST.get("add_category"):
+            _add_category(request, current_categories)
+        elif request.POST.get("add_keyword"):
+            _add_keyword(request)
+        elif request.POST.get("delete_category"):
+            _delete_category(request)
+        return HttpResponseRedirect(request.path_info)
 
-            new_category = form.cleaned_data["name"]
-            if current_categories.filter(name=new_category).count() == 0:
-                context["message"] = f"Category {new_category} added."
-                StatementCategory.objects.create(name=new_category)
-            else:
-                context["message"] = "Category already exists."
-                # render(request, "statements/categories.html", context)
-        elif request.POST["add_keyword"]:
-            form = AddKeywordForm(request.POST)
-            if not form.is_valid():
-                ...  # TODO add error handling
-
-            if StatementKeyword.objects.filter(keyword=form.cleaned_data["keyword"], category=form.cleaned_data["category"]).count() == 0:
-                StatementKeyword.objects.create(
-                    keyword=form.cleaned_data["keyword"],
-                    category=form.cleaned_data["category"],
-                    is_regex=form.cleaned_data["is_regex"],
-                )
-            else:
-                ...  # TODO add error handling
-
+    request.session["add_category_message"] = ""
+    request.session["delete_category_message"] = ""
+    request.session["add_keyword_message"] = ""
+    request.session["delete_keyword_message"] = ""
+    request.session["matching_message"] = ""
     return render(request, "statements/categories.html", context)
+
+
+def _add_keyword(request: HttpRequest):
+    """Add a new keyword to the database."""
+    form = AddKeywordForm(request.POST)
+    if not form.is_valid():
+        ...  # TODO add error handling
+    new_keyword = form.cleaned_data["name"]
+    category = form.cleaned_data["category"]
+    if StatementKeyword.objects.filter(keyword=new_keyword, category=category).count() == 0:
+        request.session["add_keyword_message"] = f"Keyword {new_keyword} for {category=} added."
+        StatementKeyword.objects.create(
+            keyword=new_keyword,
+            category=category,
+            is_regex=form.cleaned_data["is_regex"],
+        )
+    else:
+        request.session["add_keyword_message"] = f"Keyword {new_keyword} for {category=} already exists."
+
+
+def _add_category(request: HttpRequest, current_categories):
+    """Add a new category to the database."""
+    form = AddCategoryForm(request.POST)
+    if not form.is_valid():
+        ...  # TODO add error handling
+    new_category = form.cleaned_data["name"]
+    if current_categories.filter(name=new_category).count() == 0:
+        request.session["add_category_message"] = f"Category {new_category} added."
+        StatementCategory.objects.create(name=new_category)
+    else:
+        request.session["add_category_message"] = f"Category {new_category} already exists."
+
+
+def _delete_category(request: HttpRequest):
+    """Delete a category from the database."""
+    form = DeleteCategoryForm(request.POST)
+    if not form.is_valid():
+        ...  # TODO add error handling
+    category = form.cleaned_data["Category"]
+    StatementCategory.objects.filter(name=category).delete()
+    request.session["delete_category_message"] = f"Category {category} deleted."

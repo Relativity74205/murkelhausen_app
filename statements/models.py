@@ -9,8 +9,8 @@ class StatementCategory(models.Model):
 
 
 class StatementKeyword(models.Model):
-    keyword = models.CharField(max_length=256)
     category = models.ForeignKey(StatementCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    name = models.CharField(max_length=256)
     is_regex = models.BooleanField(default=False)
 
 

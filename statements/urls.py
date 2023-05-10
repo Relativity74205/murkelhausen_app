@@ -4,8 +4,8 @@ from . import views
 
 app_name = "statements"
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("<int:statement_id>/", views.render_statement, name="statement"),
+    path("", views.IndexView.as_view(), name="index"),
+    path("<int:pk>/", views.StatementView.as_view(), name="statement"),
     path("import/", views.import_statements, name="import"),
     path("categories/", views.categories, name="categories"),
 ]

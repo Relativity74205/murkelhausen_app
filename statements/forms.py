@@ -10,12 +10,20 @@ class CSVUploadForm(forms.Form):
 class AddCategoryForm(forms.Form):
     name = forms.CharField(max_length=256)
 
+FAVORITE_COLORS_CHOICES = [
+    ("blue", "Blue"),
+    ("green", "Green"),
+    ("black", "Black"),
+]
+class DeleteCategoryForm(forms.Form):
+    Category = forms.ModelChoiceField(
+        # widget=forms.CheckboxSelectMultiple,
+        queryset=StatementCategory.objects.all(),
+    )
+
 
 class AddKeywordForm(forms.ModelForm):
-    # category = forms.ModelChoiceField(queryset=StatementCategory.objects.all())
-    # keyword = forms.CharField(max_length=256)
-    # is_regex = forms.CheckboxInput()
-    class Meta():
+    class Meta:
         model = StatementKeyword
         fields = "__all__"
 

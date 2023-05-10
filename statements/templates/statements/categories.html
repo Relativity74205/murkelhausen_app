@@ -1,11 +1,11 @@
-{#<h1>{{ categories.question_text }}</h1>#}
 <body>
+    <h1>Statement Categories with their keywords</h1>
     <ul>
     {% for category in categories %}
         <li>{{ category.name }}</li>
             <ul>
                 {% for keyword in category.statementkeyword_set.all %}
-                    <li>{{ keyword.keyword }}</li>
+                    <li>{{ keyword.name }}</li>
                 {% endfor %}
             </ul>
     {% endfor %}
@@ -15,15 +15,31 @@
     <h2>Add a category</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ category_form }}
+        {{ add_category_form }}
         <button type="submit" name="add_category" value="add_category">Add</button>
-        {% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+        {% if add_category_message %}<p><strong>{{ add_category_message }}</strong></p>{% endif %}
+    </form>
+
+    <h2>Delete a category</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ delete_category_form }}
+        <button type="submit" name="delete_category" value="delete_category">Delete</button>
+        {% if delete_category_message %}<p><strong>{{ delete_category_message }}</strong></p>{% endif %}
     </form>
 
     <h2>Add a keyword</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ keyword_form }}
+        {{ add_keyword_form }}
         <button type="submit" name="add_keyword" value="add_keyword">Add</button>
+        {% if add_keyword_message %}<p><strong>{{ add_keyword_message }}</strong></p>{% endif %}
     </form>
+
+    <h2>Run Category matching</h2>
+    <form method="post" enctype="multipart/form-data">
+        <button type="submit" name="start_matching" value="start_matching">Start Matching</button>
+        {% if matching_message %}<p><strong>{{ matching_message }}</strong></p>{% endif %}
+    </form>
+
 </body>
