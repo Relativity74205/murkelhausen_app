@@ -5,7 +5,6 @@ from typing import Iterator
 
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
 from django.views import generic
 
 from .models import CommerzbankStatements, StatementCategory, StatementKeyword
@@ -78,7 +77,6 @@ def categories(request: HttpRequest):
         "add_category_message": request.session.get("add_category_message", ""),
         "delete_category_message": request.session.get("delete_category_message", ""),
         "add_keyword_message": request.session.get("add_keyword_message", ""),
-        "delete_keyword_message": request.session.get("delete_keyword_message", ""),
         "matching_message": request.session.get("start_matching_message", ""),
     }
 
@@ -94,7 +92,6 @@ def categories(request: HttpRequest):
     request.session["add_category_message"] = ""
     request.session["delete_category_message"] = ""
     request.session["add_keyword_message"] = ""
-    request.session["delete_keyword_message"] = ""
     request.session["matching_message"] = ""
     return render(request, "statements/categories.html", context)
 
@@ -106,15 +103,15 @@ def _add_keyword(request: HttpRequest):
         ...  # TODO add error handling
     new_keyword = form.cleaned_data["name"]
     category = form.cleaned_data["category"]
-    if StatementKeyword.objects.filter(keyword=new_keyword, category=category).count() == 0:
-        request.session["add_keyword_message"] = f"Keyword {new_keyword} for {category=} added."
+    if StatementKeyword.objects.filter(name=new_keyword, category=category).count() == 0:
+        request.session["add_keyword_message"] = f"Keyword {new_keyword} for category {category} added."
         StatementKeyword.objects.create(
-            keyword=new_keyword,
+            name=new_keyword,
             category=category,
             is_regex=form.cleaned_data["is_regex"],
         )
     else:
-        request.session["add_keyword_message"] = f"Keyword {new_keyword} for {category=} already exists."
+        request.session["add_keyword_message"] = f"Keyword {new_keyword} for category {category} already exists."
 
 
 def _add_category(request: HttpRequest, current_categories):
