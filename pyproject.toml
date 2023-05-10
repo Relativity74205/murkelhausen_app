@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "murkelhausen-app"
+version = "0.1.0"
+description = ""
+authors = ["Arkadius Schuchhardt <arkadius@schuchhardt.com>"]
+readme = "README.md"
+packages = [{include = "murkelhausen_app"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.1"
+psycopg = "^3.1.9"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

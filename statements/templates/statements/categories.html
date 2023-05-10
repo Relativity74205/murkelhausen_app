@@ -1,0 +1,29 @@
+{#<h1>{{ categories.question_text }}</h1>#}
+<body>
+    <ul>
+    {% for category in categories %}
+        <li>{{ category.name }}</li>
+            <ul>
+                {% for keyword in category.statementkeyword_set.all %}
+                    <li>{{ keyword.keyword }}</li>
+                {% endfor %}
+            </ul>
+    {% endfor %}
+
+    </ul>
+
+    <h2>Add a category</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ category_form }}
+        <button type="submit" name="add_category" value="add_category">Add</button>
+        {% if message %}<p><strong>{{ message }}</strong></p>{% endif %}
+    </form>
+
+    <h2>Add a keyword</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ keyword_form }}
+        <button type="submit" name="add_keyword" value="add_keyword">Add</button>
+    </form>
+</body>

@@ -1,0 +1,9 @@
+{% if statements %}
+    <ul>
+    {% for statement in statements %}
+        <li><a href="{% url 'statements:statement' statement.id %}">{{ statement.buchungstext }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Auszuege are available.</p>
+{% endif %}
