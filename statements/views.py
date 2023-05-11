@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
 
-from .models import CommerzbankStatements, StatementCategory, StatementKeyword
+from .models import CommerzbankStatement, StatementCategory, StatementKeyword
 from .forms import CSVUploadForm, AddCategoryForm, AddKeywordForm, DeleteCategoryForm, StatementForm, DeleteKeywordForm
 
 
@@ -17,21 +17,26 @@ class StatementsView(generic.ListView):
 
     def get_queryset(self):
         """Return the last five published questions."""
-        return CommerzbankStatements.objects.all().order_by('id')
+        return CommerzbankStatement.objects.all().order_by('id')
 
 
-def statement(request, statement_id):
-    statement_object = get_object_or_404(CommerzbankStatements, pk=statement_id)
+def show_statement(request, statement_id):
+    statement = get_object_or_404(CommerzbankStatement, pk=statement_id)
 
     if request.method == 'POST':
-        form = StatementForm(request.POST, instance=statement_object)
+        form = StatementForm(request.POST, instance=statement)
         if form.is_valid():
-            form.save()
+            stmt = form.save(commit=False)
+            if stmt.category is not None:
+                stmt.category_set_manually = True
+            else:
+                stmt.category_set_manually = False
+            stmt.save()
             return HttpResponseRedirect(request.path_info)
     else:
-        form = StatementForm(instance=statement_object)
+        form = StatementForm(instance=statement)
 
-    return render(request, 'statements/statement.html', {'form': form, 'statement': statement_object})
+    return render(request, 'statements/statement.html', {'form': form, 'statement': statement})
 
 
 def parse_commerzbank_date(date_string: str) -> date:
@@ -58,7 +63,7 @@ def import_statements(request):
                     logging.exception(f"Could not parse {row['Betrag']}.")  # TODO how does logging work in django?
                     betrag = 0.0
 
-                CommerzbankStatements.objects.create(
+                CommerzbankStatement.objects.create(
                     buchungstag=parse_commerzbank_date(row["Buchungstag"]),
                     wertstellung=parse_commerzbank_date(row["Wertstellung"]),
                     umsatzart=row["Umsatzart"],

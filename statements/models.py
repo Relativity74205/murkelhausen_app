@@ -17,7 +17,7 @@ class StatementKeyword(models.Model):
         return self.name
 
 
-class CommerzbankStatements(models.Model):
+class CommerzbankStatement(models.Model):
     buchungstag = models.DateField()
     wertstellung = models.DateField()
     umsatzart = models.CharField(max_length=256)
@@ -26,3 +26,4 @@ class CommerzbankStatements(models.Model):
     waehrung = models.CharField(max_length=8)
     iban_auftraggeberkonto = models.CharField(max_length=32)
     category = models.ForeignKey(StatementCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    category_set_manually = models.BooleanField(default=False)

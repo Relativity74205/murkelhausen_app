@@ -5,6 +5,7 @@
 <p>Verwendungszweck: {{ statement.buchungstext }}</p>
 <p>Auftraggeberkonto: {{ statement.iban_auftraggeberkonto }}</p>
 <p>Kategorie: {{ statement.category }}</p>
+<p>Kategorie manuell gesetzt?: {{ statement.category_set_manually }}</p>
 
 <form method="post">
     {% csrf_token %}

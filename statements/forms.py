@@ -1,6 +1,6 @@
 from django import forms
 
-from statements.models import StatementCategory, StatementKeyword, CommerzbankStatements
+from statements.models import StatementCategory, StatementKeyword, CommerzbankStatement
 
 
 class CSVUploadForm(forms.Form):
@@ -33,6 +33,5 @@ class DeleteKeywordForm(forms.Form):
 
 class StatementForm(forms.ModelForm):
     class Meta:
-        model = CommerzbankStatements
+        model = CommerzbankStatement
         fields = ['category']
-

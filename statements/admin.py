@@ -1,5 +1,7 @@
 from django.contrib import admin
 
-from .models import CommerzbankStatements
+from .models import CommerzbankStatement, StatementCategory, StatementKeyword
 
-admin.site.register(CommerzbankStatements)
+admin.site.register(CommerzbankStatement)
+admin.site.register(StatementCategory)
+admin.site.register(StatementKeyword)
