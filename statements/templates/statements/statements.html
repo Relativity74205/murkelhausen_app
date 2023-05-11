@@ -1,0 +1,14 @@
+{% if statements %}
+    <table>
+    {% for statement in statements %}
+        <tr>
+            <td>{{ statement.buchungstag }}</td>
+            <td>{{ statement.betrag }}</td>
+            <td><a href="{% url 'statements:statement' statement.id %}">{{ statement.buchungstext|slice:"0:50" }}</a></td>
+            <td>{% firstof statement.category "" %}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No Auszuege are available.</p>
+{% endif %}

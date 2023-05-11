@@ -4,28 +4,34 @@ from datetime import datetime, date
 from typing import Iterator
 
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import generic
 
 from .models import CommerzbankStatements, StatementCategory, StatementKeyword
-from .forms import CSVUploadForm, AddCategoryForm, AddKeywordForm, DeleteCategoryForm
+from .forms import CSVUploadForm, AddCategoryForm, AddKeywordForm, DeleteCategoryForm, StatementForm, DeleteKeywordForm
 
 
-# def index(request):
-#     context = {"statements": CommerzbankStatements.objects.all()}
-#     return render(request, "statements/index.html", context)
-class IndexView(generic.ListView):
-    template_name = "statements/index.html"
+class StatementsView(generic.ListView):
+    template_name = "statements/statements.html"
     context_object_name = "statements"
 
     def get_queryset(self):
         """Return the last five published questions."""
-        return CommerzbankStatements.objects.all()
+        return CommerzbankStatements.objects.all().order_by('id')
 
 
-class StatementView(generic.DetailView):
-    model = CommerzbankStatements
-    template_name = "statements/statement.html"
+def statement(request, statement_id):
+    statement_object = get_object_or_404(CommerzbankStatements, pk=statement_id)
+
+    if request.method == 'POST':
+        form = StatementForm(request.POST, instance=statement_object)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(request.path_info)
+    else:
+        form = StatementForm(instance=statement_object)
+
+    return render(request, 'statements/statement.html', {'form': form, 'statement': statement_object})
 
 
 def parse_commerzbank_date(date_string: str) -> date:
@@ -59,7 +65,7 @@ def import_statements(request):
                     buchungstext=row["Buchungstext"],
                     betrag=betrag,
                     waehrung=row["Währung"],
-                    iban_auftraggeberkonto=["IBAN Auftraggeberkonto"],
+                    iban_auftraggeberkonto=row["IBAN Auftraggeberkonto"],
                 )
             return HttpResponse(f"{count} rows have been imported.")  # TODO use django messages; len(csv_data) is not correct
 
@@ -73,45 +79,78 @@ def categories(request: HttpRequest):
         "categories": current_categories,
         "add_category_form": AddCategoryForm(),
         "delete_category_form": DeleteCategoryForm(),
-        "add_keyword_form": AddKeywordForm(),
         "add_category_message": request.session.get("add_category_message", ""),
         "delete_category_message": request.session.get("delete_category_message", ""),
-        "add_keyword_message": request.session.get("add_keyword_message", ""),
-        "matching_message": request.session.get("start_matching_message", ""),
     }
 
     if request.method == "POST":
         if request.POST.get("add_category"):
             _add_category(request, current_categories)
-        elif request.POST.get("add_keyword"):
-            _add_keyword(request)
         elif request.POST.get("delete_category"):
             _delete_category(request)
         return HttpResponseRedirect(request.path_info)
 
     request.session["add_category_message"] = ""
     request.session["delete_category_message"] = ""
-    request.session["add_keyword_message"] = ""
-    request.session["matching_message"] = ""
     return render(request, "statements/categories.html", context)
 
 
-def _add_keyword(request: HttpRequest):
+def show_category(request, category_id: int):
+    category = StatementCategory.objects.filter(id=category_id).first()
+    keyword_queryset = StatementKeyword.objects.filter(category=category).all()
+    # Prepare the choices from the queryset
+    choices = [(keyword.id, keyword.name) for keyword in keyword_queryset]
+
+    # Pass the choices to the form
+    delete_keyword_form = DeleteKeywordForm()
+    delete_keyword_form.fields["Keyword"].choices = choices
+
+    context = {
+        "category": category,
+        "add_keyword_form": AddKeywordForm(),
+        "delete_keyword_form": delete_keyword_form,
+        "add_keyword_message": request.session.get("add_keyword_message", ""),
+        "delete_keyword_message": request.session.get("delete_keyword_message", ""),
+    }
+
+    if request.method == "POST":
+        if request.POST.get("add_keyword"):
+            _add_keyword(request, category)
+        elif request.POST.get("delete_keyword"):
+            _delete_keyword(request, category)
+        return HttpResponseRedirect(request.path_info)
+
+    request.session["add_keyword_message"] = ""
+    request.session["delete_keyword_message"] = ""
+    return render(request, "statements/category.html", context)
+
+
+def _add_keyword(request: HttpRequest, category: str):
     """Add a new keyword to the database."""
     form = AddKeywordForm(request.POST)
     if not form.is_valid():
         ...  # TODO add error handling
-    new_keyword = form.cleaned_data["name"]
-    category = form.cleaned_data["category"]
-    if StatementKeyword.objects.filter(name=new_keyword, category=category).count() == 0:
-        request.session["add_keyword_message"] = f"Keyword {new_keyword} for category {category} added."
+    name = form.cleaned_data["name"]
+    if StatementKeyword.objects.filter(name=name, category=category).count() == 0:
+        request.session["add_keyword_message"] = f"Keyword {name} for category {category} added."
         StatementKeyword.objects.create(
-            name=new_keyword,
+            name=name,
             category=category,
             is_regex=form.cleaned_data["is_regex"],
         )
     else:
-        request.session["add_keyword_message"] = f"Keyword {new_keyword} for category {category} already exists."
+        request.session["add_keyword_message"] = f"Keyword {name} for category {category} already exists."
+
+
+def _delete_keyword(request: HttpRequest, category: str):
+    """Delete a keyword of a category from the database."""
+    # TODO very dirty solution, cleanup needed
+    # form = DeleteKeywordForm(request.POST)
+    # if not form.is_valid():
+    #     ...  # TODO add error handling
+    # name = form.cleaned_data["Keyword"]
+    StatementKeyword.objects.filter(category=category, id=request.POST["Keyword"][0]).delete()
+    request.session["delete_keyword_message"] = f"Keyword for category {category} deleted."
 
 
 def _add_category(request: HttpRequest, current_categories):
@@ -119,12 +158,12 @@ def _add_category(request: HttpRequest, current_categories):
     form = AddCategoryForm(request.POST)
     if not form.is_valid():
         ...  # TODO add error handling
-    new_category = form.cleaned_data["name"]
-    if current_categories.filter(name=new_category).count() == 0:
-        request.session["add_category_message"] = f"Category {new_category} added."
-        StatementCategory.objects.create(name=new_category)
+    name = form.cleaned_data["name"]
+    if current_categories.filter(name=name).count() == 0:
+        request.session["add_category_message"] = f"Category {name} added."
+        StatementCategory.objects.create(name=name)
     else:
-        request.session["add_category_message"] = f"Category {new_category} already exists."
+        request.session["add_category_message"] = f"Category {name} already exists."
 
 
 def _delete_category(request: HttpRequest):

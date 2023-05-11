@@ -1,6 +1,6 @@
 from django import forms
 
-from statements.models import StatementCategory, StatementKeyword
+from statements.models import StatementCategory, StatementKeyword, CommerzbankStatements
 
 
 class CSVUploadForm(forms.Form):
@@ -20,8 +20,19 @@ class DeleteCategoryForm(forms.Form):
 class AddKeywordForm(forms.ModelForm):
     class Meta:
         model = StatementKeyword
-        fields = "__all__"
+        fields = ["name", "is_regex"]
 
         widgets = {
             'is_regex': forms.CheckboxInput(),
         }
+
+
+class DeleteKeywordForm(forms.Form):
+    Keyword = forms.ChoiceField(choices=[])
+
+
+class StatementForm(forms.ModelForm):
+    class Meta:
+        model = CommerzbankStatements
+        fields = ['category']
+

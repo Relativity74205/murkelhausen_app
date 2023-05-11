@@ -1,0 +1,25 @@
+<h1>Kategorie: {{ category.name }}</h1>
+
+<ul>
+    {% for keyword in category.statementkeyword_set.all %}
+        <li>{{ keyword.name }}</li>
+    {% endfor %}
+</ul>
+
+<h2>Add a keyword</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ add_keyword_form.as_p }}
+    <button type="submit" name="add_keyword" value="add_keyword">Add</button>
+    {% if add_keyword_message %}<p><strong>{{ add_keyword_message }}</strong></p>{% endif %}
+</form>
+
+<h2>Delete a keyword</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ delete_keyword_form.as_p }}
+    <button type="submit" name="delete_keyword" value="delete_keyword">Delete</button>
+    {% if delete_keyword_message %}<p><strong>{{ delete_keyword_message }}</strong></p>{% endif %}
+</form>
+
+<a href="{% url 'statements:categories' %}" class="btn btn-primary">Back to Categories</a>

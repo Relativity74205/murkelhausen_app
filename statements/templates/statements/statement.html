@@ -1,1 +1,14 @@
-{{ object.buchungstext }}
+<h2>{{ statement.umsatzart }}</h2>
+<p>Buchungstag: {{ statement.buchungstag }}</p>
+<p>Wertstellung-Tag: {{ statement.wertstellung }}</p>
+<p>Betrag: {{ statement.betrag }} {{ statement.waehrung }}</p>
+<p>Verwendungszweck: {{ statement.buchungstext }}</p>
+<p>Auftraggeberkonto: {{ statement.iban_auftraggeberkonto }}</p>
+<p>Kategorie: {{ statement.category }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Category</button>
+    <a href="{% url 'statements:statements' %}" class="btn btn-primary">Back to Statements</a>
+</form>
