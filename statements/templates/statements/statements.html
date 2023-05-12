@@ -1,3 +1,11 @@
+<p>
+    <button type="button">
+    <a href="{% url 'statements:import' %}">Importieren</a>
+    </button>
+    <button type="button">
+    <a href="{% url 'statements:categories' %}">Kategorien bearbeiten</a>
+    </button>
+</p>
 {% if statements %}
     <table>
     {% for statement in statements %}
@@ -10,5 +18,5 @@
     {% endfor %}
     </table>
 {% else %}
-    <p>No Auszuege are available.</p>
+    <p>Keine Auszüge in der Datenbank.</p>
 {% endif %}
