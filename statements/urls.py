@@ -13,4 +13,5 @@ urlpatterns = [
     path('category/<int:category_id>/<int:pk>/delete', views.KeywordDeleteView.as_view(), name='keyword-delete'),
     path('start_matching/', views.StartMatchingView.as_view(), name='start_matching'),
     path('delete_matching/', views.DeleteMatchingView.as_view(), name='delete_matching'),
+    path('graph/', views.plot_graph, name='graph'),
 ]

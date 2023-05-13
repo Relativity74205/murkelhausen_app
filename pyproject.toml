@@ -13,6 +13,8 @@ psycopg = "^3.1.9"
 django-tables2 = "^2.5.3"
 django-bootstrap3 = "^23.1"
 django-filter = "^23.2"
+plotly = "^5.14.1"
+pandas = "^2.0.1"
 
 [build-system]
 requires = ["poetry-core"]

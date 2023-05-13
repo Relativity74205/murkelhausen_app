@@ -1,9 +1,9 @@
 {% load render_table from django_tables2 %}
 {% load bootstrap3 %}
 
-    <head>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-    </head>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
 <p>
     <button type="button">
     <a href="{% url 'statements:import' %}">Importieren</a>
@@ -11,29 +11,18 @@
     <button type="button">
     <a href="{% url 'statements:categories' %}">Kategorien bearbeiten</a>
     </button>
+    <button type="button">
+    <a href="{% url 'statements:graph' %}">Auswertung</a>
+    </button>
 </p>
-    <form method="post" action="{% url 'statements:start_matching' %}">
-        {% csrf_token %}
-        <button type="submit">Matching starten</button>
-    </form>
-    <form method="post" action="{% url 'statements:delete_matching' %}">
-        {% csrf_token %}
-        <button type="submit">Matchings loeschen</button>
-    </form>
-{#{% if statements %}#}
-{#    <table>#}
-{#    {% for statement in statements %}#}
-{#        <tr>#}
-{#            <td>{{ statement.buchungstag }}</td>#}
-{#            <td>{{ statement.betrag }}</td>#}
-{#            <td><a href="{% url 'statements:statement' statement.id %}">{{ statement.buchungstext|slice:"0:50" }}</a></td>#}
-{#            <td>{{ statement.category|default_if_none:"" }}</td>#}
-{#        </tr>#}
-{#    {% endfor %}#}
-{#    </table>#}
-{#{% else %}#}
-{#    <p>Keine Auszüge in der Datenbank.</p>#}
-{#{% endif %}#}
+<form method="post" action="{% url 'statements:start_matching' %}">
+    {% csrf_token %}
+    <button type="submit">Matching starten</button>
+</form>
+<form method="post" action="{% url 'statements:delete_matching' %}">
+    {% csrf_token %}
+    <button type="submit">Matchings loeschen</button>
+</form>
 
 {% if filter %}
     <form action="" method="get" class="form form-inline">

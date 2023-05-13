@@ -64,4 +64,4 @@ def match_categories():
 
 def delete_set_categories():
     """Delete all statement categories that have been set manually."""
-    CommerzbankStatement.objects.update(category=None)
+    CommerzbankStatement.objects.filter(category_set_manually=False).update(category=None)

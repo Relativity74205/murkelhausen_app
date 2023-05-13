@@ -2,14 +2,19 @@ import csv
 import logging
 from typing import Iterator
 
+import pandas as pd
+import plotly.express as px
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic, View
 from django_filters.views import FilterView
-from django_tables2 import SingleTableView, SingleTableMixin
+from django_tables2 import SingleTableMixin
 from django_filters import FilterSet
-
+from plotly.offline import plot
+from plotly.graph_objs import Scatter
 
 from . import models, forms, tables
 from .views_functions import parse_commerzbank_date, _add_keyword, _add_category, match_categories, \
@@ -157,3 +162,37 @@ def show_category(request, category_id: int):
 
     request.session["add_keyword_message"] = ""
     return render(request, "statements/category.html", context)
+
+
+def plot_graph(request):
+    positive_amounts = models.CommerzbankStatement.objects.filter(betrag__gt=0).annotate(
+        month=TruncMonth('buchungstag')).values('month', 'category__name').annotate(sum_positive=Sum('betrag')).order_by('month')
+    negative_amounts = models.CommerzbankStatement.objects.filter(betrag__lt=0).annotate(
+        month=TruncMonth('buchungstag')).values('month', 'category__name').annotate(sum_negative=Sum('betrag')).order_by('month')
+    df_negative = pd.DataFrame.from_records(negative_amounts)
+    fig_negative = px.line(df_negative, x='month', y='sum_negative', color='category__name', title='Negative Amount per Month')
+
+    # Convert plots to HTML
+    plot_html = fig_negative.to_html(full_html=False)
+
+    # fig = go.Figure()
+    # fig.add_trace(go.Scatter(x=list(negative_amounts.values_list('month', flat=True)), y=list(negative_amounts.values_list('sum_negative', flat=True)), name='Negative Amount'))
+    # fig.add_trace(go.Scatter(x=list(positive_amounts.values_list('month', flat=True)), y=list(positive_amounts.values_list('sum_positive', flat=True)), name='Positive Amount'))
+    # fig.update_layout(title='Negative and Positive Amount per Month', xaxis_title='Month', yaxis_title='Amount')
+    # plot_html = fig.to_html(full_html=False)
+    #
+    # x_data = []
+    # y_data = []
+    # for amount in positive_amounts:
+    #     x_data += [amount['month']]
+    #     y_data += [amount['sum_positive']]
+    # plot_div = plot([Scatter(x=x_data, y=y_data,
+    #                     mode='lines', name='test',
+    #                     opacity=0.8, marker_color='green')],
+    #            output_type='div')
+
+    # Pass the plot HTML to the template
+    context = {
+        'plot_html': plot_html
+    }
+    return render(request, "statements/graph.html", context=context)
