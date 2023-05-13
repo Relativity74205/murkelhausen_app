@@ -6,6 +6,14 @@
     <a href="{% url 'statements:categories' %}">Kategorien bearbeiten</a>
     </button>
 </p>
+    <form method="post" action="{% url 'statements:start_matching' %}">
+        {% csrf_token %}
+        <button type="submit">Matching starten</button>
+    </form>
+    <form method="post" action="{% url 'statements:delete_matching' %}">
+        {% csrf_token %}
+        <button type="submit">Matchings loeschen</button>
+    </form>
 {% if statements %}
     <table>
     {% for statement in statements %}

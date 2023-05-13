@@ -5,11 +5,12 @@ from typing import Iterator
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views import generic
+from django.views import generic, View
 
 from .models import CommerzbankStatement, StatementCategory, StatementKeyword
 from .forms import CSVUploadForm, AddCategoryForm, AddKeywordForm, StatementForm
-from .views_functions import parse_commerzbank_date, _add_keyword, _add_category
+from .views_functions import parse_commerzbank_date, _add_keyword, _add_category, match_categories, \
+    delete_set_categories
 
 
 class StatementsView(generic.ListView):
@@ -19,6 +20,20 @@ class StatementsView(generic.ListView):
     def get_queryset(self):
         """Return the last five published questions."""
         return CommerzbankStatement.objects.all().order_by('id')
+
+
+class StartMatchingView(View):
+    def post(self, request):
+        match_categories()
+
+        return HttpResponseRedirect(reverse_lazy('statements:statements'))
+
+
+class DeleteMatchingView(View):
+    def post(self, request):
+        delete_set_categories()
+
+        return HttpResponseRedirect(reverse_lazy('statements:statements'))
 
 
 class CategoryDeleteView(generic.DeleteView):

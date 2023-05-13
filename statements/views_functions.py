@@ -1,9 +1,10 @@
 from datetime import date, datetime
+import re
 
 from django.http import HttpRequest
 
 from statements.forms import AddKeywordForm, AddCategoryForm
-from statements.models import StatementKeyword, StatementCategory
+from statements.models import StatementKeyword, StatementCategory, CommerzbankStatement
 
 
 def parse_commerzbank_date(date_string: str) -> date:
@@ -42,3 +43,24 @@ def _add_category(request: HttpRequest, current_categories):
         StatementCategory.objects.create(name=name)
     else:
         request.session["add_category_message"] = f"Category {name} already exists."
+
+
+def match_categories():
+    """Match categories to statements."""
+    for statement in CommerzbankStatement.objects.filter(category__isnull=True):
+        for keyword in StatementKeyword.objects.filter(category__isnull=False):
+            if keyword.is_regex:
+                if re.search(keyword.name, statement.buchungstext, re.IGNORECASE):
+                    statement.category = keyword.category
+                    statement.save()
+                    break
+            else:
+                if keyword.name.lower() in statement.buchungstext.lower():
+                    statement.category = keyword.category
+                    statement.save()
+                    break
+
+
+def delete_set_categories():
+    """Delete all statement categories that have been set manually."""
+    CommerzbankStatement.objects.update(category=None)
