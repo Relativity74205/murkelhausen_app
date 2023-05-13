@@ -1,4 +1,5 @@
 {% extends 'statements/base.html' %}
+{% load bootstrap3 %}
 
 {% block content %}
 
@@ -21,7 +22,7 @@ setFocusOnField("id_name");
 <h2>Kategorie hinzufuegen</h2>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ add_category_form }}
+    {% bootstrap_form add_category_form %}
     <button type="submit" name="add_category" value="add_category">Add</button>
     {% if add_category_message %}<p><strong>{{ add_category_message }}</strong></p>{% endif %}
 </form>

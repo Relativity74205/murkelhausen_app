@@ -47,6 +47,7 @@ def _add_category(request: HttpRequest, current_categories):
 
 def match_categories():
     """Match categories to statements."""
+    # TODO rewrite as DB query
     for statement in CommerzbankStatement.objects.filter(category__isnull=True):
         for keyword in StatementKeyword.objects.filter(category__isnull=False):
             if keyword.is_regex:

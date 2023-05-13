@@ -37,6 +37,54 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-bootstrap3"
+version = "23.1"
+description = "Bootstrap 3 support for Django projects"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "django-bootstrap3-23.1.tar.gz", hash = "sha256:7095b7c66a89f3baeb78ea028799ebd795d29739fc8602460422e7c2a194ad30"},
+    {file = "django_bootstrap3-23.1-py3-none-any.whl", hash = "sha256:044ff0d34cd6a3928e0b7dc104a06b2f73e71bea237da5e9a477cc047a5d8e21"},
+]
+
+[package.dependencies]
+Django = ">=3.2"
+
+[[package]]
+name = "django-filter"
+version = "23.2"
+description = "Django-filter is a reusable Django application for allowing users to filter querysets dynamically."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "django-filter-23.2.tar.gz", hash = "sha256:2fe15f78108475eda525692813205fa6f9e8c1caf1ae65daa5862d403c6dbf00"},
+    {file = "django_filter-23.2-py3-none-any.whl", hash = "sha256:d12d8e0fc6d3eb26641e553e5d53b191eb8cec611427d4bdce0becb1f7c172b5"},
+]
+
+[package.dependencies]
+Django = ">=3.2"
+
+[[package]]
+name = "django-tables2"
+version = "2.5.3"
+description = "Table/data-grid framework for Django"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-tables2-2.5.3.tar.gz", hash = "sha256:f6c1623aac188d29aae9cf6b4de3211c96c525e49890654bec3359c181600eb9"},
+    {file = "django_tables2-2.5.3-py2.py3-none-any.whl", hash = "sha256:e336fdf8899a8fab110550a40cad956064bd4054818e0b972c1893b3e2542168"},
+]
+
+[package.dependencies]
+Django = ">=3.2"
+
+[package.extras]
+tablib = ["tablib"]
+
+[[package]]
 name = "psycopg"
 version = "3.1.9"
 description = "PostgreSQL database adapter for Python"
@@ -104,4 +152,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "1c9e89e4f3fda0a63e31c04f4b23b0b97f789b20ece4593d754ce92c1032e26e"
+content-hash = "d575306ac5029ddff5b42b9f735cd5a8d1e4470bafb15d51020fcc513ac9bd3b"
