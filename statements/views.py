@@ -75,6 +75,7 @@ class StatementUpdateView(UpdateView):
     model = models.CommerzbankStatement
     form_class = forms.StatementUpdateForm
     template_name_suffix = "_update_form"
+    success_url = reverse_lazy('statements:statements')
 
 
 def import_statements(request):

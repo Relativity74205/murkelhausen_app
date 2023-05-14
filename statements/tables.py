@@ -14,3 +14,4 @@ class StatementsTable(tables.Table):
         template_name = "django_tables2/bootstrap.html"
         # fields = ("buchungstag", )
         exclude = ("id", "wertstellung", "waehrung", "iban_auftraggeberkonto", )
+        order_by = ("buchungstag", "id", )

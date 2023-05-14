@@ -1,3 +1,21 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get the category and category_set_manually fields
+    var categoryField = document.getElementById('id_category');
+    var categorySetManuallyField = document.getElementById('id_category_set_manually');
+
+    // Add an event listener to the category field for the 'change' event
+    categoryField.addEventListener('change', function() {
+      // Set the category_set_manually field to true
+      categorySetManuallyField.checked = true;
+    });
+  });
+</script>
+
+
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}

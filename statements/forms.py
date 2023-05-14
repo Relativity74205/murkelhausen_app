@@ -36,5 +36,5 @@ class StatementUpdateForm(forms.ModelForm):
         model = models.CommerzbankStatement
         fields = '__all__'  # Replace with the specific fields you want to include in the form
         widgets = {
-            'iban_auftraggeberkonto': forms.TextInput(attrs={'width': 300}),
+            'buchungstext': forms.Textarea(attrs={'class': 'custom-input'}),
         }
