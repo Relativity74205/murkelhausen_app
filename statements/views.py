@@ -7,31 +7,24 @@ import plotly.express as px
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic, View
+from django.views.generic import UpdateView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
-from django_filters import FilterSet
-from plotly.offline import plot
-from plotly.graph_objs import Scatter
 
-from . import models, forms, tables
+
+from . import models, forms, tables, filters
 from .views_functions import parse_commerzbank_date, _add_keyword, _add_category, match_categories, \
     delete_set_categories
-
-
-class StatementsFilter(FilterSet):
-    class Meta:
-        model = models.CommerzbankStatement
-        fields = {"buchungstext": ["exact", "contains"]}
 
 
 class StatementsView(SingleTableMixin, FilterView):
     model = models.CommerzbankStatement
     template_name = "statements/statements.html"
     table_class = tables.StatementsTable
-    filterset_class = StatementsFilter
+    filterset_class = filters.StatementsFilter
 
 
 class StartMatchingView(View):
@@ -78,24 +71,10 @@ class KeywordDeleteView(generic.DeleteView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-# TODO check if replaced with update view?
-def show_statement(request, statement_id):
-    statement = get_object_or_404(models.CommerzbankStatement, pk=statement_id)
-
-    if request.method == 'POST':
-        form = forms.StatementForm(request.POST, instance=statement)
-        if form.is_valid():
-            stmt = form.save(commit=False)
-            if stmt.category is not None:
-                stmt.category_set_manually = True
-            else:
-                stmt.category_set_manually = False
-            stmt.save()
-            return HttpResponseRedirect(request.path_info)
-    else:
-        form = forms.StatementForm(instance=statement)
-
-    return render(request, 'statements/statement.html', {'form': form, 'statement': statement})
+class StatementUpdateView(UpdateView):
+    model = models.CommerzbankStatement
+    form_class = forms.StatementUpdateForm
+    template_name_suffix = "_update_form"
 
 
 def import_statements(request):

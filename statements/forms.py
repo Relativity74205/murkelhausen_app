@@ -1,6 +1,6 @@
 from django import forms
 
-from statements.models import StatementCategory, StatementKeyword, CommerzbankStatement
+from . import models
 
 
 class CSVUploadForm(forms.Form):
@@ -13,13 +13,13 @@ class AddCategoryForm(forms.Form):
 
 class DeleteCategoryForm(forms.Form):
     Category = forms.ModelChoiceField(
-        queryset=StatementCategory.objects.all(),
+        queryset=models.StatementCategory.objects.all(),
     )
 
 
 class AddKeywordForm(forms.ModelForm):
     class Meta:
-        model = StatementKeyword
+        model = models.StatementKeyword
         fields = ["name", "is_regex"]
 
         widgets = {
@@ -31,7 +31,10 @@ class DeleteKeywordForm(forms.Form):
     Keyword = forms.ChoiceField(choices=[])
 
 
-class StatementForm(forms.ModelForm):
+class StatementUpdateForm(forms.ModelForm):
     class Meta:
-        model = CommerzbankStatement
-        fields = ['category']
+        model = models.CommerzbankStatement
+        fields = '__all__'  # Replace with the specific fields you want to include in the form
+        widgets = {
+            'iban_auftraggeberkonto': forms.TextInput(attrs={'width': 300}),
+        }

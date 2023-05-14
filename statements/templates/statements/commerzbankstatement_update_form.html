@@ -1,0 +1,6 @@
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Category</button>
+    <a href="{% url 'statements:statements' %}" class="btn btn-primary">Back to Statements</a>
+</form>
