@@ -19,7 +19,8 @@ def get_stations() -> StationModel:
 
 
 stations = get_stations()
-station_id = stations.get_station_id("Lierberg")
+station_id = stations.get_station_id("Hauptbahnhof", "Essen")
 departure_data = get_departure_data(station_id)
-departures = departure_data.get_departure_list_per_line('125')
+# departures = departure_data.get_departure_list_per_line('125')
+departures = departure_data.get_departure_list()
 print(departures[0].planned_departure_time)

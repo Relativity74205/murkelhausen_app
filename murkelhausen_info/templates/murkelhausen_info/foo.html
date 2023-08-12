@@ -1,0 +1,15 @@
+{#<ul>#}
+{#    {% for keyword in category.statementkeyword_set.all %}#}
+{#        <li>{{ keyword.name }} <a href="{% url 'statements:keyword-delete' category.id keyword.id %}"><i class="fas fa-times" style="color: red;"></i></a></li>#}
+{#    {% endfor %}#}
+{#</ul>#}
+
+<p>
+foo bar
+</p>
+
+{% for departure in departures %}
+    <ul>
+        <li>Line {{ departure.servingLine.number }}: {{ departure.planned_departure_time }} {% if departure.delay > 0 %} ({{ departure.delay }} Minuten Verspätung) {% endif %} ; direction {{ departure.servingLine.liErgRiProj.direction }} (to {{ departure.servingLine.direction }} from {{ departure.servingLine.directionFrom }})</li>
+    </ul>
+{% endfor %}

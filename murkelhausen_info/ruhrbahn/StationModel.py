@@ -66,8 +66,8 @@ class Station(BaseModel):
 class StationModel(BaseModel):
     stations: list[Station]
 
-    def get_station_id(self, station_name: str) -> str:
+    def get_station_id(self, station_name: str, city: str) -> str:
         try:
-            return next(station.id for station in self.stations if station.name == station_name)
+            return next(station.id for station in self.stations if station.name == station_name and station.city == city)
         except StopIteration:
             raise ValueError(f"Station with id {station_name} not found")
