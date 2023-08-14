@@ -3,9 +3,10 @@ from datetime import timezone, datetime
 from django.http import HttpResponseRedirect, HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, TemplateView
+from django.views.generic import DetailView, TemplateView, ListView
 
 from murkelhausen_info.forms import StationForm
+from murkelhausen_info.ruhrbahn.DepartureModel import DepartureListItem
 from murkelhausen_info.ruhrbahn.main import get_stations, get_departure_data
 
 
@@ -55,6 +56,24 @@ from murkelhausen_info.ruhrbahn.main import get_stations, get_departure_data
 #             selected_station_id = int(form.cleaned_data['Station'])
 #             selected_station_name = choices[selected_station_id]
 #             return selected_station_name
+
+class DepartureView(ListView):
+    model = DepartureListItem
+    template_name = "murkelhausen_info/foo.html"
+    paginate_by = 10
+
+    def get_queryset(self, **kwargs):
+        station_name = self.kwargs.get('station_name', None)
+        if station_name is None:
+            station_name = "Lierberg"
+
+        stations = get_stations()
+        station_id = stations.get_station_id(station_name, "Mülheim")
+
+        departure_data = get_departure_data(station_id)
+        departures = departure_data.get_departure_list()
+
+        return departures
 
 
 def show_departure(request: HttpRequest, station_name: str | None = None) -> HttpResponse:
