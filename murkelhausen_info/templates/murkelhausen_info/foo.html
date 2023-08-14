@@ -1,15 +1,21 @@
-{#<ul>#}
-{#    {% for keyword in category.statementkeyword_set.all %}#}
-{#        <li>{{ keyword.name }} <a href="{% url 'statements:keyword-delete' category.id keyword.id %}"><i class="fas fa-times" style="color: red;"></i></a></li>#}
-{#    {% endfor %}#}
-{#</ul>#}
+{% load bootstrap3 %}
 
-<p>
-foo bar
-</p>
+<body>
+<h2>Wahl eine Station aus:</h2>
+<ul>
+    <li><a href={% url 'murkelhausen_info:show_departure' 'Lierberg' %} >Lierberg</a></li>
+    <li><a href={% url 'murkelhausen_info:show_departure' 'Kriegerstr.' %} >Kriegerstr.</a></li>
+</ul>
+{#<form method="post" enctype="multipart/form-data">#}
+{#    {% csrf_token %}#}
+{#    {% bootstrap_form station_form %}#}
+{#    <button type="submit">Get data</button>#}
+{#</form>#}
 
+<p>Departures for <b>{{ selection_station }}</b>:</p>
 {% for departure in departures %}
     <ul>
         <li>Line {{ departure.servingLine.number }}: {{ departure.planned_departure_time }} {% if departure.delay > 0 %} ({{ departure.delay }} Minuten Verspätung) {% endif %} ; direction {{ departure.servingLine.liErgRiProj.direction }} (to {{ departure.servingLine.direction }} from {{ departure.servingLine.directionFrom }})</li>
     </ul>
 {% endfor %}
+</body>

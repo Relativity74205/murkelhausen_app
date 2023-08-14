@@ -4,5 +4,6 @@ from . import views
 
 app_name = "murkelhausen_info"
 urlpatterns = [
-    path("", views.FooView.as_view(), name="foo"),
+    path("<str:station_name>/", views.show_departure, name="show_departure"),
+    path("", views.show_departure, name="show_departures"),
 ]

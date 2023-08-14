@@ -1,4 +1,5 @@
 import json
+from functools import lru_cache
 
 import requests
 
@@ -12,6 +13,8 @@ def get_departure_data(station_id: str) -> DepartureModel:
     return DepartureModel(**json_data)
 
 
+# TODO replace with ttl cache (https://github.com/tkem/cachetools)
+@lru_cache()
 def get_stations() -> StationModel:
     json_data = requests.get(URLS["stations"]).json()
     data = {"stations": json_data}

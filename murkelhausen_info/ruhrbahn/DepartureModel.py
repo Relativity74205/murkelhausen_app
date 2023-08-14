@@ -47,12 +47,12 @@ class Points(BaseModel):
 
 class Dm(BaseModel):
     input: Input
-    points: Points
+    points: Points | None = None
 
 
 class Arr(BaseModel):
     input: Input
-    points: None
+    points: Points | None = None
 
 
 class ValidityDates(BaseModel):
@@ -250,8 +250,8 @@ class DepartureListItem(BaseModel):
 
 class Data(BaseModel):
     parameters: list[Parameter]
-    dm: Dm
-    arr: Arr
+    # dm: Dm
+    # arr: Arr
     dateTime: ValidityDates
     dateRange: list[DateRangeItem]
     option: Option

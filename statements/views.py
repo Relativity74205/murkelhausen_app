@@ -78,7 +78,7 @@ class StatementUpdateView(UpdateView):
     success_url = reverse_lazy('statements:statements')
 
 
-def import_statements(request):
+def import_statements(request: HttpRequest):
     if request.method == "POST":
         form = forms.CSVUploadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -126,7 +126,7 @@ def show_categories(request: HttpRequest):
     return render(request, "statements/categories.html", context)
 
 
-def show_category(request, category_id: int):
+def show_category(request: HttpRequest, category_id: int):
     category = models.StatementCategory.objects.filter(id=category_id).first()
 
     context = {
