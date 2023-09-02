@@ -5,6 +5,9 @@
 
 <body>
 
+
+
+<h1>Alle Vokabeln</h1>
 {% for vokabel in object_list %}
     <ul>
         <li><a href="{% url 'trainer:update' vokabel.id %}">Deutsch: {{ vokabel.deutsch }}; Englisch: {{ vokabel.englisch }}</a></li>

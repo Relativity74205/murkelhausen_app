@@ -4,23 +4,14 @@
 
 <h2>Vokabel aktualisieren</h2>
 
-    <p>
-    Erstellt: {{ vokabel.created }}
-    Zuletzt geändert: {{ vokabel.updated }}
-    </p>
-
 <form method="post">{% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Save">
+    <input type="submit" value="Confirm">
 </form>
-
 
 <p>
     <button type="button">
-    <a href="{% url 'trainer:delete' vokabel.id %}">Vokabel loeschen</a>
-    </button>
-    <button type="button">
-    <a href="{% url 'trainer:start' %}">Zurück zum Start</a>
+    <a href="{% url 'trainer:update' vokabel.id %}">Abbruch</a>
     </button>
     <button type="button">
     <a href="{% url 'trainer:list' %}">Zur Vokabel Liste</a>

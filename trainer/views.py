@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render
 from django.views.generic import ListView
@@ -16,8 +17,8 @@ class VokabelView(ListView):
 class AddVokabelView(SuccessMessageMixin, generic.CreateView):
     model = models.Vokabel
     fields = ['deutsch', 'englisch']
-    template_name = "trainer/add_vokabel.html"
-    success_url = '/trainer/add/'
+    template_name_suffix = "_create_form"
+    success_url = '/trainer/vokabel/'
     success_message = "%(deutsch)s erfolgreich hinzugefügt."
 
 
@@ -26,7 +27,14 @@ class UpdateVokabelView(SuccessMessageMixin, generic.UpdateView):
     fields = ['deutsch', 'englisch']
     template_name_suffix = "_update_form"
     success_url = '/trainer/list/'
-    # success_message = "%(deutsch)s erfolgreich aktualisiert."
+    success_message = "%(deutsch)s erfolgreich aktualisiert."
+
+
+class DeleteVokabelView(SuccessMessageMixin, generic.DeleteView):
+    model = models.Vokabel
+    template_name_suffix = "_delete_form"
+    success_url = '/trainer/list/'
+    success_message = "Erfolgreich gelöscht."
 
 
 def start(request):
