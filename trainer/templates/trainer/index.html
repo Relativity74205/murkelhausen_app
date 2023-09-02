@@ -1,0 +1,14 @@
+{% extends 'trainer/base.html' %}
+
+{% block content %}
+
+<p>
+    <button type="button">
+    <a href="{% url 'trainer:add' %}">Vokabel Hinzufügen</a>
+    </button>
+    <button type="button">
+    <a href="{% url 'trainer:list' %}">Zur Vokabel Liste</a>
+    </button>
+</p>
+
+{% endblock %}

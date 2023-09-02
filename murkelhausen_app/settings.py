@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'statements.apps.StatementsConfig',
+    'trainer.apps.TrainerConfig',
     'murkelhausen_info.apps.MurkelhausenInfoConfig',
     'django_tables2',
     'bootstrap3',
