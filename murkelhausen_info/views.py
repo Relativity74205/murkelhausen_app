@@ -61,19 +61,25 @@ class DepartureView(ListView):
     model = DepartureListItem
     template_name = "murkelhausen_info/foo.html"
     paginate_by = 10
+    station_name = "Lierberg"
 
     def get_queryset(self, **kwargs):
-        station_name = self.kwargs.get('station_name', None)
-        if station_name is None:
-            station_name = "Lierberg"
+        station_name_param = self.kwargs.get('station_name', None)
+        if station_name_param is not None:
+            self.station_name = station_name_param
 
         stations = get_stations()
-        station_id = stations.get_station_id(station_name, "Mülheim")
+        station_id = stations.get_station_id(self.station_name, "Mülheim")
 
         departure_data = get_departure_data(station_id)
         departures = departure_data.get_departure_list()
 
         return departures
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["selection_station"] = self.station_name
+        return context
 
 
 def show_departure(request: HttpRequest, station_name: str | None = None) -> HttpResponse:

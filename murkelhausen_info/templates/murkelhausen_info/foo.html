@@ -15,7 +15,7 @@
 <p>Departures for <b>{{ selection_station }}</b>:</p>
 {% for departure in object_list %}
     <ul>
-        <li>Line {{ departure.servingLine.number }}: {{ departure.planned_departure_time }} {% if departure.delay > 0 %} ({{ departure.delay }} Minuten Verspätung) {% endif %} ; direction {{ departure.servingLine.liErgRiProj.direction }} (to {{ departure.servingLine.direction }} from {{ departure.servingLine.directionFrom }})</li>
+        <li>Line {{ departure.servingLine.number }} {{ departure.platform }} {{ departure.platformName }}: {{ departure.planned_departure_time }} {% if departure.delay > 0 %} ({{ departure.delay }} Minuten Verspätung) {% endif %} ; direction {{ departure.servingLine.liErgRiProj.direction }} (to {{ departure.servingLine.direction }} from {{ departure.servingLine.directionFrom }})</li>
     </ul>
 {% endfor %}
 </body>
