@@ -1,8 +1,9 @@
-from django.forms import forms
+from django import forms
 
-from trainer import models
+from trainer.models import Vokabel
 
 
-class AddVokabelForm(forms.ModelForm):
+class TrainForm(forms.Form):
     class Meta:
-        model = models.Vokabel
+        model = Vokabel
+        fields = ['deutsch', 'englisch']

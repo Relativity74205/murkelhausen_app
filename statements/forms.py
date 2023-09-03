@@ -11,12 +11,6 @@ class AddCategoryForm(forms.Form):
     name = forms.CharField(max_length=256)
 
 
-class DeleteCategoryForm(forms.Form):
-    Category = forms.ModelChoiceField(
-        queryset=models.StatementCategory.objects.all(),
-    )
-
-
 class AddKeywordForm(forms.ModelForm):
     class Meta:
         model = models.StatementKeyword
@@ -25,10 +19,6 @@ class AddKeywordForm(forms.ModelForm):
         widgets = {
             'is_regex': forms.CheckboxInput(),
         }
-
-
-class DeleteKeywordForm(forms.Form):
-    Keyword = forms.ChoiceField(choices=[])
 
 
 class StatementUpdateForm(forms.ModelForm):

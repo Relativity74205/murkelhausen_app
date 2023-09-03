@@ -1,0 +1,26 @@
+{% extends 'trainer/base.html' %}
+
+{% block content %}
+
+<ul class="messages">
+    {% for message in messages %}
+    <p><i>{{ message }}</i></p>
+    {% endfor %}
+</ul>
+
+<form method="post">
+  {% csrf_token %}
+    <p>deutsch: {{ deutsch }}</p><input type="text" name="correct_answer" value="{{ englisch }}" hidden>
+    <p>englisch: <input type="text" name="answer"></p>
+    <input type="submit" value="Submit">
+</form>
+
+<span id="answer"></span>
+
+<p>
+    <button type="button">
+    <a href="{% url 'trainer:start' %}">Zurück zum Start</a>
+    </button>
+</p>
+
+{% endblock %}

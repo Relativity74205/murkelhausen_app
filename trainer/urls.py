@@ -5,6 +5,7 @@ from . import views
 app_name = "trainer"
 urlpatterns = [
     path("", views.start, name="start"),
+    path("train/", views.TrainView.as_view(), name="train"),
     path("list/", views.VokabelView.as_view(), name="list"),
     path("vokabel/", views.AddVokabelView.as_view(), name="add"),
     path("vokabel/<int:pk>/", views.UpdateVokabelView.as_view(), name="update"),
