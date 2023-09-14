@@ -1,0 +1,8 @@
+{% load bootstrap3 %}
+
+<body>
+<h2>Wahl eine Station aus:</h2>
+<ul>
+    <li><a href={% url 'murkelhausen_info:show_departure' 'Lierberg' %} >Lierberg</a></li>
+    <li><a href={% url 'murkelhausen_info:show_departure' 'Kriegerstr.' %} >Kriegerstr.</a></li>
+</ul>
