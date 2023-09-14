@@ -25,10 +25,10 @@ setFocusOnField("answer");
 
 <form method="post">
   {% csrf_token %}
-    <p>deutsch: {{ vokabel.deutsch }}</p>
+{#    <p>deutsch: {{ vokabel.deutsch }}</p>#}
     <input type="text" name="vokabel_id" value="{{ vokabel.id }}" hidden>
-    <p>englisch: <input type="text" name="answer" id="answer"></p>
-
+{#    <p>englisch: <input type="text" name="answer" id="answer"></p>#}
+    {% bootstrap_form form %}
     {% bootstrap_button content="Prüfen" name="submit" button_type="submit" %}
     {% bootstrap_button content="Neue Runde starten" name="reset" button_type="submit" %}
 </form>

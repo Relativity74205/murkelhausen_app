@@ -6,6 +6,7 @@ from django.views import generic, View
 from pydantic import BaseModel
 
 from trainer import models
+from trainer.forms import TrainForm
 
 
 class VokabelView(ListView):
@@ -77,6 +78,7 @@ class TrainView(View):
         train_session = self._get_train_session()
 
         context = {
+            "form": TrainForm(initial={"deutsch": vokabel.deutsch}),
             "vokabel": vokabel,
             "answer": train_session.last_answer,
             "train_session": train_session,
@@ -86,16 +88,15 @@ class TrainView(View):
         return render(request, "trainer/train.html", context)
 
     def post(self, request, **kwargs):
-        print(request.POST)
         if "reset" in request.POST:
             request.session["train_session"] = TrainSession().model_dump(mode="json")
             return HttpResponseRedirect(request.path_info)
 
         train_session = self._get_train_session()
 
-        form = request.POST.dict()
-        answer = form.get("answer")
-        vokabel_id = form.get("vokabel_id")
+        form = TrainForm(request.POST)
+        answer = form.data["englisch"]
+        vokabel_id = form.data["vokabel_id"]
         vokabel = models.Vokabel.objects.get(id=vokabel_id)
         correct = answer == vokabel.englisch
         if correct:

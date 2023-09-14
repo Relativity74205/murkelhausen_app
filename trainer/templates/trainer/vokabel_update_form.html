@@ -6,6 +6,14 @@
 
 <h2>Vokabel aktualisieren</h2>
 
+    {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <p><i>{{ message }}</i></p>
+    {% endfor %}
+</ul>
+{% endif %}
+    
     <p>
     Erstellt: {{ vokabel.created }}
     Zuletzt geändert: {{ vokabel.updated }}

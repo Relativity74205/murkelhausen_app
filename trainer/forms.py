@@ -1,14 +1,11 @@
 from django import forms
 
-from trainer.models import Vokabel
 
-
-class TrainForm(forms.ModelForm):
-    class Meta:
-        model = Vokabel
-        fields = ('deutsch', 'englisch', )
-
-        widgets = {
-            'deutsch': forms.TextInput(attrs={'readonly': 'readonly'}),
-            'englisch': forms.TextInput(),
-        }
+class TrainForm(forms.Form):
+    deutsch = forms.CharField(widget=forms.TextInput(attrs={"readonly": "readonly"}))
+    englisch = forms.CharField(
+        widget=forms.TextInput(),
+        help_text="Englischen Begriff eingeben.",
+        required=False,
+    )
+    id = forms.IntegerField(widget=forms.HiddenInput())
