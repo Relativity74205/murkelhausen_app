@@ -33,12 +33,6 @@ setFocusOnField("answer");
     {% bootstrap_button content="Neue Runde starten" name="reset" button_type="submit" %}
 </form>
 
-<form method="post">
-    {% csrf_token %}
-
-</form>
-
-
 <p>
 Anzahl richtig: {{ train_session.correct }}<br>
 Anzahl falsch: {{ train_session.wrong }}<br>

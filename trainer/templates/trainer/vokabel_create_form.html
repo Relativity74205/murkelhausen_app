@@ -1,5 +1,7 @@
 {% extends 'trainer/base.html' %}
 
+{% load django_bootstrap5 %}
+
 {% block content %}
 
 <h2>Vokabel hinzufügen</h2>
@@ -12,8 +14,8 @@
 {% endif %}
 
 <form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Speichern">
+    {% bootstrap_form form %}
+    {% bootstrap_button content="Speichern" button_type="submit" %}
 </form>
 
 {% endblock %}

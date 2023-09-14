@@ -1,5 +1,7 @@
 {% extends 'trainer/base.html' %}
 
+{% load django_bootstrap5 %}
+
 {% block content %}
 
 <h2>Vokabel aktualisieren</h2>
@@ -9,17 +11,12 @@
     Zuletzt geändert: {{ vokabel.updated }}
     </p>
 
-<form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Speichern">
+<form method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% bootstrap_button content="Speichern" button_type="submit" %}
 </form>
 
-
-<p>
-    <button type="button">
-    <a href="{% url 'trainer:delete' vokabel.id %}">Vokabel löschen</a>
-    </button>
-</p>
-
+<a href="{% url 'trainer:delete' vokabel.id %}">{% bootstrap_button content="Löschen" button_type="link" button_class="btn btn-secondary" %}</a>
 
 {% endblock %}
