@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
@@ -5,6 +7,7 @@ from django.shortcuts import render
 from django.views.generic import ListView, FormView
 from django.views import generic, View
 from django.views.generic.edit import ModelFormMixin
+from pydantic import BaseModel
 
 from trainer import models, forms
 from trainer.forms import TrainForm
@@ -40,6 +43,12 @@ class DeleteVokabelView(SuccessMessageMixin, generic.DeleteView):
     success_message = "Erfolgreich gelöscht."
 
 
+class Answer(BaseModel):
+    given: str
+    expected: str
+    correct: bool
+
+
 class TrainView(View):
     @staticmethod
     def _retrieve_from_session(request, key: str) -> str | None:
@@ -48,16 +57,14 @@ class TrainView(View):
 
     def get(self, request, *args, **kwargs):
         vokabel = models.Vokabel.objects.order_by("?").first()
-
-        given_answer = self._retrieve_from_session(request, "given_answer")
-        correct_answer = self._retrieve_from_session(request, "correct_answer")
-        correctly = self._retrieve_from_session(request, "correctly")
+        if "answer" in request.session:
+            answer = Answer(**self.request.session.pop("answer"))
+        else:
+            answer = None
 
         context = {
             "vokabel": vokabel,
-            "given_answer": given_answer,
-            "correct_answer": correct_answer,
-            "answered_correctly": correctly,
+            "answer": answer,
         }
         return render(request, "trainer/train.html", context)
 
@@ -67,9 +74,11 @@ class TrainView(View):
         vokabel_id = form.get("vokabel_id")
         vokabel = models.Vokabel.objects.get(id=vokabel_id)
 
-        request.session["given_answer"] = vokabel.deutsch
-        request.session["correct_answer"] = vokabel.englisch
-        request.session["correctly"] = answer == vokabel.englisch
+        request.session["answer"] = Answer(
+            given=vokabel.deutsch,
+            expected=vokabel.englisch,
+            correct=answer == vokabel.englisch,
+        ).model_dump(mode="json")
 
         return HttpResponseRedirect(request.path_info)
 

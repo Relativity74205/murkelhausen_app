@@ -6,25 +6,9 @@
 setFocusOnField("answer");
 </script>
 
-{% if given_answer %}
-    Deine Antwort <i>{{ given_answer }}</i> auf <i>{{ correct_answer }}</i> war
-    {% if answered_correctly %} richtig{% else %} falsch{% endif %}.
-
-{#    {% if request.session.correctly %}#}
-{#        <p>#}
-{#            <button type="button">#}
-{#            <a href="{% url 'trainer:next' %}">Nächste Vokabel</a>#}
-{#            </button>#}
-{#        </p>#}
-{#    {% endif %}#}
-{##}
-{#    {% if not request.session.correctly %}#}
-{#        <p>#}
-{#            <button type="button">#}
-{#            <a href="{% url 'trainer:repeat' %}">Nochmal</a>#}
-{#            </button>#}
-{#        </p>#}
-{#    {% endif %}#}
+{% if answer %}
+    Deine Antwort "<i>{{ answer.given }}</i>" auf "<i>{{ answer.expected }}</i>" war
+    {% if answer.correct %} richtig{% else %} falsch{% endif %}.
 {% endif %}
 
 
