@@ -44,41 +44,67 @@ class DeleteVokabelView(SuccessMessageMixin, generic.DeleteView):
 
 
 class Answer(BaseModel):
-    given: str
+    asked: str
     expected: str
+    actual: str
     correct: bool
+
+
+class TrainSession(BaseModel):
+    correct: int = 0
+    wrong: int = 0
+    last_answer: Answer | None = None
+
+    @property
+    def total(self):
+        return self.correct + self.wrong
+
+    @property
+    def correct_percentage(self):
+        return self.correct / self.total * 100
 
 
 class TrainView(View):
     @staticmethod
-    def _retrieve_from_session(request, key: str) -> str | None:
-        if key in request.session:
-            return request.session.pop(key)
+    def _get_train_session(request) -> TrainSession:
+        if "train_session" in request.session:
+            return TrainSession(**request.session.get("train_session"))
+        else:
+            return TrainSession()
 
     def get(self, request, *args, **kwargs):
         vokabel = models.Vokabel.objects.order_by("?").first()
-        if "answer" in request.session:
-            answer = Answer(**self.request.session.pop("answer"))
-        else:
-            answer = None
+        train_session = self._get_train_session(request)
 
         context = {
             "vokabel": vokabel,
-            "answer": answer,
+            "answer": train_session.last_answer,
+            "train_session": train_session,
         }
+        train_session.last_answer = None
+        request.session["train_session"] = train_session.model_dump(mode="json")
         return render(request, "trainer/train.html", context)
 
     def post(self, request, **kwargs):
+        train_session = self._get_train_session(request)
+
         form = request.POST.dict()
         answer = form.get("answer")
         vokabel_id = form.get("vokabel_id")
         vokabel = models.Vokabel.objects.get(id=vokabel_id)
+        correct = answer == vokabel.englisch
+        if correct:
+            train_session.correct += 1
+        else:
+            train_session.wrong += 1
 
-        request.session["answer"] = Answer(
-            given=vokabel.deutsch,
+        train_session.last_answer = Answer(
+            asked=vokabel.deutsch,
             expected=vokabel.englisch,
-            correct=answer == vokabel.englisch,
-        ).model_dump(mode="json")
+            actual=answer,
+            correct=correct,
+        )
+        request.session["train_session"] = train_session.model_dump(mode="json")
 
         return HttpResponseRedirect(request.path_info)
 
