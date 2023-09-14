@@ -5,9 +5,7 @@
 
 <body>
 
-
-
-<h1>Alle Vokabeln</h1>
+<h1>Vokabel Liste</h1>
 {% for vokabel in object_list %}
     <ul>
         <li><a href="{% url 'trainer:update' vokabel.id %}">Deutsch: {{ vokabel.deutsch }}; Englisch: {{ vokabel.englisch }}</a></li>
@@ -18,12 +16,12 @@
 <div class="pagination">
     <span class="step-links">
         {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            <a href="?page=1">&laquo; vor</a>
+            <a href="?page={{ page_obj.previous_page_number }}">zurück</a>
         {% endif %}
 
         <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            Seite {{ page_obj.number }} von {{ page_obj.paginator.num_pages }}.
         </span>
 
         {% if page_obj.has_next %}
@@ -32,14 +30,5 @@
         {% endif %}
     </span>
 </div>
-
-<p>
-    <button type="button">
-        <a href="{% url 'trainer:start' %}">Zurück zum Start</a>
-    </button>
-    <button type="button">
-        <a href="{% url 'trainer:add' %}">Vokabel Hinzufügen</a>
-    </button>
-</p>
 
 {% endblock %}

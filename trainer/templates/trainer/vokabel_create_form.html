@@ -13,16 +13,7 @@
 
 <form method="post">{% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Save">
+    <input type="submit" value="Speichern">
 </form>
-
-<p>
-    <button type="button">
-    <a href="{% url 'trainer:start' %}">Zurück zum Start</a>
-    </button>
-    <button type="button">
-    <a href="{% url 'trainer:list' %}">Zur Vokabel Liste</a>
-    </button>
-</p>
 
 {% endblock %}

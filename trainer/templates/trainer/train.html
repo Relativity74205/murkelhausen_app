@@ -1,10 +1,17 @@
 {% extends 'trainer/base.html' %}
 
+{% load django_bootstrap5 %}
+
 {% block content %}
 
 <script>
 setFocusOnField("answer");
 </script>
+
+<body>
+<h1>Trainieren</h1>
+</body>
+
 
 {% if answer %}
     Deine Antwort "<i>{{ answer.actual }}</i>" auf "<i>{{ answer.asked }}</i>" war
@@ -21,15 +28,16 @@ setFocusOnField("answer");
     <p>deutsch: {{ vokabel.deutsch }}</p>
     <input type="text" name="vokabel_id" value="{{ vokabel.id }}" hidden>
     <p>englisch: <input type="text" name="answer" id="answer"></p>
-    <input type="submit" name="submit" value="Prüfen">
-    <input type="submit" name="reset" value="Neue Runde starten">
+
+    {% bootstrap_button content="Prüfen" name="submit" button_type="submit" %}
+    {% bootstrap_button content="Neue Runde starten" name="reset" button_type="submit" %}
 </form>
 
-<p>
-    <button type="button">
-    <a href="{% url 'trainer:start' %}">Zurück zum Start</a>
-    </button>
-</p>
+<form method="post">
+    {% csrf_token %}
+
+</form>
+
 
 <p>
 Anzahl richtig: {{ train_session.correct }}<br>

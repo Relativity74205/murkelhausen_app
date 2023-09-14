@@ -1,16 +1,11 @@
-from dataclasses import dataclass
-
-from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponseRedirect, HttpRequest
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView
 from django.views import generic, View
-from django.views.generic.edit import ModelFormMixin
 from pydantic import BaseModel
 
-from trainer import models, forms
-from trainer.forms import TrainForm
+from trainer import models
 
 
 class VokabelView(ListView):
@@ -91,7 +86,8 @@ class TrainView(View):
         return render(request, "trainer/train.html", context)
 
     def post(self, request, **kwargs):
-        if request.POST.get("reset"):
+        print(request.POST)
+        if "reset" in request.POST:
             request.session["train_session"] = TrainSession().model_dump(mode="json")
             return HttpResponseRedirect(request.path_info)
 
