@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpRequest
 from django.shortcuts import render
 from django.views.generic import ListView, FormView
 from django.views import generic, View
@@ -61,20 +61,25 @@ class TrainSession(BaseModel):
 
     @property
     def correct_percentage(self):
-        return self.correct / self.total * 100
+        try:
+            return self.correct / self.total * 100
+        except ZeroDivisionError:
+            return 0
 
 
 class TrainView(View):
-    @staticmethod
-    def _get_train_session(request) -> TrainSession:
-        if "train_session" in request.session:
-            return TrainSession(**request.session.get("train_session"))
+    def _get_train_session(self) -> TrainSession:
+        if "train_session" in self.request.session:
+            return TrainSession(**self.request.session.get("train_session"))
         else:
             return TrainSession()
 
+    def _set_train_session(self, train_session: TrainSession) -> None:
+        self.request.session["train_session"] = train_session.model_dump(mode="json")
+
     def get(self, request, *args, **kwargs):
         vokabel = models.Vokabel.objects.order_by("?").first()
-        train_session = self._get_train_session(request)
+        train_session = self._get_train_session()
 
         context = {
             "vokabel": vokabel,
@@ -82,11 +87,15 @@ class TrainView(View):
             "train_session": train_session,
         }
         train_session.last_answer = None
-        request.session["train_session"] = train_session.model_dump(mode="json")
+        self._set_train_session(train_session)
         return render(request, "trainer/train.html", context)
 
     def post(self, request, **kwargs):
-        train_session = self._get_train_session(request)
+        if request.POST.get("reset"):
+            request.session["train_session"] = TrainSession().model_dump(mode="json")
+            return HttpResponseRedirect(request.path_info)
+
+        train_session = self._get_train_session()
 
         form = request.POST.dict()
         answer = form.get("answer")
@@ -104,7 +113,7 @@ class TrainView(View):
             actual=answer,
             correct=correct,
         )
-        request.session["train_session"] = train_session.model_dump(mode="json")
+        self._set_train_session(train_session)
 
         return HttpResponseRedirect(request.path_info)
 

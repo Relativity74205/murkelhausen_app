@@ -21,7 +21,8 @@ setFocusOnField("answer");
     <p>deutsch: {{ vokabel.deutsch }}</p>
     <input type="text" name="vokabel_id" value="{{ vokabel.id }}" hidden>
     <p>englisch: <input type="text" name="answer" id="answer"></p>
-    <input type="submit" value="Submit">
+    <input type="submit" name="submit" value="Prüfen">
+    <input type="submit" name="reset" value="Neue Runde starten">
 </form>
 
 <p>
@@ -33,7 +34,7 @@ setFocusOnField("answer");
 <p>
 Anzahl richtig: {{ train_session.correct }}<br>
 Anzahl falsch: {{ train_session.wrong }}<br>
-Anteil richtig: {{ train_session.correct_percentage }}
+Anteil richtig: {{ train_session.correct_percentage|floatformat:1 }}
 </p>
 
 {% endblock %}
