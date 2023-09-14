@@ -36,7 +36,7 @@ class DeleteVokabelView(SuccessMessageMixin, generic.DeleteView):
     model = models.Vokabel
     template_name_suffix = "_delete_form"
     success_url = "/trainer/list/"
-    success_message = "Erfolgreich gelöscht."
+    success_message = "%(deutsch)s erfolgreich gelöscht."
 
 
 class Answer(BaseModel):

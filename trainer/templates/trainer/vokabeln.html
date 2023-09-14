@@ -6,6 +6,15 @@
 <body>
 
 <h1>Vokabel Liste</h1>
+    {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <p><i>{{ message }}</i></p>
+    {% endfor %}
+</ul>
+{% endif %}
+
+
 {% for vokabel in object_list %}
     <ul>
         <li><a href="{% url 'trainer:update' vokabel.id %}">Deutsch: {{ vokabel.deutsch }}; Englisch: {{ vokabel.englisch }}</a></li>
