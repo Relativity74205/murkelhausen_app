@@ -1,0 +1,26 @@
+{% extends 'trainer/base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<script>
+setFocusOnField("id_deutsch");
+</script>
+
+<h2>Vokabel Gruppe hinzufügen</h2>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <p><i>{{ message }}</i></p>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="post">{% csrf_token %}
+    {% bootstrap_form form %}
+    {% bootstrap_button content="Speichern" button_type="submit" %}
+    <a class="btn btn-secondary" href="{% url 'trainer:group_list' %}">Abbruch</a>
+</form>
+
+{% endblock %}

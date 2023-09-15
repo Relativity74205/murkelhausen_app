@@ -1,45 +1,87 @@
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 from django.views import generic, View
+from django.views.generic import ListView
 from django_filters.views import FilterView
-from django_tables2 import SingleTableMixin
+from django_tables2 import SingleTableMixin, SingleTableView
 from pydantic import BaseModel
 
 from trainer import models, tables, filters
 from trainer.forms import TrainForm
 
 
+class VokabelGroupView(SingleTableView):
+    model = models.VokabelGroup
+    template_name = "trainer/vokabelgroup.html"
+    table_class = tables.VokabelGroupTable
+
+
+class AddVokabelGroupView(SuccessMessageMixin, generic.CreateView):
+    model = models.VokabelGroup
+    fields = ["name"]
+    template_name_suffix = "_create_form"
+    # success_message = "%(name)s erfolgreich hinzugefügt."
+
+    def get_success_url(self):
+        return reverse("trainer:group_list")
+
+
+class UpdateVokabelGroupView(SuccessMessageMixin, generic.UpdateView):
+    model = models.VokabelGroup
+    fields = ["name"]
+    template_name_suffix = "_update_form"
+    success_message = "%(name)s erfolgreich aktualisiert."
+
+    def get_success_url(self):
+        return reverse("trainer:group_list")
+
+
+class DeleteVokabelGroupView(SuccessMessageMixin, generic.DeleteView):
+    model = models.VokabelGroup
+    template_name_suffix = "_delete_form"
+    success_message = "Vokabel Gruppe erfolgreich gelöscht."
+
+    def get_success_url(self):
+        return reverse("trainer:group_list")
+
+
 class VokabelView(SingleTableMixin, FilterView):
     model = models.Vokabel
-    template_name = "trainer/vokabeln.html"
+    template_name = "trainer/vokabel.html"
     table_class = tables.VokabelTable
     filterset_class = filters.VokabelTableFilter
 
 
-# TODO prevent duplicates
 class AddVokabelView(SuccessMessageMixin, generic.CreateView):
     model = models.Vokabel
-    fields = ["deutsch", "englisch"]
+    fields = ["deutsch", "englisch", "group"]
     template_name_suffix = "_create_form"
-    success_url = "/trainer/vokabel/"
     success_message = "%(deutsch)s erfolgreich hinzugefügt."
 
+    def get_success_url(self):
+        return reverse("trainer:add")
 
-# TODO check if vokabel already exists
+
 class UpdateVokabelView(SuccessMessageMixin, generic.UpdateView):
     model = models.Vokabel
-    fields = ["deutsch", "englisch"]
+    fields = ["deutsch", "englisch", "group"]
     template_name_suffix = "_update_form"
-    success_url = "/trainer/list/"
     success_message = "%(deutsch)s erfolgreich aktualisiert."
 
+    def get_success_url(self):
+        return reverse("trainer:list")
 
+
+# TODO add vokabel details to delete template
 class DeleteVokabelView(SuccessMessageMixin, generic.DeleteView):
     model = models.Vokabel
     template_name_suffix = "_delete_form"
-    success_url = "/trainer/list/"
     success_message = "Vokabel erfolgreich gelöscht."
+
+    def get_success_url(self):
+        return reverse("trainer:list")
 
 
 # TODO move to ???

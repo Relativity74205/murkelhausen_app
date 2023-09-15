@@ -1,0 +1,30 @@
+{% extends 'trainer/base.html' %}
+{% load django_tables2 %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+
+<body>
+
+<h1>Vokabel Gruppen Liste</h1>
+    {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <p><i>{{ message }}</i></p>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<a class="btn btn-primary" href={% url 'trainer:group_add' %} > Gruppen hinzufügen </a>
+
+{% if filter %}
+    <form action="" method="get" class="form form-inline">
+        {% bootstrap_form filter.form layout='horizontal' %}
+        {% bootstrap_button 'filter' %}
+        <a class="btn btn-secondary" href={% url 'trainer:group_list' %} > Clear All </a>
+    </form>
+{% endif %}
+{% render_table table 'django_tables2/bootstrap.html' %}
+
+{% endblock %}
