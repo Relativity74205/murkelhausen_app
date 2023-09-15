@@ -24,6 +24,7 @@ class AddVokabelView(SuccessMessageMixin, generic.CreateView):
     success_message = "%(deutsch)s erfolgreich hinzugefügt."
 
 
+# TODO check if vokabel already exists
 class UpdateVokabelView(SuccessMessageMixin, generic.UpdateView):
     model = models.Vokabel
     fields = ["deutsch", "englisch"]
@@ -36,7 +37,7 @@ class DeleteVokabelView(SuccessMessageMixin, generic.DeleteView):
     model = models.Vokabel
     template_name_suffix = "_delete_form"
     success_url = "/trainer/list/"
-    success_message = "%(deutsch)s erfolgreich gelöscht."
+    success_message = "%(id_deutsch)s erfolgreich gelöscht."
 
 
 class Answer(BaseModel):
