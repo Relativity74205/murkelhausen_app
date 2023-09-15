@@ -12,7 +12,7 @@ setFocusOnField("id_englisch");
 <h1>Trainieren</h1>
 </body>
 
-
+{# TODO make pretty #}
 {% if answer %}
     Deine Antwort "<i>{{ answer.actual }}</i>" auf "<i>{{ answer.asked }}</i>" war
     {% if answer.correct %} richtig{% else %} falsch{% endif %}.
@@ -25,14 +25,12 @@ setFocusOnField("id_englisch");
 
 <form method="post">
   {% csrf_token %}
-{#    <p>deutsch: {{ vokabel.deutsch }}</p>#}
-    <input type="text" name="vokabel_id" value="{{ vokabel.id }}" hidden>
-{#    <p>englisch: <input type="text" name="answer" id="answer"></p>#}
-    {% bootstrap_form form %}
-    {% bootstrap_button content="Prüfen" name="submit" button_type="submit" %}
-    {% bootstrap_button content="Neue Runde starten" name="reset" button_type="submit" %}
+    {% bootstrap_form form layout='inline' %}
+    {% bootstrap_button content="Prüfen" name="submit" button_type="submit" %}<br><br>
+    {% bootstrap_button content="Neue Runde starten" name="reset" button_type="submit" button_class="btn btn-secondary" %}
 </form>
 
+{# TODO make pretty #}
 <p>
 Anzahl richtig: {{ train_session.correct }}<br>
 Anzahl falsch: {{ train_session.wrong }}<br>

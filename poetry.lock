@@ -317,6 +317,17 @@ Django = ">=3.2"
 tablib = ["tablib"]
 
 [[package]]
+name = "fontawesomefree"
+version = "6.4.2"
+description = "Font Awesome Free"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "fontawesomefree-6.4.2-py3-none-any.whl", hash = "sha256:ceaff7efc4fc39dadff3c3ff7298a7a1095403110d373f22456bb1c34ab6db02"},
+]
+
+[[package]]
 name = "jpype1"
 version = "1.4.1"
 description = "A Python to Java bridge."
@@ -896,4 +907,4 @@ test = ["pytest (>=7.2.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "2c8443f0dcc5e1616074ba55f4f679c640035c913bb9cb1d7100cc50ddf76588"
+content-hash = "9d679f6c4d4fe3722b0d30f0dd33975bc51133286b83d72570769d534c2dc31a"

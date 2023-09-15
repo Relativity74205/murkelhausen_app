@@ -8,3 +8,7 @@ class Vokabel(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     readonly_fields = ["created", "updated"]
+
+    # TODO error message is bad: Vokabel with this Deutsch already exists.
+    class Meta:
+        unique_together = ("deutsch",)

@@ -15,8 +15,10 @@
     {% csrf_token %}
     {% bootstrap_form form %}
     {% bootstrap_button content="Speichern" button_type="submit" %}
+    <a href="{% url 'trainer:list' %}">{% bootstrap_button content="Abbruch" button_class="btn btn-secondary" %}</a>
 </form>
+    <a href="{% url 'trainer:delete' vokabel.id %}">{% bootstrap_button content="Löschen" button_class="btn btn-danger" %}</a>
 
-<a href="{% url 'trainer:delete' vokabel.id %}">{% bootstrap_button content="Löschen" button_type="link" button_class="btn btn-secondary" %}</a>
+
 
 {% endblock %}

@@ -1,21 +1,21 @@
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import ListView
 from django.views import generic, View
+from django_tables2 import SingleTableView
 from pydantic import BaseModel
 
-from trainer import models
+from trainer import models, tables
 from trainer.forms import TrainForm
 
 
-class VokabelView(ListView):
+class VokabelView(SingleTableView):
     model = models.Vokabel
     template_name = "trainer/vokabeln.html"
-    paginate_by = 10
-    ordering = ["id"]
+    table_class = tables.VokabelTable
 
 
+# TODO prevent duplicates
 class AddVokabelView(SuccessMessageMixin, generic.CreateView):
     model = models.Vokabel
     fields = ["deutsch", "englisch"]
@@ -37,9 +37,10 @@ class DeleteVokabelView(SuccessMessageMixin, generic.DeleteView):
     model = models.Vokabel
     template_name_suffix = "_delete_form"
     success_url = "/trainer/list/"
-    success_message = "%(id_deutsch)s erfolgreich gelöscht."
+    success_message = "Vokabel erfolgreich gelöscht."
 
 
+# TODO move to ???
 class Answer(BaseModel):
     asked: str
     expected: str
@@ -47,6 +48,7 @@ class Answer(BaseModel):
     correct: bool
 
 
+# TODO move to ???
 class TrainSession(BaseModel):
     correct: int = 0
     wrong: int = 0
@@ -65,27 +67,27 @@ class TrainSession(BaseModel):
 
 
 class TrainView(View):
-    def _get_train_session(self) -> TrainSession:
+    def _load_train_session(self) -> TrainSession:
         if "train_session" in self.request.session:
             return TrainSession(**self.request.session.get("train_session"))
         else:
             return TrainSession()
 
-    def _set_train_session(self, train_session: TrainSession) -> None:
+    def _save_train_session(self, train_session: TrainSession) -> None:
         self.request.session["train_session"] = train_session.model_dump(mode="json")
 
     def get(self, request, *args, **kwargs):
         vokabel = models.Vokabel.objects.order_by("?").first()
-        train_session = self._get_train_session()
+        train_session = self._load_train_session()
 
         context = {
-            "form": TrainForm(initial={"deutsch": vokabel.deutsch}),
+            "form": TrainForm(initial={"deutsch": vokabel.deutsch, "id": vokabel.id}),
             "vokabel": vokabel,
             "answer": train_session.last_answer,
             "train_session": train_session,
         }
         train_session.last_answer = None
-        self._set_train_session(train_session)
+        self._save_train_session(train_session)
         return render(request, "trainer/train.html", context)
 
     def post(self, request, **kwargs):
@@ -93,11 +95,11 @@ class TrainView(View):
             request.session["train_session"] = TrainSession().model_dump(mode="json")
             return HttpResponseRedirect(request.path_info)
 
-        train_session = self._get_train_session()
+        train_session = self._load_train_session()
 
         form = TrainForm(request.POST)
         answer = form.data["englisch"]
-        vokabel_id = form.data["vokabel_id"]
+        vokabel_id = form.data["id"]
         vokabel = models.Vokabel.objects.get(id=vokabel_id)
         correct = answer == vokabel.englisch
         if correct:
@@ -111,7 +113,7 @@ class TrainView(View):
             actual=answer,
             correct=correct,
         )
-        self._set_train_session(train_session)
+        self._save_train_session(train_session)
 
         return HttpResponseRedirect(request.path_info)
 
