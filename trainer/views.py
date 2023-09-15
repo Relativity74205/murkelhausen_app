@@ -2,17 +2,19 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import generic, View
-from django_tables2 import SingleTableView
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin
 from pydantic import BaseModel
 
-from trainer import models, tables
+from trainer import models, tables, filters
 from trainer.forms import TrainForm
 
 
-class VokabelView(SingleTableView):
+class VokabelView(SingleTableMixin, FilterView):
     model = models.Vokabel
     template_name = "trainer/vokabeln.html"
     table_class = tables.VokabelTable
+    filterset_class = filters.VokabelTableFilter
 
 
 # TODO prevent duplicates

@@ -1,5 +1,6 @@
 {% extends 'trainer/base.html' %}
 {% load django_tables2 %}
+{% load django_bootstrap5 %}
 
 {% block content %}
 
@@ -15,30 +16,13 @@
 </ul>
 {% endif %}
 
+{% if filter %}
+    <form action="" method="get" class="form form-inline">
+        {% bootstrap_form filter.form layout='horizontal' %}
+        {% bootstrap_button 'filter' %}
+        <a class="btn btn-secondary" href={% url 'trainer:list' %} > Clear All </a>
+    </form>
+{% endif %}
 {% render_table table 'django_tables2/bootstrap.html' %}
-{#{% for vokabel in object_list %}#}
-{#    <ul>#}
-{#        <li><a href="{% url 'trainer:update' vokabel.id %}">Deutsch: {{ vokabel.deutsch }}; Englisch: {{ vokabel.englisch }}</a></li>#}
-{#    </ul>#}
-{#{% endfor %}#}
-{#</body>#}
-{##}
-{#<div class="pagination">#}
-{#    <span class="step-links">#}
-{#        {% if page_obj.has_previous %}#}
-{#            <a href="?page=1">&laquo; vor</a>#}
-{#            <a href="?page={{ page_obj.previous_page_number }}">zurück</a>#}
-{#        {% endif %}#}
-{##}
-{#        <span class="current">#}
-{#            Seite {{ page_obj.number }} von {{ page_obj.paginator.num_pages }}.#}
-{#        </span>#}
-{##}
-{#        {% if page_obj.has_next %}#}
-{#            <a href="?page={{ page_obj.next_page_number }}">next</a>#}
-{#            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>#}
-{#        {% endif %}#}
-{#    </span>#}
-{#</div>#}
 
 {% endblock %}
