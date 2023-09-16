@@ -8,13 +8,6 @@
 <body>
 
 <h1>Vokabel Gruppen Liste</h1>
-    {% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <p><i>{{ message }}</i></p>
-    {% endfor %}
-</ul>
-{% endif %}
 
 <a class="btn btn-primary" href={% url 'trainer:group_add' %} > Gruppen hinzufügen </a>
 

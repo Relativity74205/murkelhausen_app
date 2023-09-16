@@ -8,13 +8,6 @@
 <body>
 
 <h1>Vokabel Liste</h1>
-    {% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <p><i>{{ message }}</i></p>
-    {% endfor %}
-</ul>
-{% endif %}
 
 {% if filter %}
     <form action="" method="get" class="form form-inline">

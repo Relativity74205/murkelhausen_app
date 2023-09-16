@@ -12,29 +12,38 @@ setFocusOnField("id_englisch");
 <h1>Trainieren</h1>
 </body>
 
-{# TODO make pretty #}
-{% if answer %}
-    Deine Antwort "<i>{{ answer.actual }}</i>" auf "<i>{{ answer.asked }}</i>" war
-    {% if answer.correct %} richtig{% else %} falsch{% endif %}.
-    <br>
-    {% if not answer.correct %}
-        Die richtige Antwort lautet "<i>{{ answer.expected }}</i>".
-    {% endif %}
-{% endif %}
+<p>
+    <table class="table table-striped" style="width: max-content; text-align: right"><tbody>
+<tr>
+    <td>Anzahl richtig</td><td>{{ train_session.correct }}</td>
+</tr>
+<tr>
+    <td>Anzahl falsch</td><td>{{ train_session.wrong }}</td>
+</tr>
+<tr>
+    <td>Anteil richtig</td><td>{{ train_session.correct_percentage|floatformat:1 }} %</td>
+</tr>
+</tbody></table>
 
 
 <form method="post">
   {% csrf_token %}
     {% bootstrap_form form layout='inline' %}
-    {% bootstrap_button content="Prüfen" name="submit" button_type="submit" %}<br><br>
+    {% bootstrap_button content="Prüfen" name="submit" button_type="submit" %}
     {% bootstrap_button content="Neue Runde starten" name="reset" button_type="submit" button_class="btn btn-secondary" %}
 </form>
 
-{# TODO make pretty #}
-<p>
-Anzahl richtig: {{ train_session.correct }}<br>
-Anzahl falsch: {{ train_session.wrong }}<br>
-Anteil richtig: {{ train_session.correct_percentage|floatformat:1 }}
-</p>
+{% if answer %}
+    <p>
+    Deine Antwort <mark style="background-color: lightblue">{{ answer.actual }}</mark> auf die
+    Vokabel <mark style="background-color: lightblue">{{ answer.asked }}</mark> war
+    {% if answer.correct %} <mark style="background-color: lightgreen">richtig</mark>{% else %} <mark style="background-color: lightcoral">falsch</mark> {% endif %}.
+    </p>
+    {% if not answer.correct %}
+        {# TODO add char by char comparison between correct and false answer. #}
+        <p>Die richtige Antwort lautet <mark style="background-color: lightblue">{{ answer.expected }}</mark>.</p>
+    {% endif %}
+{% endif %}
 
 {% endblock %}
+

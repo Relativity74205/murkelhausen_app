@@ -2,7 +2,9 @@ from django.db import models
 
 
 class VokabelGroup(models.Model):
-    name = models.CharField(max_length=256)
+    name = models.CharField(
+        max_length=256, error_messages={"unique": "Diese Gruppe existiert bereits."}
+    )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -24,6 +26,5 @@ class Vokabel(models.Model):
 
     readonly_fields = ["created", "updated"]
 
-    # TODO error message is bad: Vokabel with this Deutsch already exists.
     class Meta:
-        unique_together = ("deutsch",)
+        unique_together = ("deutsch", "group")
