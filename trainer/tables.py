@@ -1,5 +1,5 @@
 from django.utils.safestring import mark_safe
-from django_tables2 import tables, LinkColumn, A, DateTimeColumn
+from django_tables2 import tables, LinkColumn, A, DateTimeColumn, Column
 
 from . import models
 
@@ -21,6 +21,7 @@ class VokabelTable(tables.Table):
     delete = DeleteColumn(
         "trainer:delete", args=[A("id")], text="Löschen", verbose_name="Löschen"
     )
+    group = Column(verbose_name="Gruppe")
 
     class Meta:
         model = models.Vokabel

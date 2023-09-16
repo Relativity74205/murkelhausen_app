@@ -9,28 +9,16 @@ setFocusOnField("id_englisch");
 </script>
 
 <body>
-<h1>Trainieren</h1>
+<h2>Trainieren</h2>
 </body>
 
-<p>
-    <table class="table table-striped" style="width: max-content; text-align: right"><tbody>
-<tr>
-    <td>Anzahl richtig</td><td>{{ train_session.correct }}</td>
-</tr>
-<tr>
-    <td>Anzahl falsch</td><td>{{ train_session.wrong }}</td>
-</tr>
-<tr>
-    <td>Anteil richtig</td><td>{{ train_session.correct_percentage|floatformat:1 }} %</td>
-</tr>
-</tbody></table>
 
+<h5>Wie heisst die folgende Vokabel auf englisch?</h5>
 
 <form method="post">
   {% csrf_token %}
-    {% bootstrap_form form layout='inline' %}
+    {% bootstrap_form form layout='vertical' %}
     {% bootstrap_button content="Prüfen" name="submit" button_type="submit" %}
-    {% bootstrap_button content="Neue Runde starten" name="reset" button_type="submit" button_class="btn btn-secondary" %}
 </form>
 
 {% if answer %}
@@ -44,6 +32,26 @@ setFocusOnField("id_englisch");
         <p>Die richtige Antwort lautet <mark style="background-color: lightblue">{{ answer.expected }}</mark>.</p>
     {% endif %}
 {% endif %}
+
+<h5>Statistik</h5>
+<p>
+    <table class="table table-striped" style="width: max-content; text-align: right"><tbody>
+<tr>
+    <td>Anzahl richtig</td><td>{{ train_session.correct }}</td>
+</tr>
+<tr>
+    <td>Anzahl falsch</td><td>{{ train_session.wrong }}</td>
+</tr>
+<tr>
+    <td>Anteil richtig</td><td>{{ train_session.correct_percentage|floatformat:1 }} %</td>
+</tr>
+</tbody></table>
+
+<form method="post">
+  {% csrf_token %}
+{% bootstrap_button content="Neue Runde starten" name="reset" button_type="submit" button_class="btn btn-secondary" style="align: right" %}
+</form>
+
 
 {% endblock %}
 

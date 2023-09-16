@@ -14,16 +14,16 @@
   <div class="collapse navbar-collapse" id="navbarText">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
+        <a class="nav-link" href="{% url 'trainer:train' %}">Trainieren</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="{% url 'trainer:add' %}">Vokabel Hinzufügen</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="{% url 'trainer:list' %}">Vokabel Liste</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'trainer:train' %}">Trainieren</a>
-      </li>
-        <li class="nav-item">
-        <a class="nav-link" href="{% url 'trainer:group_list' %}">Vokabelgruppen</a>
+        <a class="nav-link" href="{% url 'trainer:group_list' %}">Vokabelgruppen Liste</a>
       </li>
     </ul>
   </div>

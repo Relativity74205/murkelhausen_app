@@ -103,10 +103,10 @@ class TrainView(View):
         vokabel = models.Vokabel.objects.order_by("?").first()
         train_session = self._load_train_session()
 
+        form = forms.TrainForm(initial={"deutsch": vokabel.deutsch, "id": vokabel.id})
+        # form.fields["englisch"].label = vokabel.deutsch
         context = {
-            "form": forms.TrainForm(
-                initial={"deutsch": vokabel.deutsch, "id": vokabel.id}
-            ),
+            "form": form,
             "vokabel": vokabel,
             "answer": train_session.last_answer,
             "train_session": train_session,
