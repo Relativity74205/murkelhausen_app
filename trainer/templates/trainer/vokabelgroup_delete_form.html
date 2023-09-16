@@ -4,7 +4,11 @@
 
 {% block content %}
 
-<h2>Vokabel Gruppe aktualisieren</h2>
+<h2>Vokabel Gruppe Löschen</h2>
+
+<p>
+    Soll die Vokabel Gruppe <strong>{{ vokabelgroup.name }}</strong> wirklich gelöscht werden?
+</p>
 
 <form method="post">{% csrf_token %}
     {% bootstrap_form form %}

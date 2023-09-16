@@ -56,9 +56,9 @@ class UpdateVokabelView(UpdateView):
     success_url = reverse_lazy("trainer:list")
 
 
-# TODO add vokabel details to delete template
 class DeleteVokabelView(DeleteView):
     model = models.Vokabel
+    fields = ["deutsch", "englisch", "group"]
     template_name_suffix = "_delete_form"
     success_url = reverse_lazy("trainer:list")
 

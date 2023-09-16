@@ -4,7 +4,11 @@
 
 {% block content %}
 
-<h2>Vokabel aktualisieren</h2>
+<h2>Vokabel Löschen</h2>
+
+<p>
+    Soll die Vokabel <strong>{{ vokabel.deutsch }}</strong> ({{ vokabel.englisch }}) wirklich gelöscht werden?
+</p>
 
 <form method="post">{% csrf_token %}
     {% bootstrap_form form %}
