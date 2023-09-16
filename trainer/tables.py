@@ -25,7 +25,7 @@ class VokabelTable(tables.Table):
     class Meta:
         model = models.Vokabel
         template_name = "django_tables2/bootstrap.html"
-        fields = ("deutsch", "englisch")
+        fields = ("deutsch", "englisch", "group")
         order_by = ("deutsch",)
 
 

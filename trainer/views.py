@@ -1,15 +1,13 @@
-from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
-from django.views import generic, View
-from django.views.generic import ListView
+from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic import UpdateView, CreateView, DeleteView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin, SingleTableView
 from pydantic import BaseModel
 
-from trainer import models, tables, filters
-from trainer.forms import TrainForm
+from trainer import models, tables, filters, forms
 
 
 class VokabelGroupView(SingleTableView):
@@ -18,33 +16,24 @@ class VokabelGroupView(SingleTableView):
     table_class = tables.VokabelGroupTable
 
 
-class AddVokabelGroupView(SuccessMessageMixin, generic.CreateView):
+class AddVokabelGroupView(CreateView):
     model = models.VokabelGroup
     fields = ["name"]
     template_name_suffix = "_create_form"
-    # success_message = "%(name)s erfolgreich hinzugefügt."
-
-    def get_success_url(self):
-        return reverse("trainer:group_list")
+    success_url = reverse_lazy("trainer:group_list")
 
 
-class UpdateVokabelGroupView(SuccessMessageMixin, generic.UpdateView):
+class UpdateVokabelGroupView(UpdateView):
     model = models.VokabelGroup
     fields = ["name"]
     template_name_suffix = "_update_form"
-    success_message = "%(name)s erfolgreich aktualisiert."
-
-    def get_success_url(self):
-        return reverse("trainer:group_list")
+    success_url = reverse_lazy("trainer:group_list")
 
 
-class DeleteVokabelGroupView(SuccessMessageMixin, generic.DeleteView):
+class DeleteVokabelGroupView(DeleteView):
     model = models.VokabelGroup
     template_name_suffix = "_delete_form"
-    success_message = "Vokabel Gruppe erfolgreich gelöscht."
-
-    def get_success_url(self):
-        return reverse("trainer:group_list")
+    success_url = reverse_lazy("trainer:group_list")
 
 
 class VokabelView(SingleTableMixin, FilterView):
@@ -54,34 +43,24 @@ class VokabelView(SingleTableMixin, FilterView):
     filterset_class = filters.VokabelTableFilter
 
 
-class AddVokabelView(SuccessMessageMixin, generic.CreateView):
-    model = models.Vokabel
-    fields = ["deutsch", "englisch", "group"]
-    template_name_suffix = "_create_form"
-    success_message = "%(deutsch)s erfolgreich hinzugefügt."
-
-    def get_success_url(self):
-        return reverse("trainer:add")
+class AddVokabelView(CreateView):
+    form_class = forms.CreateVokabelForm
+    template_name = "trainer/vokabel_create_form.html"
+    success_url = reverse_lazy("trainer:add")
 
 
-class UpdateVokabelView(SuccessMessageMixin, generic.UpdateView):
+class UpdateVokabelView(UpdateView):
     model = models.Vokabel
     fields = ["deutsch", "englisch", "group"]
     template_name_suffix = "_update_form"
-    success_message = "%(deutsch)s erfolgreich aktualisiert."
-
-    def get_success_url(self):
-        return reverse("trainer:list")
+    success_url = reverse_lazy("trainer:list")
 
 
 # TODO add vokabel details to delete template
-class DeleteVokabelView(SuccessMessageMixin, generic.DeleteView):
+class DeleteVokabelView(DeleteView):
     model = models.Vokabel
     template_name_suffix = "_delete_form"
-    success_message = "Vokabel erfolgreich gelöscht."
-
-    def get_success_url(self):
-        return reverse("trainer:list")
+    success_url = reverse_lazy("trainer:list")
 
 
 # TODO move to ???
@@ -125,7 +104,9 @@ class TrainView(View):
         train_session = self._load_train_session()
 
         context = {
-            "form": TrainForm(initial={"deutsch": vokabel.deutsch, "id": vokabel.id}),
+            "form": forms.TrainForm(
+                initial={"deutsch": vokabel.deutsch, "id": vokabel.id}
+            ),
             "vokabel": vokabel,
             "answer": train_session.last_answer,
             "train_session": train_session,
@@ -141,7 +122,7 @@ class TrainView(View):
 
         train_session = self._load_train_session()
 
-        form = TrainForm(request.POST)
+        form = forms.TrainForm(request.POST)
         answer = form.data["englisch"]
         vokabel_id = form.data["id"]
         vokabel = models.Vokabel.objects.get(id=vokabel_id)

@@ -9,6 +9,9 @@ class VokabelGroup(models.Model):
     class Meta:
         unique_together = ("name",)
 
+    def __str__(self):
+        return self.name
+
 
 class Vokabel(models.Model):
     deutsch = models.CharField(max_length=256)
