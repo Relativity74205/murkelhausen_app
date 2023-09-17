@@ -4,9 +4,6 @@ from django.core.exceptions import NON_FIELD_ERRORS
 from trainer import models
 
 
-# TODO add crispy forms
-# - https://django-crispy-forms.readthedocs.io/en/latest/layouts.html
-# - https://simpleisbetterthancomplex.com/tutorial/2018/11/28/advanced-form-rendering-with-django-crispy-forms.html
 class TrainForm(forms.Form):
     deutsch = forms.CharField(
         widget=forms.TextInput(
@@ -21,11 +18,12 @@ class TrainForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "placeholder": "Englischen Begriff eingeben.",
+                "autocomplete": "off",
                 "style": "width: 400px",
             }
         ),
         required=False,
-        label="Wie heißt %(deutsch)s auf Englisch?",
+        label="",
     )
     id = forms.IntegerField(widget=forms.HiddenInput())
 

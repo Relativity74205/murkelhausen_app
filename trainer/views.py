@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -54,6 +55,11 @@ class UpdateVokabelView(UpdateView):
     fields = ["deutsch", "englisch", "group"]
     template_name_suffix = "_update_form"
     success_url = reverse_lazy("trainer:list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["trainer_last_n"] = settings.TRAINER_LAST_N
+        return context
 
 
 class DeleteVokabelView(DeleteView):
@@ -126,11 +132,14 @@ class TrainView(View):
         answer = form.data["englisch"]
         vokabel_id = form.data["id"]
         vokabel = models.Vokabel.objects.get(id=vokabel_id)
+
         correct = answer == vokabel.englisch
         if correct:
             train_session.correct += 1
         else:
             train_session.wrong += 1
+        vokabel.results.append(correct)
+        vokabel.save()
 
         train_session.last_answer = Answer(
             asked=vokabel.deutsch,

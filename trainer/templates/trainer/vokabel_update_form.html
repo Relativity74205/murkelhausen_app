@@ -7,8 +7,23 @@
 <h2>Vokabel aktualisieren</h2>
 
 <p>
-    Erstellt: {{ vokabel.created }}
-    Zuletzt geändert: {{ vokabel.updated }}
+<table class="table table-striped" style="width: max-content; text-align: right"><tbody>
+<tr>
+    <td>Erstellt</td><td>{{ vokabel.created }}</td>
+</tr><tr>
+    <td>Zuletzt geändert</td><td>{{ vokabel.updated }}</td>
+</tr><tr>
+    <td>Anzahl der Antworten</td><td>{{ vokabel.total }}</td>
+</tr><tr>
+    <td>Richtige Antworten</td><td>{{ vokabel.count_correct }}</td>
+</tr><tr>
+    <td>Falsche Antworten</td><td>{{ vokabel.count_wrong }}</td>
+</tr><tr>
+    <td>% richtig</td><td>{{ vokabel.correct_percentage|floatformat:0 }}</td>
+</tr><tr>
+    <td>% richtig (letzte {{ trainer_last_n }})</td><td>{{ vokabel.correct_percentage_last|floatformat:0 }}</td>
+</tr><tr>
+</tbody></table>
 </p>
 
 <form method="post">
