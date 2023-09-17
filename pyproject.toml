@@ -19,6 +19,7 @@ tabula-py = "^2.7.0"
 pydantic = "^2.1.1"
 django-bootstrap5 = "^23.3"
 fontawesomefree = "^6.4.2"
+requests = "^2.31.0"
 
 [build-system]
 requires = ["poetry-core"]
