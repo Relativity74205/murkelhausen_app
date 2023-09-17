@@ -1,3 +1,5 @@
+import random
+
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -78,6 +80,7 @@ class Answer(BaseModel):
 
 
 # TODO move to ???
+# TODO add train session as database model
 class TrainSession(BaseModel):
     correct: int = 0
     wrong: int = 0
@@ -105,8 +108,18 @@ class TrainView(View):
     def _save_train_session(self, train_session: TrainSession) -> None:
         self.request.session["train_session"] = train_session.model_dump(mode="json")
 
+    @staticmethod
+    def get_random_vokabel():
+        # TODO test!
+        vokabeln = models.Vokabel.objects.all()
+        weights = [
+            (1 - v.correct_percentage_last / 100) * 0.8 + settings.TRAINER_RANDOM_OFFSET
+            for v in vokabeln
+        ]
+        return random.choices(vokabeln, weights=weights)[0]
+
     def get(self, request, *args, **kwargs):
-        vokabel = models.Vokabel.objects.order_by("?").first()
+        vokabel = self.get_random_vokabel()
         train_session = self._load_train_session()
 
         form = forms.TrainForm(initial={"deutsch": vokabel.deutsch, "id": vokabel.id})

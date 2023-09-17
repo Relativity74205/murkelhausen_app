@@ -135,3 +135,4 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 TRAINER_LAST_N = 5
+TRAINER_RANDOM_OFFSET = 0.2
