@@ -4,6 +4,14 @@ from django.core.exceptions import NON_FIELD_ERRORS
 from trainer import models
 
 
+class VokabelGroupSelectForm(forms.Form):
+    group = forms.ChoiceField(
+        widget=forms.Select(attrs={"style": "width: 400px"}),
+        choices=[],
+        label="Wähle eine Gruppe aus.",
+    )
+
+
 class TrainForm(forms.Form):
     deutsch = forms.CharField(
         widget=forms.TextInput(

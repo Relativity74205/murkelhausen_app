@@ -1,7 +1,7 @@
 import random
 
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpRequest
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
@@ -109,23 +109,32 @@ class TrainView(View):
         self.request.session["train_session"] = train_session.model_dump(mode="json")
 
     @staticmethod
-    def get_random_vokabel():
+    def get_random_vokabel(group_id: int | None):
         # TODO test!
-        vokabeln = models.Vokabel.objects.all()
+        if group_id is None:
+            vokabeln = models.Vokabel.objects.all()
+        else:
+            vokabeln = models.Vokabel.objects.filter(group__id=group_id).all()
+
         weights = [
             (1 - v.correct_percentage_last / 100) * 0.8 + settings.TRAINER_RANDOM_OFFSET
             for v in vokabeln
         ]
         return random.choices(vokabeln, weights=weights)[0]
 
-    def get(self, request, *args, **kwargs):
-        vokabel = self.get_random_vokabel()
+    def get(self, request: HttpRequest, *args, **kwargs):
+        group_id = request.session.get("group_id")
+        vokabel = self.get_random_vokabel(group_id)
         train_session = self._load_train_session()
 
-        form = forms.TrainForm(initial={"deutsch": vokabel.deutsch, "id": vokabel.id})
+        group_select_form = self._get_group_select_form(group_id)
+        train_form = forms.TrainForm(
+            initial={"deutsch": vokabel.deutsch, "id": vokabel.id}
+        )
         # form.fields["englisch"].label = vokabel.deutsch
         context = {
-            "form": form,
+            "train_form": train_form,
+            "group_select_form": group_select_form,
             "vokabel": vokabel,
             "answer": train_session.last_answer,
             "train_session": train_session,
@@ -134,9 +143,28 @@ class TrainView(View):
         self._save_train_session(train_session)
         return render(request, "trainer/train.html", context)
 
-    def post(self, request, **kwargs):
+    @staticmethod
+    def _get_group_select_form(group_id: int | None):
+        group_select_form = forms.VokabelGroupSelectForm()
+        group_choices = [(-1, "Alle")]
+        group_choices += [
+            (group.id, group.name) for group in models.VokabelGroup.objects.all()
+        ]
+        group_select_form.fields["group"].choices = group_choices
+        group_select_form.fields["group"].initial = group_id
+        return group_select_form
+
+    def post(self, request: HttpRequest, **kwargs):
         if "reset" in request.POST:
             request.session["train_session"] = TrainSession().model_dump(mode="json")
+            return HttpResponseRedirect(request.path_info)
+        elif "group" in request.POST:
+            group_id = request.POST["group"]
+            if group_id == "-1":
+                self.request.session["group_id"] = None
+            else:
+                self.request.session["group_id"] = group_id
+
             return HttpResponseRedirect(request.path_info)
 
         train_session = self._load_train_session()

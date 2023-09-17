@@ -12,12 +12,27 @@ setFocusOnField("id_englisch");
 <h2>Trainieren</h2>
 </body>
 
+<form method="post" id="group_select_form">
+  {% csrf_token %}
+    {% bootstrap_form group_select_form %}
+</form>
 
-<h5>Wie heisst die folgende Vokabel auf englisch?</h5>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Use jQuery to submit the form when the choice field changes
+    $(document).ready(function () {
+        $('#id_group').change(function () {
+            $('#group_select_form').submit();
+        });
+    });
+</script>
+
+
+<h5>Wie heisst die folgende Vokabel auf Englisch?</h5>
 
 <form method="post">
   {% csrf_token %}
-    {% bootstrap_form form layout='vertical' %}
+    {% bootstrap_form train_form layout='vertical' %}
     {% bootstrap_button content="Prüfen" name="submit" button_type="submit" %}
 </form>
 
