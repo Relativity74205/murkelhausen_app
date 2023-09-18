@@ -1,4 +1,6 @@
 .env
+.envrc
+.python-version
 data
 
 # caches
