@@ -6,7 +6,9 @@ from trainer import models
 
 class VokabelGroupSelectForm(forms.Form):
     group = forms.ChoiceField(
-        widget=forms.Select(attrs={"style": "width: 400px"}),
+        widget=forms.Select(
+            attrs={"style": "width: 400px", "class": "form-select form-select-lg"}
+        ),
         choices=[],
         label="Wähle eine Gruppe aus.",
     )
@@ -25,7 +27,7 @@ class TrainForm(forms.Form):
     englisch = forms.CharField(
         widget=forms.TextInput(
             attrs={
-                "placeholder": "Englischen Begriff eingeben.",
+                "placeholder": "Englische Vokabel eingeben.",
                 "autocomplete": "off",
                 "style": "width: 400px",
             }
@@ -38,7 +40,10 @@ class TrainForm(forms.Form):
 
 class CreateVokabelForm(forms.ModelForm):
     group = forms.ModelChoiceField(
-        queryset=models.VokabelGroup.objects.order_by("-created").all(), initial=0
+        widget=forms.Select(attrs={"class": "form-select form-select-lg"}),
+        queryset=models.VokabelGroup.objects.order_by("-created").all(),
+        initial=0,
+        required=False,
     )
 
     class Meta:

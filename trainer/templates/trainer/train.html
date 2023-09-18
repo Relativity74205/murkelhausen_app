@@ -28,13 +28,17 @@ setFocusOnField("id_englisch");
 </script>
 
 
-<h5>Wie heisst die folgende Vokabel auf Englisch?</h5>
-
-<form method="post">
-  {% csrf_token %}
-    {% bootstrap_form train_form layout='vertical' %}
-    {% bootstrap_button content="Prüfen" name="submit" button_type="submit" %}
-</form>
+{% if vokabel %}
+    <h5>Wie heisst die folgende Vokabel auf Englisch?</h5>
+    <form method="post">
+      {% csrf_token %}
+        {% bootstrap_form train_form layout='vertical' %}
+        {% bootstrap_button content="Prüfen" name="submit" button_type="submit" %}
+    </form>
+{% else %}
+    <h5>Für diese Gruppe sind keine Vokabeln vorhanden</h5>
+    <br>
+{% endif %}
 
 {% if answer %}
     <p>
@@ -48,6 +52,7 @@ setFocusOnField("id_englisch");
     {% endif %}
 {% endif %}
 
+<br>
 <h4>Statistik</h4>
 <p>
     <table class="table table-striped" style="width: max-content; text-align: right"><tbody>

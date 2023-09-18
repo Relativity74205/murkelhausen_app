@@ -109,12 +109,15 @@ class TrainView(View):
         self.request.session["train_session"] = train_session.model_dump(mode="json")
 
     @staticmethod
-    def get_random_vokabel(group_id: int | None):
+    def get_random_vokabel(group_id: int | None) -> models.Vokabel | None:
         # TODO test!
         if group_id is None:
             vokabeln = models.Vokabel.objects.all()
         else:
             vokabeln = models.Vokabel.objects.filter(group__id=group_id).all()
+
+        if len(vokabeln) == 0:
+            return None
 
         weights = [
             (1 - v.correct_percentage_last / 100) * 0.8 + settings.TRAINER_RANDOM_OFFSET
@@ -128,10 +131,13 @@ class TrainView(View):
         train_session = self._load_train_session()
 
         group_select_form = self._get_group_select_form(group_id)
-        train_form = forms.TrainForm(
-            initial={"deutsch": vokabel.deutsch, "id": vokabel.id}
-        )
-        # form.fields["englisch"].label = vokabel.deutsch
+        if vokabel:
+            train_form = forms.TrainForm(
+                initial={"deutsch": vokabel.deutsch, "id": vokabel.id}
+            )
+        else:
+            train_form = None
+
         context = {
             "train_form": train_form,
             "group_select_form": group_select_form,
