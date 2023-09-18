@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get("DJANGO__SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DJANGO__DEBUG", "False"))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['beowulf.local', '192.168.1.69']
 
 
 # Application definition

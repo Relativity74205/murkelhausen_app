@@ -2,6 +2,26 @@
 
 ## Setup
 
+### Running app on beowulf (temporary)
+
+```bash
+screen -S murkel -d -m poetry run python manage.py runserver 0.0.0.0:8000
+```
+
+accessing the screen session:
+
+```bash
+screen -r murkel
+```
+
+Killing the screen session:
+
+```bash
+screen -X -S murkel quit
+```
+
+
+
 ### Database
 
 ```sql
