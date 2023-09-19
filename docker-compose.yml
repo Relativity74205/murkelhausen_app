@@ -1,12 +1,10 @@
 version: '3'
 services:
   murkel:
-    build:
-        context: .
-        dockerfile: Dockerfile
+    image: ghcr.io/relativity74205/murkelhausen_app/murkel_app:latest
     restart: always
     ports:
-      - "8000:8000"
+      - "80:8000"
     hostname: murkel
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
@@ -14,3 +12,4 @@ services:
       - POSTGRES_DBNAME=${POSTGRES_DBNAME}
       - DJANGO__SECRET_KEY=${DJANGO__SECRET_KEY}
       - DJANGO__DEBUG=${DJANGO__DEBUG}
+      - DJANGO__ALLOWED_HOSTS=${DJANGO__ALLOWED_HOSTS}
