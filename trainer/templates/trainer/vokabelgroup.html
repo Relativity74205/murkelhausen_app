@@ -4,12 +4,9 @@
 
 {% block content %}
 
+<p><h2>Vokabel Gruppen Liste</h2></p>
 
-<body>
-
-<h1>Vokabel Gruppen Liste</h1>
-
-<a class="btn btn-primary" href={% url 'trainer:group_add' %} > Gruppen hinzufügen </a>
+<p><a class="btn btn-primary" href={% url 'trainer:group_add' %} > Gruppen hinzufügen </a></p>
 
 {% if filter %}
     <form action="" method="get" class="form form-inline">
@@ -18,6 +15,6 @@
         <a class="btn btn-secondary" href={% url 'trainer:group_list' %} > Clear All </a>
     </form>
 {% endif %}
-{% render_table table 'django_tables2/bootstrap.html' %}
+{% render_table table %}
 
 {% endblock %}

@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import QuerySet, When, Case
 from django.utils.safestring import mark_safe
 from django_tables2 import tables, LinkColumn, A, DateTimeColumn, Column
 
@@ -22,21 +23,53 @@ class NumberColumn(Column):
 
 class VokabelTable(tables.Table):
     update = UpdateColumn(
-        "trainer:update", args=[A("id")], text="Ändern", verbose_name="Ändern"
+        "trainer:update",
+        args=[A("id")],
+        text="Ändern",
+        verbose_name="Ändern",
+        orderable=False,
     )
     delete = DeleteColumn(
-        "trainer:delete", args=[A("id")], text="Löschen", verbose_name="Löschen"
+        "trainer:delete",
+        args=[A("id")],
+        text="Löschen",
+        verbose_name="Löschen",
+        orderable=False,
     )
-    group = Column(verbose_name="Gruppe")
-    total = Column(verbose_name="Anzahl Fragen")
+    group = Column(
+        verbose_name="Gruppe",
+    )
+    total = Column(verbose_name="Anzahl Fragen", orderable=True)
     correct_percentage = NumberColumn(verbose_name="Richtig in %")
     correct_percentage_last = NumberColumn(
         verbose_name=f"Richtig in % (letzte {settings.TRAINER_LAST_N})"
     )
 
+    def order_total(self, queryset, is_descending):
+        sorted_queryset = sorted(queryset, key=lambda x: x.total, reverse=is_descending)
+        list_of_ids = [x.id for x in sorted_queryset]
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(list_of_ids)])
+        return queryset.filter(pk__in=list_of_ids).order_by(preserved), True
+
+    def order_correct_percentage(self, queryset, is_descending):
+        sorted_queryset = sorted(
+            queryset, key=lambda x: x.correct_percentage, reverse=is_descending
+        )
+        list_of_ids = [x.id for x in sorted_queryset]
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(list_of_ids)])
+        return queryset.filter(pk__in=list_of_ids).order_by(preserved), True
+
+    def order_correct_percentage_last(self, queryset, is_descending):
+        sorted_queryset = sorted(
+            queryset, key=lambda x: x.correct_percentage_last, reverse=is_descending
+        )
+        list_of_ids = [x.id for x in sorted_queryset]
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(list_of_ids)])
+        return queryset.filter(pk__in=list_of_ids).order_by(preserved), True
+
     class Meta:
         model = models.Vokabel
-        template_name = "django_tables2/bootstrap.html"
+        template_name = "django_tables2/bootstrap5.html"
         fields = (
             "deutsch",
             "englisch",
@@ -46,20 +79,34 @@ class VokabelTable(tables.Table):
             "correct_percentage_last",
         )
         order_by = ("deutsch",)
+        attrs = {
+            "class": "table table-hover",
+            "thead": {
+                "class": "table-light",
+            },
+        }
 
 
 class VokabelGroupTable(tables.Table):
     update = UpdateColumn(
-        "trainer:group_update", args=[A("id")], text="Ändern", verbose_name="Ändern"
+        "trainer:group_update",
+        args=[A("id")],
+        text="Ändern",
+        verbose_name="Ändern",
+        orderable=False,
     )
     delete = DeleteColumn(
-        "trainer:group_delete", args=[A("id")], text="Löschen", verbose_name="Löschen"
+        "trainer:group_delete",
+        args=[A("id")],
+        text="Löschen",
+        verbose_name="Löschen",
+        orderable=False,
     )
     created = DateTimeColumn(format="d.m.Y H:i:s", verbose_name="Erstellt")
 
     class Meta:
         model = models.VokabelGroup
-        template_name = "django_tables2/bootstrap.html"
+        template_name = "django_tables2/bootstrap5.html"
         fields = (
             "name",
             "created",

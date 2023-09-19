@@ -5,9 +5,8 @@
 {% block content %}
 
 
-<body>
 
-<h1>Vokabel Liste</h1>
+<p><h2>Vokabel Liste</h2></p>
 
 {% if filter %}
     <form action="" method="get" class="form form-inline">
@@ -16,6 +15,6 @@
         <a class="btn btn-secondary" href={% url 'trainer:list' %} > Clear All </a>
     </form>
 {% endif %}
-{% render_table table 'django_tables2/bootstrap.html' %}
+{% render_table table %}
 
 {% endblock %}

@@ -11,8 +11,6 @@ jobs:
       contents: read
       packages: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Log in to GitHub Container Registry
@@ -29,6 +27,8 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ env.REPO }}/murkel_app:latest
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Build Changelog
         id: build_changelog
         uses: mikepenz/release-changelog-builder-action@v4

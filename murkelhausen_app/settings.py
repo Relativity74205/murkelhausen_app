@@ -135,5 +135,12 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# DJANGO_TABLES2_TABLE_ATTRS = {
+#     "class": "table table-hover",
+#     "thead": {
+#         "class": "table-light",
+#     },
+# }
+
 TRAINER_LAST_N = 5
 TRAINER_RANDOM_OFFSET = 0.2

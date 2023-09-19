@@ -1,8 +1,22 @@
+<!-- base.html -->
+<html lang="de">
 {% load django_bootstrap5 %}
 
-<body>
-<h2>Wähl ein Ziel aus:</h2>
-<ul>
-    <li><a href={% url 'trainer:start' %} >Vokabel Trainer</a></li>
-    <li><a href={% url 'murkelhausen_info:show_departures' %} >Murkelhausen Info.</a></li>
-</ul>
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">Murkelhausen Home</a>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'trainer:start' %}">Vokabel Trainer</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'murkelhausen_info:show_departures' %}">Murkelhausen Info</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
