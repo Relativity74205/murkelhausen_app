@@ -58,7 +58,7 @@ class VokabelGroupTable(tables.Table):
     created = DateTimeColumn(format="d.m.Y H:i:s", verbose_name="Erstellt")
 
     class Meta:
-        model = models.Vokabel
+        model = models.VokabelGroup
         template_name = "django_tables2/bootstrap.html"
         fields = (
             "name",
