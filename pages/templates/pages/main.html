@@ -1,0 +1,8 @@
+{% load django_bootstrap5 %}
+
+<body>
+<h2>Wähl ein Ziel aus:</h2>
+<ul>
+    <li><a href={% url 'trainer:start' %} >Vokabel Trainer</a></li>
+    <li><a href={% url 'murkelhausen_info:show_departures' %} >Murkelhausen Info.</a></li>
+</ul>

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "statements.apps.StatementsConfig",
     "trainer.apps.TrainerConfig",
     "murkelhausen_info.apps.MurkelhausenInfoConfig",
+    "pages.apps.PagesConfig",
     "django_tables2",
     "django_bootstrap5",
     "django_filters",

@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+import pages.views
+
 urlpatterns = [
-    # path("", include("trainer.urls")),
+    path("", pages.views.home_view, name="home"),
     path("statements/", include("statements.urls")),
     path("murkelhausen_info/", include("murkelhausen_info.urls")),
     path("trainer/", include("trainer.urls")),
