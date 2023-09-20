@@ -40,9 +40,12 @@ class CreateVokabelForm(forms.ModelForm):
     group = forms.ModelChoiceField(
         widget=forms.Select(),
         queryset=models.VokabelGroup.objects.order_by("-created").all(),
-        initial=0,
         required=False,
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.initial["group"] = models.VokabelGroup.objects.order_by("-created").first()
 
     class Meta:
         model = models.Vokabel
