@@ -1,8 +1,8 @@
 # action.yml
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '*'
 
 jobs:
   build_container:
@@ -26,7 +26,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/${{ env.REPO }}/murkel_app:latest
+          tags: ghcr.io/${{ env.REPO }}/murkel_app:${{ github.ref_name }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build Changelog
