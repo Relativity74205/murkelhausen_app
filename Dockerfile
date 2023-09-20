@@ -23,6 +23,7 @@ COPY murkelhausen_app murkelhausen_app
 COPY murkelhausen_info murkelhausen_info
 COPY statements statements
 COPY trainer trainer
+COPY pages pages
 COPY manage.py pyproject.toml poetry.lock* README.md ./
 
 RUN poetry config installer.max-workers 10 && \
