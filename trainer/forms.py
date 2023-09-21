@@ -43,10 +43,6 @@ class CreateVokabelForm(forms.ModelForm):
         required=False,
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.initial["group"] = models.VokabelGroup.objects.order_by("-created").first()
-
     class Meta:
         model = models.Vokabel
         fields = ["deutsch", "englisch", "group"]

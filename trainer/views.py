@@ -51,6 +51,20 @@ class AddVokabelView(CreateView):
     template_name = "trainer/vokabel_create_form.html"
     success_url = reverse_lazy("trainer:add")
 
+    def get(self, request: HttpRequest, *args, **kwargs):
+        group_id = self.request.session.get("last_group_added_to")
+        if group_id:
+            self.initial["group"] = group_id
+        else:
+            self.initial["group"] = models.VokabelGroup.objects.order_by(
+                "-created"
+            ).first()
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request: HttpRequest, *args, **kwargs):
+        self.request.session["last_group_added_to"] = request.POST["group"]
+        return super().post(request, *args, **kwargs)
+
 
 class UpdateVokabelView(UpdateView):
     model = models.Vokabel

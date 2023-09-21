@@ -42,6 +42,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Post Tag
         run: echo ${{steps.tag.outputs.tag}}
+#      - name: SemVer
+#        id: semver
+#        uses: paulhatch/semantic-version@v5.2.3
+#        with:
+#          change_path: ""
       - name: Build Changelog
         id: build_changelog
         uses: mikepenz/release-changelog-builder-action@v4
