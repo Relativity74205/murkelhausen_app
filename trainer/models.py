@@ -46,11 +46,15 @@ class Vokabel(models.Model):
 
     @property
     def correct_percentage(self):
-        if self.count_correct == 0:
+        try:
+            return self.count_correct / (self.count_correct + self.count_wrong) * 100
+        except ZeroDivisionError:
             return 0
-        return self.count_correct / (self.count_correct + self.count_wrong) * 100
 
     @property
     def correct_percentage_last(self):
         last_n_results = self.results[-settings.TRAINER_LAST_N :]
-        return sum(last_n_results) / len(last_n_results) * 100
+        try:
+            return sum(last_n_results) / len(last_n_results) * 100
+        except ZeroDivisionError:
+            return 0
