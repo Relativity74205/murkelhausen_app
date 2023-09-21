@@ -3,6 +3,8 @@ on:
   push:
     tags:
       - '*'
+#    branches:
+#      - main
 
 jobs:
   build_container:
@@ -26,7 +28,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/${{ env.REPO }}/murkel_app:${{ github.ref_name }}
+#          tags: ghcr.io/${{ env.REPO }}/murkel_app:${{ github.ref_name }}
+          tags: ghcr.io/${{ env.REPO }}/murkel_app:latest
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build Changelog
@@ -34,3 +37,15 @@ jobs:
         uses: mikepenz/release-changelog-builder-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Post Changelog
+        run: echo ${{steps.build_changelog.outputs.changelog}}
+      - name: Tag
+        id: tag
+        uses: K-Phoen/semver-release-action@master
+        with:
+          release_branch: main
+          release_strategy: none
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Post Tag
+        run: echo ${{steps.tag.outputs.tag}}
