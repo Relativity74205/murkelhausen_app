@@ -1,11 +1,8 @@
 from django_filters import (
     FilterSet,
-    DateFromToRangeFilter,
     CharFilter,
-    BooleanFilter,
     ModelChoiceFilter,
 )
-from django_filters.widgets import DateRangeWidget, BooleanWidget
 
 from . import models
 

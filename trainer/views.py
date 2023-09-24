@@ -1,7 +1,7 @@
 import random
 
 from django.conf import settings
-from django.http import HttpResponseRedirect, HttpRequest
+from django.http import HttpResponseRedirect, HttpRequest, QueryDict
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
@@ -44,6 +44,21 @@ class VokabelView(SingleTableMixin, FilterView):
     template_name = "trainer/vokabel.html"
     table_class = tables.VokabelTable
     filterset_class = filters.VokabelTableFilter
+
+    def get(self, request: HttpRequest, *args, **kwargs):
+        if len(request.GET) == 0:
+            last_vokabel_filter = request.session.get("last_vokabel_filter")
+            if last_vokabel_filter:
+                query_dict = QueryDict("", mutable=True)
+                query_dict.update(last_vokabel_filter)
+                request.GET = query_dict
+        else:
+            if "reset" in request.GET:
+                request.session["last_vokabel_filter"] = None
+                request.GET = QueryDict("")
+            else:
+                request.session["last_vokabel_filter"] = request.GET
+        return super().get(request, *args, **kwargs)
 
 
 class AddVokabelView(CreateView):
