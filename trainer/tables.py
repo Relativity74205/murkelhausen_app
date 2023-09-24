@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import QuerySet, When, Case
+from django.db.models import When, Case
 from django.utils.safestring import mark_safe
 from django_tables2 import tables, LinkColumn, A, DateTimeColumn, Column
 
@@ -28,6 +28,10 @@ class VokabelTable(tables.Table):
         text="Ändern",
         verbose_name="Ändern",
         orderable=False,
+        attrs={
+            "td": {"style": "text-align: center"},
+            "th": {"style": "text-align: center"},
+        },
     )
     delete = DeleteColumn(
         "trainer:delete",
@@ -35,14 +39,35 @@ class VokabelTable(tables.Table):
         text="Löschen",
         verbose_name="Löschen",
         orderable=False,
+        attrs={
+            "td": {"style": "text-align: center"},
+            "th": {"style": "text-align: center"},
+        },
     )
     group = Column(
         verbose_name="Gruppe",
     )
-    total = Column(verbose_name="Anzahl Fragen", orderable=True)
-    correct_percentage = NumberColumn(verbose_name="Richtig in %")
+    total = Column(
+        verbose_name="Anzahl Fragen",
+        orderable=True,
+        attrs={
+            "td": {"style": "text-align: right"},
+            "th": {"style": "text-align: right"},
+        },
+    )
+    correct_percentage = NumberColumn(
+        verbose_name="Richtig in %",
+        attrs={
+            "td": {"style": "text-align: right"},
+            "th": {"style": "text-align: right"},
+        },
+    )
     correct_percentage_last = NumberColumn(
-        verbose_name=f"Richtig in % (letzte {settings.TRAINER_LAST_N})"
+        verbose_name=f"Richtig in % (letzte {settings.TRAINER_LAST_N})",
+        attrs={
+            "td": {"style": "text-align: right"},
+            "th": {"style": "text-align: right"},
+        },
     )
 
     def order_total(self, queryset, is_descending):
