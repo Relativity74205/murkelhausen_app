@@ -9,8 +9,13 @@ jobs:
       # you must check out the repository
       - name: Checkout
         uses: actions/checkout@v4
+      - name: testing
+        run: |
+          ls -la
+          pwd
+          ls -la ../
       - name: Hello world action step
-        uses: ./.github/actions/test_action
+        uses: ./
         id: hello
         with:
           who-to-greet: 'Mona the Octocat'
