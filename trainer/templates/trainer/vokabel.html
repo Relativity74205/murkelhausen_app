@@ -12,7 +12,7 @@
     <form action="" method="get" class="form form-inline">
         {% bootstrap_form filter.form layout='horizontal' %}
         {% bootstrap_button 'filter' %}
-        <a class="btn btn-secondary" href={% url 'trainer:list' %} > Clear All </a>
+        <a class="btn btn-secondary" href={% url 'trainer:list' %}?reset=true > Clear All </a>
     </form>
 {% endif %}
 {% render_table table %}
