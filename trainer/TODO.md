@@ -1,0 +1,4 @@
+- Multi User Support
+- Bei "Vokabel hinzufügen" sollte die zuletzt hinzugefügte Vokabel zur Kontrolle angezeigt werden
+    - inkl. Links zum Veraendern und Loeschen
+- Training Session persistieren und eine Auswertung hinzufuegen
