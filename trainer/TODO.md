@@ -1,7 +1,8 @@
 - Multi User Support
-- Bei "Vokabel hinzufügen" sollte die zuletzt hinzugefügte Vokabel zur Kontrolle angezeigt werden
-    - inkl. Links zum Veraendern und Loeschen
+- [x] Bei "Vokabel hinzufügen" sollte die zuletzt hinzugefügte Vokabel zur Kontrolle angezeigt werden
+    - [x] inkl. Links zum Veraendern und Loeschen
 - Training Session persistieren und eine Auswertung hinzufuegen
-- Filterung der Vokabelliste sollte persistent sein (vorallem nach dem Aendern einer Vokabel)
+- [x] Filterung der Vokabelliste sollte persistent sein (vorallem nach dem Aendern einer Vokabel)
 - Option hinzufuegen, damit der "." nicht in der Bewertung beruecksichtigt wird
 - verbesserter Vergleich zwischen eingetipptem und korrektem Wort
+- gleichzeitiges loeschen von Variablen aus der Variablenliste erlauben 

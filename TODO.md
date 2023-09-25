@@ -1,4 +1,10 @@
-- automatisches Tagging und Bau von entsprechend getaggten Containern in der Github Actions Pipeline einbauen
+- action bauen mit 'workflow_dispatch' (d.h. manuell triggerbar)
+    - action:
+        - berechnet neuen Tag-Version
+        - erstellt release mit Tag
+            - automatische changes log
+        - (optional) aendert Version in pyproject.toml
+    - diese action ueber API starten (wenn moeglich) 
 - automatisches Pull der Container auf Beowulf und Starten der Container einbauen
 - weitere Ideen:
     - Familienkalender
