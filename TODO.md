@@ -1,0 +1,6 @@
+- automatisches Tagging und Bau von entsprechend getaggten Containern in der Github Actions Pipeline einbauen
+- automatisches Pull der Container auf Beowulf und Starten der Container einbauen
+- weitere Ideen:
+    - Familienkalender
+    - TODO
+    - Einkaufsliste?

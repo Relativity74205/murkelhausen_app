@@ -3,15 +3,13 @@ on:
   push:
     tags:
       - '*'
-#    branches:
-#      - main
 
 jobs:
   build_container:
     runs-on: ubuntu-latest
-    permissions: write-all
-#      contents: read
-#      packages: write
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -25,32 +23,7 @@ jobs:
         run: |
           echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
       - name: Build and push the container
-        uses: docker/build-push-action@v5
+        uses: docker/dock@v5
         with:
           push: true
-#          tags: ghcr.io/${{ env.REPO }}/murkel_app:${{ github.ref_name }}
-          tags: ghcr.io/${{ env.REPO }}/murkel_app:latest
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Tag
-        id: tag
-        uses: K-Phoen/semver-release-action@master
-        with:
-          release_branch: main
-          release_strategy: none
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Post Tag
-        run: echo ${{steps.tag.outputs.tag}}
-#      - name: SemVer
-#        id: semver
-#        uses: paulhatch/semantic-version@v5.2.3
-#        with:
-#          change_path: ""
-      - name: Build Changelog
-        id: build_changelog
-        uses: mikepenz/release-changelog-builder-action@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Post Changelog
-        run: echo ${{steps.build_changelog.outputs.changelog}}
+          tags: ghcr.io/${{ env.REPO }}/murkel_app:${{ github.ref_name }}, ghcr.io/${{ env.REPO }}/murkel_app:latest
