@@ -1,11 +1,13 @@
-- action bauen mit 'workflow_dispatch' (d.h. manuell triggerbar)
+- action bauen mit 'workflow_dispatch' (d.h. manuell triggerbar); https://docs.github.com/en/actions/using-workflows/manually-running-a-workflow
     - action:
         - berechnet neuen Tag-Version
         - erstellt release mit Tag
             - automatische changes log
         - (optional) aendert Version in pyproject.toml
     - diese action ueber API starten (wenn moeglich) 
-- automatisches Pull der Container auf Beowulf und Starten der Container einbauen
+- automatisches Pull der Container auf Beowulf und Starten der Container einbauen: portainer
+    - portainer auf beowulf installieren
+    - portainer backup
 - weitere Ideen:
     - Familienkalender
     - TODO
