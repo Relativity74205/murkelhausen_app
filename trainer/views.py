@@ -206,6 +206,10 @@ class TrainView(View):
         group_select_form.fields["group"].initial = group_id
         return group_select_form
 
+    @staticmethod
+    def _check_answer(expected: str, actual: str) -> bool:
+        return actual.replace(".", "") == expected.replace(".", "")
+
     def post(self, request: HttpRequest, **kwargs):
         if "reset" in request.POST:
             request.session["train_session"] = TrainSession().model_dump(mode="json")
@@ -222,11 +226,11 @@ class TrainView(View):
         train_session = self._load_train_session()
 
         form = forms.TrainForm(request.POST)
-        answer = form.data["englisch"]
+        answer: str = form.data["englisch"]
         vokabel_id = form.data["id"]
         vokabel = models.Vokabel.objects.get(id=vokabel_id)
 
-        correct = answer == vokabel.englisch
+        correct = self._check_answer(vokabel.englisch, answer)
         if correct:
             train_session.correct += 1
         else:

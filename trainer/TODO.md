@@ -3,6 +3,6 @@
     - [x] inkl. Links zum Veraendern und Loeschen
 - Training Session persistieren und eine Auswertung hinzufuegen
 - [x] Filterung der Vokabelliste sollte persistent sein (vorallem nach dem Aendern einer Vokabel)
-- Option hinzufuegen, damit der "." nicht in der Bewertung beruecksichtigt wird
+- [x] Option hinzufuegen, damit der "." nicht in der Bewertung beruecksichtigt wird
 - verbesserter Vergleich zwischen eingetipptem und korrektem Wort
 - gleichzeitiges loeschen von Variablen aus der Variablenliste erlauben 
