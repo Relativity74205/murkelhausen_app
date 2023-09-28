@@ -1,7 +1,9 @@
 # Container image that runs your code
 FROM python:3.11.5-slim
 
-RUN pip install GitPython==3.1.37
+RUN apt-get update && apt-get install -y git
+
+RUN pip install --upgrade pip && pip install GitPython==3.1.37
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY entrypoint.sh /entrypoint.sh
