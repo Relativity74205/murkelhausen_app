@@ -2,6 +2,7 @@
 FROM python:3.11.5-slim
 
 RUN apt-get update && apt-get install -y git
+RUN git config --global --add safe.directory '*'
 
 RUN pip install --upgrade pip && pip install GitPython==3.1.37
 
