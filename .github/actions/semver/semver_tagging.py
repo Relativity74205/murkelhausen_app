@@ -46,8 +46,10 @@ class UpgradeType(StrEnum):
 
 
 def get_last_tag(repo: Repo) -> Tag | None:
+    for tag in repo.tags:
+        print(tag)
     try:
-        last_tag_string = repo.tags[-2].name
+        last_tag_string = repo.tags[-1].name
         return Tag.from_tag_name(last_tag_string)
     except IndexError:
         return None
@@ -59,7 +61,10 @@ def get_commit_messages_since_tag(repo: Repo, last_tag: Tag) -> list[str]:
 
 
 def get_commit_summaries_since_tag(repo: Repo, last_tag: Tag) -> list[str]:
-    commits_since_tag = list(repo.iter_commits(f"{last_tag}..HEAD"))
+    if last_tag is None:
+        commits_since_tag = list(repo.iter_commits("HEAD"))
+    else:
+        commits_since_tag = list(repo.iter_commits(f"{last_tag}..HEAD"))
     return [commit.summary for commit in commits_since_tag]
 
 
