@@ -2,6 +2,8 @@
 
 set -e
 
+echo "foo"
+
 git config --global --add safe.directory '*'
 python /semver_tagging.py
 

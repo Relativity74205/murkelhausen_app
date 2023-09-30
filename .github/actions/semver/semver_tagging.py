@@ -118,7 +118,9 @@ def calculate_next_tag(commit_messages: list[str], last_tag: Tag) -> str:
 
 
 def main():
+    print(f"Start with {repo=}")
     last_tag = get_last_tag(repo)
+    print(f"{last_tag=}")
     commit_messages = get_commit_messages_since_tag(repo, last_tag)
 
     next_tag = calculate_next_tag(commit_messages, last_tag)
