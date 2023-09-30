@@ -56,7 +56,10 @@ def get_last_tag(repo: Repo) -> Tag | None:
 
 
 def get_commit_messages_since_tag(repo: Repo, last_tag: Tag) -> list[str]:
-    commits_since_tag = list(repo.iter_commits(f"{last_tag}..HEAD"))
+    if last_tag is None:
+        commits_since_tag = list(repo.iter_commits("HEAD"))
+    else:
+        commits_since_tag = list(repo.iter_commits(f"{last_tag}..HEAD"))
     return [commit.message for commit in commits_since_tag]
 
 
@@ -64,7 +67,7 @@ def get_commit_summaries_since_tag(repo: Repo, last_tag: Tag) -> list[str]:
     if last_tag is None:
         commits_since_tag = list(repo.iter_commits("HEAD"))
     else:
-        commits_since_tag = list(repo.iter_commits(f"1.0.2..HEAD"))
+        commits_since_tag = list(repo.iter_commits(f"{last_tag}..HEAD"))
     return [commit.summary for commit in commits_since_tag]
 
 
