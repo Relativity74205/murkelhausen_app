@@ -64,7 +64,7 @@ def get_commit_summaries_since_tag(repo: Repo, last_tag: Tag) -> list[str]:
     if last_tag is None:
         commits_since_tag = list(repo.iter_commits("HEAD"))
     else:
-        commits_since_tag = list(repo.iter_commits(f"{last_tag}..HEAD"))
+        commits_since_tag = list(repo.iter_commits(f"1.0.2..HEAD"))
     return [commit.summary for commit in commits_since_tag]
 
 
