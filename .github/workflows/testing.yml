@@ -7,7 +7,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Hello world action step
+      - name: Semver
         uses: ./.github/actions/semver
         id: semver
       - name: Get the next tag

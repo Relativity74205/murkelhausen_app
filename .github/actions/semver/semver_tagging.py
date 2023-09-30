@@ -122,6 +122,7 @@ def main():
     last_tag = get_last_tag(repo)
     print(f"{last_tag=}")
     commit_messages = get_commit_messages_since_tag(repo, last_tag)
+    exit(1)
 
     next_tag = calculate_next_tag(commit_messages, last_tag)
 
