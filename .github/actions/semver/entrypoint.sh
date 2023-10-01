@@ -10,7 +10,8 @@ git tag
 
 echo "bar"
 
-python /semver_tagging.py
+foo=$(python /semver_tagging.py)
+echo "foo=${foo}"
 
 echo "baz"
 

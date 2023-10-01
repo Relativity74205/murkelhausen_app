@@ -131,10 +131,11 @@ def main():
     commit_messages = get_commit_messages_since_tag(github_repo, last_tag_datetime)
 
     next_tag = calculate_next_tag(commit_messages, last_tag)
-    print(f"{next_tag=}")
 
     os.environ["NEXT_TAG"] = next_tag
     os.environ["CHANGELOG"] = "\n".join(commit_messages)
+
+    print(f"{next_tag}")
 
 
 if __name__ == "__main__":
