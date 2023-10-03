@@ -10,14 +10,14 @@ git tag
 
 echo "bar"
 
-foo=$(python /semver_tagging.py)
-echo "foo=${foo}"
+python /semver_tagging.py
 
 echo "baz"
 
 # shellcheck disable=SC2086
-echo NEXT_TAG=${NEXT_TAG}
-echo CHANGELOG="${CHANGELOG}"
+# TODO get results from file
+NEXT_TAG=$(jq .NEXT_TAG semver_result.json)
+CHANGELOG=$(jq .CHANGELOG semver_result.json)
 echo "next_tag=${NEXT_TAG}" >> "$GITHUB_OUTPUT"
 # shellcheck disable=SC2086
 echo "changelog_delta=${CHANGELOG}" >> $GITHUB_OUTPUT

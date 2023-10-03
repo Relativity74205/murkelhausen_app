@@ -1,4 +1,5 @@
 import os
+import json
 from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum, auto
@@ -127,15 +128,19 @@ def main():
     print("Start.")
     github_repo = get_github_repo()
     last_tag, last_tag_datetime = get_last_tag(github_repo)
-    print(f"{last_tag=} with {last_tag_datetime=}")
+    print(f"last_tag={str(last_tag)} with {last_tag_datetime=}")
     commit_messages = get_commit_messages_since_tag(github_repo, last_tag_datetime)
 
     next_tag = calculate_next_tag(commit_messages, last_tag)
 
-    os.environ["NEXT_TAG"] = next_tag
-    os.environ["CHANGELOG"] = "\n".join(commit_messages)
+    result_dict = {
+        "NEXT_TAG": next_tag,
+        "CHANGELOG": "\n".join(commit_messages),
+    }
+    print(f"{result_dict=}")
 
-    print(f"{next_tag}")
+    with open("semver_result.json", "w") as f:
+        json.dump(result_dict, f, indent=4)
 
 
 if __name__ == "__main__":

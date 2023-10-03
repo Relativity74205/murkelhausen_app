@@ -3,7 +3,7 @@ on: [push]
 jobs:
   create_release:
     runs-on: ubuntu-latest
-    name: A job to say hello
+    name: A tagging job
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -15,4 +15,4 @@ jobs:
       - name: Get the next tag
         run: echo "The next tag is ${{ steps.semver.outputs.next_tag }}"
       - name: Get the delta changelog
-        run: echo "The changelog delta is ${{ steps.semver.outputs.changelog_delta }}"
+        run: echo 'The changelog delta is ${{ steps.semver.outputs.changelog_delta }}'
