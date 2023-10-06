@@ -3,6 +3,7 @@ import json
 from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum, auto
+from typing import Iterator
 
 from github import Github, Auth, Repository
 
@@ -21,18 +22,27 @@ class Tag:
     def __str__(self):
         return f"{self.major}.{self.minor}.{self.patch}"
 
+    def __eq__(self, other):
+        if not isinstance(other, Tag):
+            return NotImplemented
+        return (
+            self.major == other.major
+            and self.minor == other.minor
+            and self.patch == other.patch
+        )
+
     @staticmethod
     def as_string(major: int, minor: int, patch: int):
         return f"{major}.{minor}.{patch}"
 
-    def return_next_major(self):
-        return self.as_string(self.major + 1, 0, 0)
+    def return_next_major(self) -> "Tag":
+        return Tag(self.major + 1, 0, 0)
 
-    def return_next_minor(self):
-        return self.as_string(self.major, self.minor + 1, 0)
+    def return_next_minor(self) -> "Tag":
+        return Tag(self.major, self.minor + 1, 0)
 
-    def return_next_patch(self):
-        return self.as_string(self.major, self.minor, self.patch + 1)
+    def return_next_patch(self) -> "Tag":
+        return Tag(self.major, self.minor, self.patch + 1)
 
 
 class UpgradeType(StrEnum):
@@ -62,20 +72,12 @@ def get_last_tag(repo: Repository) -> tuple[Tag | None, datetime | None]:
 
 def get_commit_messages_since_tag(
     repo: Repository, last_tag_datetime: datetime
-) -> list[str]:
+) -> Iterator[str]:
     if last_tag_datetime is None:
         commits_since_tag = repo.get_commits()
     else:
         commits_since_tag = repo.get_commits(since=last_tag_datetime)
-    return [commit.commit.message for commit in commits_since_tag]
-
-
-def get_commit_summaries_since_tag(repo: Repository, last_tag: Tag) -> list[str]:
-    if last_tag is None:
-        commits_since_tag = list(repo.iter_commits("HEAD"))
-    else:
-        commits_since_tag = list(repo.iter_commits(f"{last_tag}..HEAD"))
-    return [commit.summary for commit in commits_since_tag]
+    return (commit.commit.message for commit in commits_since_tag)
 
 
 def get_conventional_commits_prefix(commit_message: str) -> str | None:
@@ -105,11 +107,11 @@ def get_upgrade_type(commit_messages: list[str]) -> UpgradeType:
     return UpgradeType.NONE
 
 
-def calculate_next_tag(commit_messages: list[str], last_tag: Tag) -> str:
+def calculate_next_tag(commit_messages: Iterator[str], last_tag: Tag) -> Tag:
     if last_tag is None:
-        return "0.0.1"
+        return Tag(0, 0, 1)
 
-    upgrade_type = get_upgrade_type(commit_messages)
+    upgrade_type = get_upgrade_type(list(commit_messages))
 
     match upgrade_type:
         case UpgradeType.MAJOR:
@@ -119,9 +121,7 @@ def calculate_next_tag(commit_messages: list[str], last_tag: Tag) -> str:
         case UpgradeType.PATCH:
             return last_tag.return_next_patch()
         case _:
-            ...
-
-    return str(last_tag)
+            return last_tag
 
 
 def main():
@@ -132,11 +132,18 @@ def main():
     commit_messages = get_commit_messages_since_tag(github_repo, last_tag_datetime)
 
     next_tag = calculate_next_tag(commit_messages, last_tag)
-
-    result_dict = {
-        "NEXT_TAG": next_tag,
-        "CHANGELOG": "\n".join(commit_messages),
-    }
+    print(f"next_tag={str(next_tag)}")
+    if next_tag == last_tag:
+        print("No new tag needed.")
+        result_dict = {
+            "NEXT_TAG": "",
+            "CHANGELOG": "",
+        }
+    else:
+        result_dict = {
+            "NEXT_TAG": str(next_tag),
+            "CHANGELOG": "\n".join(commit_messages),
+        }
     print(f"{result_dict=}")
 
     with open("semver_result.json", "w") as f:
