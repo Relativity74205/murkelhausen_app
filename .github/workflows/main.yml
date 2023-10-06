@@ -1,5 +1,7 @@
-# action.yml
 on:
+  create:
+    tags:
+      - '*'
   push:
     tags:
       - '*'
