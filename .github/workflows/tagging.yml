@@ -14,21 +14,20 @@ jobs:
         id: semver
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # if next_tag is not set, abort
       - name: Get the next tag
         run: echo "The next tag is ${{ steps.semver.outputs.next_tag }}"
       - name: Get the delta changelog
         run: echo 'The changelog delta is ${{ steps.semver.outputs.changelog_delta }}'
-        # TODO: add change to pyproject.toml
-        # TODO: add change to docker-compose.yml
       - name: write tag to file for testing
         id: write_tag
+        if: steps.semver.outputs.next_tag != ''
         run: |
-          echo ${{ steps.semver.outputs.next_tag }} > tag.txt
-          echo ${{ steps.semver.outputs.changelog_delta }} > changelog.txt
+          sed -i "s/version = \".*\"/version = \"${{ steps.semver.outputs.next_tag }}\"/g" pyproject.toml
+          sed -i "/image:/ s/:[^:]*$/:${{ steps.semver.outputs.next_tag }}/" docker-compose.yml
           git config --local user.email "foo@bar.com"
           git config --local user.name "github-actions[bot]"
-          git commit -a -m "chore: update tag.txt and changelog.txt"
+          git add pyproject.toml docker-compose.yml
+          git commit -m "chore: update tag.txt and changelog.txt"
           git push
       - name: Create tag
         uses: actions/github-script@v5
@@ -41,15 +40,14 @@ jobs:
               ref: 'refs/tags/${{ steps.semver.outputs.next_tag }}',
               sha: context.sha
             })
-#      - name: Create Release
-#        id: create_release
-#        if: steps.semver.outputs.next_tag != ''
-#        uses: ncipollo/release-action@v1
-#        with:
-#          tag: ${{ steps.semver.outputs.next_tag }}
-#          # TODO prettify changelog; \n are not interpreted; use markdown in a file?; add What's changed title and a Full Changelog link in footer
-#          # **Full Changelog**: https://github.com/Relativity74205/murkelhausen_app/compare/1.1.1...1.1.3
-#          body: ${{ steps.semver.outputs.changelog_delta }}
-#          draft: false
-#          prerelease: false
+      - name: Create Release
+        id: create_release
+        if: steps.semver.outputs.next_tag != ''
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.semver.outputs.next_tag }}
+          generateReleaseNotes: true
+          draft: false
+          prerelease: false
+
 

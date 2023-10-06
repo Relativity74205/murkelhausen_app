@@ -3,7 +3,6 @@ import json
 from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum, auto
-from typing import Iterator
 
 from github import Github, Auth, Repository
 
@@ -72,12 +71,12 @@ def get_last_tag(repo: Repository) -> tuple[Tag | None, datetime | None]:
 
 def get_commit_messages_since_tag(
     repo: Repository, last_tag_datetime: datetime
-) -> Iterator[str]:
+) -> list[str]:
     if last_tag_datetime is None:
         commits_since_tag = repo.get_commits()
     else:
         commits_since_tag = repo.get_commits(since=last_tag_datetime)
-    return (commit.commit.message for commit in commits_since_tag)
+    return [commit.commit.message for commit in commits_since_tag]
 
 
 def get_conventional_commits_prefix(commit_message: str) -> str | None:
@@ -107,11 +106,11 @@ def get_upgrade_type(commit_messages: list[str]) -> UpgradeType:
     return UpgradeType.NONE
 
 
-def calculate_next_tag(commit_messages: Iterator[str], last_tag: Tag) -> Tag:
+def calculate_next_tag(commit_messages: list[str], last_tag: Tag) -> Tag:
     if last_tag is None:
         return Tag(0, 0, 1)
 
-    upgrade_type = get_upgrade_type(list(commit_messages))
+    upgrade_type = get_upgrade_type(commit_messages)
 
     match upgrade_type:
         case UpgradeType.MAJOR:
@@ -148,6 +147,9 @@ def main():
 
     with open("semver_result.json", "w") as f:
         json.dump(result_dict, f, indent=4)
+
+    with open("changelog_delta.txt", "w") as f:
+        f.writelines(commit_messages)
 
 
 if __name__ == "__main__":
