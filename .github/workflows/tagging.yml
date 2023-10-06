@@ -28,7 +28,7 @@ jobs:
           git config --local user.email "foo@bar.com"
           git config --local user.name "github-actions[bot]"
           git add pyproject.toml docker-compose.yml
-          git commit -m "chore: update pyproject.toml and docker-compose.yml"  --allow-empty
+          git commit -m "chore: update pyproject.toml and docker-compose.yml" --allow-empty
           git push
       - name: Create tag
         uses: actions/github-script@v5
