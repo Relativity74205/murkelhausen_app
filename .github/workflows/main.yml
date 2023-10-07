@@ -1,8 +1,10 @@
-# action.yml
 on:
-  push:
+  create:
     tags:
       - '*'
+#  push:
+#    tags:
+#      - '*'
 
 jobs:
   build_container:
@@ -19,6 +21,8 @@ jobs:
           registry: ghcr.io
           username: publisher
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: check ref name
+        run: echo "ref_name=${{ github.ref_name }}"
       - name: lowercase repo name
         run: |
           echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
