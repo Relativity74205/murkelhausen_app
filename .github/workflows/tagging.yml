@@ -22,7 +22,7 @@ jobs:
         id: write_tag
         if: steps.semver.outputs.next_tag != ''
         run: |
-          rm semver_result.json
+          rm semver_result.json  # has to be removed, otherwise git add might cause problems if pyproject.toml and docker-compose.yml is not changed
           sed -i "s/version = \".*\"/version = \"${{ steps.semver.outputs.next_tag }}\"/g" pyproject.toml
           sed -i "/image:/ s/:[^:]*$/:${{ steps.semver.outputs.next_tag }}/" docker-compose.yml
           git config --local user.email "foo@bar.com"
@@ -51,4 +51,4 @@ jobs:
           draft: false
           prerelease: false
           makeLatest: true
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.PAT }}  # This token must have repo permissions and we cannot use GITHUB_TOKEN as it does not trigger the release event https://stackoverflow.com/questions/69063452/github-actions-on-release-created-workflow-trigger-not-working
