@@ -1,8 +1,6 @@
-# action.yml
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [published]
 
 jobs:
   build_container:
@@ -19,6 +17,10 @@ jobs:
           registry: ghcr.io
           username: publisher
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: check ref name
+        run: |
+          echo "github_ref_name=${{ github.ref_name }}"
+          echo "GITHUB_REF=${GITHUB_REF}"
       - name: lowercase repo name
         run: |
           echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
