@@ -148,9 +148,6 @@ def main():
     with open("semver_result.json", "w") as f:
         json.dump(result_dict, f, indent=4)
 
-    with open("changelog_delta.txt", "w") as f:
-        f.writelines(commit_messages)
-
 
 if __name__ == "__main__":
     main()
