@@ -76,7 +76,11 @@ def get_commit_messages_since_tag(
         commits_since_tag = repo.get_commits()
     else:
         commits_since_tag = repo.get_commits(since=last_tag_datetime)
-    return [commit.commit.message for commit in commits_since_tag]
+    return [
+        commit.commit.message
+        for commit in commits_since_tag
+        if commit.commit.author.date > last_tag_datetime
+    ]
 
 
 def get_conventional_commits_prefix(commit_message: str) -> str | None:
@@ -147,9 +151,6 @@ def main():
 
     with open("semver_result.json", "w") as f:
         json.dump(result_dict, f, indent=4)
-
-    with open("changelog_delta.txt", "w") as f:
-        f.writelines(commit_messages)
 
 
 if __name__ == "__main__":
