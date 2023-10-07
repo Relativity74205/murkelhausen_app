@@ -1,8 +1,6 @@
-#on:
-#  release:
-#    types: [released, created, published]
 on:
-  create:
+  release:
+    types: [released, created, published]
 
 jobs:
   build_container:

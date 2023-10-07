@@ -51,3 +51,4 @@ jobs:
           draft: false
           prerelease: false
           makeLatest: true
+          token: ${{ secrets.PAT }}
