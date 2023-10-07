@@ -6,6 +6,8 @@ from enum import StrEnum, auto
 
 from github import Github, Auth, Repository
 
+REPO_NAME = "Relativity74205/murkelhausen_app"
+
 
 @dataclass
 class Tag:
@@ -57,7 +59,7 @@ def get_github_repo() -> Repository:
 
     g = Github(auth=auth)
 
-    return g.get_repo("Relativity74205/murkelhausen_app")
+    return g.get_repo(REPO_NAME)
 
 
 def get_last_tag(repo: Repository) -> tuple[Tag | None, datetime | None]:

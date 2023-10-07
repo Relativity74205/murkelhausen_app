@@ -22,11 +22,8 @@ jobs:
         id: write_tag
         if: steps.semver.outputs.next_tag != ''
         run: |
-#         to prevent git add fail when pyproject.toml and docker-compose.yml is not changed
           rm semver_result.json
-          # pyproject.toml
           sed -i "s/version = \".*\"/version = \"${{ steps.semver.outputs.next_tag }}\"/g" pyproject.toml
-          # docker-compose.yml
           sed -i "/image:/ s/:[^:]*$/:${{ steps.semver.outputs.next_tag }}/" docker-compose.yml
           git config --local user.email "foo@bar.com"
           git config --local user.name "github-actions[bot]"
