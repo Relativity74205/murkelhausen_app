@@ -10,12 +10,16 @@
 
 ...
 
-### 'changelog_delta'
+### `changelog_delta`
 
 ...
 
 ## Example usage
 
 ```yaml
-uses: actions/semver
+      - name: Semver
+        uses: ./.github/actions/semver
+        id: semver
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
