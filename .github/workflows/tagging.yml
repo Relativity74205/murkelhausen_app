@@ -30,6 +30,9 @@ jobs:
           git add pyproject.toml docker-compose.yml
           git commit -m "chore: update pyproject.toml and docker-compose.yml" --allow-empty
           git push
+          echo "NEW_COMMIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+      - name: Test
+        run: echo $NEW_COMMIT_SHA
       - name: Create tag
         uses: actions/github-script@v5
         if: steps.semver.outputs.next_tag != ''
@@ -39,7 +42,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: 'refs/tags/${{ steps.semver.outputs.next_tag }}',
-              sha: context.sha
+              sha: $NEW_COMMIT_SHA
             })
       - name: Create Release
         id: create_release
