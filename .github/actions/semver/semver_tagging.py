@@ -87,7 +87,7 @@ def get_commit_messages_since_tag(
 
 def get_conventional_commits_prefix(commit_message: str) -> str | None:
     try:
-        return commit_message.split(":")[0]
+        return commit_message.split(":")[0].strip()
     except IndexError:
         return None
 
