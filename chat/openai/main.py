@@ -35,7 +35,7 @@ def generate_chat_completion(
 
     answer = completion.choices[0].message.content
 
-    return answer
+    return answer, None
 
 
 def speech_to_text():
