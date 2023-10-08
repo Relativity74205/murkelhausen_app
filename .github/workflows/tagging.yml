@@ -42,7 +42,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: 'refs/tags/${{ steps.semver.outputs.next_tag }}',
-              sha: $NEW_COMMIT_SHA
+              sha: '${{ env.NEW_COMMIT_SHA }}'
             })
       - name: Create Release
         id: create_release
