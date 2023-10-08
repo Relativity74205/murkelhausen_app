@@ -1,0 +1,17 @@
+{% extends 'chat/base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<h2>Chat System aktualisieren</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% bootstrap_button content="Speichern" button_type="submit" %}
+    <a class="btn btn-secondary" href="{% url 'chat:chatsystem_list' %}">Abbruch</a>
+    <a class="btn btn-danger" href="{% url 'chat:chatsystem_update' chatsystem.id %}">Löschen</a>
+</form>
+
+{% endblock %}

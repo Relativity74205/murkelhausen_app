@@ -16,7 +16,10 @@ def image_generation():
 
 
 def generate_chat_completion(
-    input_message: str, model: OpenAIModel = OpenAIModel.GPT35TURBO
+    *,
+    input_message: str,
+    system_setup_text: str | None,
+    model: OpenAIModel = OpenAIModel.GPT35TURBO
 ) -> tuple[str | None, str | None]:
     """
     https://platform.openai.com/docs/guides/gpt/chat-completions-api
@@ -26,16 +29,20 @@ def generate_chat_completion(
     - [ ] count usage tokens from answer
     - [ ] evaluate finish_reason
     """
+    messages = []
+    if system_setup_text is not None:
+        messages.append({"role": "system", "content": system_setup_text})
+
+    messages.append({"role": "user", "content": input_message})
+
     try:
-        completion = openai.ChatCompletion.create(
-            model=model, messages=[{"role": "user", "content": input_message}]
-        )
+        completion = openai.ChatCompletion.create(model=model, messages=messages)
     except openai.error.AuthenticationError:
         return None, "No or wrong API key set"
 
     answer = completion.choices[0].message.content
 
-    return answer
+    return answer, None
 
 
 def speech_to_text():

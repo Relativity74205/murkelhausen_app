@@ -1,0 +1,19 @@
+{% extends 'chat/base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<script>
+setFocusOnField("id_name");
+</script>
+
+<h2>Chat System hinzufügen</h2>
+
+<form method="post">{% csrf_token %}
+    {% bootstrap_form form %}
+    {% bootstrap_button content="Speichern" button_type="submit" %}
+    <a class="btn btn-secondary" href="{% url 'chat:chatsystem_list' %}">Abbruch</a>
+</form>
+
+{% endblock %}

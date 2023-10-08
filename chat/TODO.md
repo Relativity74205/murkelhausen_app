@@ -1,0 +1,11 @@
+- [ ] save token usage
+  - [ ] calculate price
+  - [ ] create eval page
+- [ ] prettify output from gpt
+- [ ] add stream possibility
+- [ ] persist questions
+- [ ] build chat gpt
+  - [ ] persist chat
+- [ ] multiuser setup
+- [ ] speech to text
+- [ ] image generation with dall-e

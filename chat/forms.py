@@ -1,5 +1,7 @@
 from django import forms
 
+from chat import models
+
 
 class QAForm(forms.Form):
     input = forms.CharField(
@@ -11,4 +13,9 @@ class QAForm(forms.Form):
             }
         ),
         label="",
+    )
+    system = forms.ModelChoiceField(
+        widget=forms.Select(),
+        queryset=models.ChatSystem.objects.order_by("-created").all(),
+        required=False,
     )
