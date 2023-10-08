@@ -15,7 +15,9 @@ class QAView(View):
         self.request.session["qa_answer"] = output
 
     def _load_chat(self) -> str:
-        return self.request.session.get("qa_answer", "")
+        answer = self.request.session.get("qa_answer", "")
+        self.request.session["qa_answer"] = None
+        return answer
 
     def get(self, request, *args, **kwargs):
         context = {
@@ -28,7 +30,6 @@ class QAView(View):
         chat_form = forms.QAForm(request.POST)
         if chat_form.is_valid():
             input_message = chat_form.cleaned_data["input"]
-            # TODO: Add some kind of error handling, especially if no API key is set
             answer = generate_chat_completion(input_message)
             self._save_chat(answer)
 

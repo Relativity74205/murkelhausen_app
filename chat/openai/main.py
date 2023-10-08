@@ -26,10 +26,12 @@ def generate_chat_completion(
     - [ ] count usage tokens from answer
     - [ ] evaluate finish_reason
     """
-    # TODO add some kind of error handling, especially if no API key is set
-    completion = openai.ChatCompletion.create(
-        model=model, messages=[{"role": "user", "content": input_message}]
-    )
+    try:
+        completion = openai.ChatCompletion.create(
+            model=model, messages=[{"role": "user", "content": input_message}]
+        )
+    except openai.error.AuthenticationError:
+        return "No or wrong API key set"
 
     answer = completion.choices[0].message.content
 
