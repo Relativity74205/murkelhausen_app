@@ -24,5 +24,6 @@ urlpatterns = [
     path("statements/", include("statements.urls")),
     path("murkelhausen_info/", include("murkelhausen_info.urls")),
     path("trainer/", include("trainer.urls")),
+    path("chat/", include("chat.urls")),
     path("admin/", admin.site.urls),
 ]

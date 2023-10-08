@@ -1,0 +1,26 @@
+{% extends 'chat/base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<script>
+setFocusOnField("input");
+</script>
+
+<p><h2>Trainieren</h2></p>
+
+<form method="post" id="qa_form">
+  {% csrf_token %}
+    {% bootstrap_form qa_form %}
+    {% bootstrap_button content="Fragen!" button_type="submit" %}
+</form>
+
+{% if qa_answer %}
+    <p>
+    <mark style="background-color: lightblue">{{ qa_answer }}</mark>.
+    </p>
+{% endif %}
+
+{% endblock %}
+
