@@ -1,0 +1,20 @@
+{% extends 'trainer/base.html' %}
+{% load django_tables2 %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<p><h2>Chat System Liste</h2>
+
+<p><a class="btn btn-primary" href={% url 'chat:chatsystem_add' %} > Chat System hinzufügen </a></p>
+
+{% if filter %}
+    <form action="" method="get" class="form form-inline">
+        {% bootstrap_form filter.form layout='horizontal' %}
+        {% bootstrap_button 'filter' %}
+        <a class="btn btn-secondary" href={% url 'chat:chatsystem_list' %} > Clear All </a>
+    </form>
+{% endif %}
+{% render_table table %}
+
+{% endblock %}

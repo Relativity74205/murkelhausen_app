@@ -25,13 +25,13 @@ COPY statements statements
 COPY trainer trainer
 COPY pages pages
 COPY chat chat
-COPY manage.py pyproject.toml poetry.lock* README.md ./
+COPY manage.py entrypoint.sh pyproject.toml poetry.lock* README.md ./
 
 RUN poetry config installer.max-workers 10 && \
     poetry config virtualenvs.in-project true && \
     poetry install --no-dev
 
-ENTRYPOINT ["poetry", "run", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+ENTRYPOINT ["./entrypoint.sh"]
 
 EXPOSE 8000
 

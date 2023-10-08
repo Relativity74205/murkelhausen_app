@@ -1,9 +1,12 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views import View
+from django.views.generic import CreateView, UpdateView, DeleteView
+from django_tables2 import SingleTableView
 from pydantic import BaseModel
 
-from chat import forms
+from chat import forms, models, tables
 from chat.openai.main import generate_chat_completion
 
 
@@ -52,3 +55,29 @@ class QAView(View):
             )
 
         return HttpResponseRedirect(request.path_info)
+
+
+class ChatSystemView(SingleTableView):
+    model = models.ChatSystem
+    template_name = "chat/chatsystem.html"
+    table_class = tables.ChatSystemTable
+
+
+class AddChatSystemView(CreateView):
+    model = models.ChatSystem
+    fields = ["name", "system_setup_text"]
+    template_name_suffix = "_create_form"
+    success_url = reverse_lazy("chat:chatsystem_list")
+
+
+class UpdateChatSystemView(UpdateView):
+    model = models.ChatSystem
+    fields = ["name", "system_setup_text"]
+    template_name_suffix = "_update_form"
+    success_url = reverse_lazy("chat:chatsystem_list")
+
+
+class DeleteChatSystemView(DeleteView):
+    model = models.ChatSystem
+    template_name_suffix = "_delete_form"
+    success_url = reverse_lazy("chat:chatsystem_list")

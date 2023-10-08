@@ -1,0 +1,20 @@
+{% extends 'trainer/base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<h2>Vokabel Gruppe Löschen</h2>
+
+<p>
+    Soll die Vokabel Gruppe <strong>{{ vokabelgroup.name }}</strong> wirklich gelöscht werden?
+</p>
+
+<form method="post">{% csrf_token %}
+    {% bootstrap_form form %}
+    {% bootstrap_button content="Löschen" button_type="submit" button_class="btn btn-danger" %}
+</form>
+
+<a class="btn btn-primary" href="{% url 'trainer:group_list' %}">Abbruch</a>
+
+{% endblock %}

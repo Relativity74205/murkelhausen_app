@@ -6,16 +6,19 @@ from django_tables2 import tables, LinkColumn, A, DateTimeColumn, Column
 from . import models
 
 
+# TODO move to own common module
 class DeleteColumn(LinkColumn):
     def render(self, record, value):
         return mark_safe('<i class="fas fa-times" style="color: red;"></i>')
 
 
+# TODO move to own common module
 class UpdateColumn(LinkColumn):
     def render(self, record, value):
         return mark_safe('<i class="fa-solid fa-pen-to-square"></i>')
 
 
+# TODO move to own common module
 class NumberColumn(Column):
     def render(self, value):
         return f"{value:.0f}"
