@@ -17,7 +17,7 @@ def image_generation():
 
 def generate_chat_completion(
     input_message: str, model: OpenAIModel = OpenAIModel.GPT35TURBO
-) -> str:
+) -> tuple[str | None, str | None]:
     """
     https://platform.openai.com/docs/guides/gpt/chat-completions-api
     https://platform.openai.com/docs/api-reference/chat/create
@@ -31,7 +31,7 @@ def generate_chat_completion(
             model=model, messages=[{"role": "user", "content": input_message}]
         )
     except openai.error.AuthenticationError:
-        return "No or wrong API key set"
+        return None, "No or wrong API key set"
 
     answer = completion.choices[0].message.content
 

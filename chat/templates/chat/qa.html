@@ -16,12 +16,12 @@ setFocusOnField("input");
     {% bootstrap_button content="Fragen!" button_type="submit" %}
 </form>
 
-{% if qa_answer %}
+{% if last_qa_question %}
     <p>
-    {% if qa_answer == 'No or wrong API key set' %}
-        <mark style="background-color: lightcoral">{{ qa_answer }}</mark>
+    {% if last_qa_question.answer %}
+        <mark style="background-color: lightgreen">{{ last_qa_question.answer }}</mark>
     {% else %}
-        <mark style="background-color: lightgreen">{{ qa_answer }}</mark>
+        <mark style="background-color: lightcoral">{{ last_qa_question.error_msg }}</mark>
     {% endif %}
 
     </p>
