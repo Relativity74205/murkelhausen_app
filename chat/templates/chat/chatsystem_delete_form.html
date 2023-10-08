@@ -1,13 +1,13 @@
-{% extends 'trainer/base.html' %}
+{% extends 'chat/base.html' %}
 
 {% load django_bootstrap5 %}
 
 {% block content %}
 
-<h2>Vokabel Gruppe Löschen</h2>
+<h2>Chat System Löschen</h2>
 
 <p>
-    Soll die Vokabel Gruppe <strong>{{ vokabelgroup.name }}</strong> wirklich gelöscht werden?
+    Soll das Chat System  <strong>{{ chatsystem.name }}</strong> wirklich gelöscht werden?
 </p>
 
 <form method="post">{% csrf_token %}
@@ -15,6 +15,6 @@
     {% bootstrap_button content="Löschen" button_type="submit" button_class="btn btn-danger" %}
 </form>
 
-<a class="btn btn-primary" href="{% url 'trainer:group_list' %}">Abbruch</a>
+<a class="btn btn-primary" href="{% url 'chat:chatsystem_list' %}">Abbruch</a>
 
 {% endblock %}

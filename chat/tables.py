@@ -24,14 +24,14 @@ class NumberColumn(Column):
 
 class ChatSystemTable(tables.Table):
     update = UpdateColumn(
-        "chat:system_group_update",
+        "chat:chatsystem_update",
         args=[A("id")],
         text="Ändern",
         verbose_name="Ändern",
         orderable=False,
     )
     delete = DeleteColumn(
-        "trainer:group_delete",
+        "chat:chatsystem_delete",
         args=[A("id")],
         text="Löschen",
         verbose_name="Löschen",
@@ -44,6 +44,7 @@ class ChatSystemTable(tables.Table):
         template_name = "django_tables2/bootstrap5.html"
         fields = (
             "name",
-            "system_setup_text" "created",
+            "system_setup_text",
+            "created",
         )
         order_by = "-created"

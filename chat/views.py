@@ -3,10 +3,11 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView
-from django_tables2 import SingleTableView
+from django_filters.views import FilterView
+from django_tables2 import SingleTableView, SingleTableMixin
 from pydantic import BaseModel
 
-from chat import forms, models, tables
+from chat import forms, models, tables, filters
 from chat.openai.main import generate_chat_completion
 
 
@@ -26,7 +27,6 @@ class QAView(View):
         last_question = self.LastQAQuestion(
             question=input_message, answer=answer, error_msg=error_msg
         )
-        print(f"last_question: {last_question}")
         self.request.session["last_qa_question"] = last_question.model_dump(mode="json")
 
     def _load_last_qa_question(self) -> LastQAQuestion | None:
@@ -34,7 +34,6 @@ class QAView(View):
             answer = self.LastQAQuestion(**self.request.session.get("last_qa_question"))
         except TypeError:
             answer = None
-        print(f"answer: {answer}")
         self.request.session["last_qa_question"] = None
         return answer
 
@@ -49,7 +48,15 @@ class QAView(View):
         chat_form = forms.QAForm(request.POST)
         if chat_form.is_valid():
             input_message = chat_form.cleaned_data["input"]
-            answer, error_msg = generate_chat_completion(input_message)
+            system_name = chat_form.cleaned_data["system"]
+            try:
+                system = models.ChatSystem.objects.get(name=system_name)
+            except models.ChatSystem.DoesNotExist:
+                system = None
+
+            answer, error_msg = generate_chat_completion(
+                input_message=input_message, system_setup_text=system.system_setup_text
+            )
             self._save_last_qa_question(
                 input_message=input_message, answer=answer, error_msg=error_msg
             )
@@ -57,10 +64,11 @@ class QAView(View):
         return HttpResponseRedirect(request.path_info)
 
 
-class ChatSystemView(SingleTableView):
+class ChatSystemView(SingleTableMixin, FilterView):
     model = models.ChatSystem
     template_name = "chat/chatsystem.html"
     table_class = tables.ChatSystemTable
+    filterset_class = filters.ChatSystemFilter
 
 
 class AddChatSystemView(CreateView):
