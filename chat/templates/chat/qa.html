@@ -18,7 +18,12 @@ setFocusOnField("input");
 
 {% if qa_answer %}
     <p>
-    <mark style="background-color: lightblue">{{ qa_answer }}</mark>.
+    {% if qa_answer == 'No or wrong API key set' %}
+        <mark style="background-color: lightcoral">{{ qa_answer }}</mark>
+    {% else %}
+        <mark style="background-color: lightgreen">{{ qa_answer }}</mark>
+    {% endif %}
+
     </p>
 {% endif %}
 
