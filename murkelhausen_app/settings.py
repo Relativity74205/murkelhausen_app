@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "statements.apps.StatementsConfig",
     "trainer.apps.TrainerConfig",
     "murkelhausen_info.apps.MurkelhausenInfoConfig",
+    "chat.apps.ChatConfig",
     "pages.apps.PagesConfig",
     "django_tables2",
     "django_bootstrap5",
@@ -144,3 +145,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 TRAINER_LAST_N = 5
 TRAINER_RANDOM_OFFSET = 0.2
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
