@@ -51,11 +51,12 @@ class QAView(View):
             system_name = chat_form.cleaned_data["system"]
             try:
                 system = models.ChatSystem.objects.get(name=system_name)
-            except models.ChatSystem.DoesNotExist:
-                system = None
+                system_setup_text = system.system_setup_text
+            except (models.ChatSystem.DoesNotExist, AttributeError):
+                system_setup_text = None
 
             answer, error_msg = generate_chat_completion(
-                input_message=input_message, system_setup_text=system.system_setup_text
+                input_message=input_message, system_setup_text=system_setup_text
             )
             self._save_last_qa_question(
                 input_message=input_message, answer=answer, error_msg=error_msg
