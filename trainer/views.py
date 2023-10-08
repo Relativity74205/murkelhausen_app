@@ -66,19 +66,30 @@ class AddVokabelView(CreateView):
     template_name = "trainer/vokabel_create_form.html"
     success_url = reverse_lazy("trainer:add")
 
+    class LastAddedVokabel(BaseModel):
+        group: str
+        deutsch: str
+        englisch: str
+        id: int | None
+
+    def _get_last_added_vokabel(self) -> LastAddedVokabel | None:
+        try:
+            return self.LastAddedVokabel(
+                **self.request.session.get("last_added_vokabel")
+            )
+        except TypeError:
+            return None
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["last_object_deutsch"] = self.request.session["last_object_deutsch"]
-        context["last_object_englisch"] = self.request.session["last_object_englisch"]
-        context["last_object_id"] = self.request.session["last_object_id"]
-        self.request.session["last_object_deutsch"] = None
-        self.request.session["last_object_englisch"] = None
-        self.request.session["last_object_id"] = None
+
+        context["last_added_vokabel"] = self._get_last_added_vokabel()
+        self.request.session["last_added_vokabel"] = None
         return context
 
     def get(self, request: HttpRequest, *args, **kwargs):
-        if group_id := self.request.session.get("last_group_added_to"):
-            self.initial["group"] = group_id
+        if last_added_vokabel := self._get_last_added_vokabel():
+            self.initial["group"] = last_added_vokabel.group
         else:
             self.initial["group"] = models.VokabelGroup.objects.order_by(
                 "-created"
@@ -88,13 +99,16 @@ class AddVokabelView(CreateView):
 
     def post(self, request: HttpRequest, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        self.request.session["last_object_group"] = request.POST["group"]
-        self.request.session["last_object_deutsch"] = request.POST["deutsch"]
-        self.request.session["last_object_englisch"] = request.POST["englisch"]
         try:
-            self.request.session["last_object_id"] = self.object.id
+            last_object_id = self.object.id
         except AttributeError:
-            self.request.session["last_object_id"] = None
+            last_object_id = None
+        request.session["last_added_vokabel"] = self.LastAddedVokabel(
+            group=request.POST["group"],
+            deutsch=request.POST["deutsch"],
+            englisch=request.POST["englisch"],
+            id=last_object_id,
+        ).model_dump(mode="json")
         return response
 
 
@@ -114,6 +128,7 @@ class DeleteVokabelView(DeleteView):
     model = models.Vokabel
     fields = ["deutsch", "englisch", "group"]
     template_name_suffix = "_delete_form"
+    # TODO success_url based on entry last page; if "Vokabel Hinzufuegen", then success_url = reverse_lazy("trainer:add")
     success_url = reverse_lazy("trainer:list")
 
 

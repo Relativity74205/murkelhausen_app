@@ -15,14 +15,14 @@ setFocusOnField("id_deutsch");
     {% bootstrap_button content="Speichern" button_type="submit" %}
 </form>
 
-{% if last_object_deutsch %}
+{% if last_added_vokabel %}
 <h5>Letzte Vokabel</h5>
 <table class="table table-striped" style="width: max-content; text-align: center">
     <tr><td>Deutsch</td><td>Englisch</td></tr>
-    <tr><td>{{ last_object_deutsch }}</td><td>{{ last_object_englisch }}</td></tr>
+    <tr><td>{{ last_added_vokabel.deutsch }}</td><td>{{ last_added_vokabel.englisch }}</td></tr>
 </table>
-<a class="btn btn-secondary" href="{% url 'trainer:update' last_object_id %}">Ändern</a>
-<a class="btn btn-secondary" href="{% url 'trainer:delete' last_object_id %}">Löschen</a>
+<a class="btn btn-secondary" href="{% url 'trainer:update' last_added_vokabel.id %}">Ändern</a>
+<a class="btn btn-secondary" href="{% url 'trainer:delete' last_added_vokabel.id %}">Löschen</a>
 {% endif %}
 
 {% endblock %}
