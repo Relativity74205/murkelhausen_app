@@ -28,6 +28,7 @@ class QAView(View):
         chat_form = forms.QAForm(request.POST)
         if chat_form.is_valid():
             input_message = chat_form.cleaned_data["input"]
+            # TODO: Add some kind of error handling, especially if no API key is set
             answer = generate_chat_completion(input_message)
             self._save_chat(answer)
 
