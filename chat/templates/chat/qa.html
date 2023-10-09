@@ -1,14 +1,14 @@
 {% extends 'chat/base.html' %}
 
 {% load django_bootstrap5 %}
-
+{% load markdownify %}
 {% block content %}
 
 <script>
 setFocusOnField("input");
 </script>
 
-<p><h2>Trainieren</h2></p>
+<p><h2>GPT fragen</h2>
 
 <form method="post" id="qa_form">
   {% csrf_token %}
@@ -19,7 +19,7 @@ setFocusOnField("input");
 {% if last_qa_question %}
     <p>
     {% if last_qa_question.answer %}
-        <mark style="background-color: lightgreen">{{ last_qa_question.answer }}</mark>
+        {{ last_qa_question.answer|markdownify }}
     {% else %}
         <mark style="background-color: lightcoral">{{ last_qa_question.error_msg }}</mark>
     {% endif %}

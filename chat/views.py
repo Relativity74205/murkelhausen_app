@@ -58,6 +58,14 @@ class QAView(View):
             answer, error_msg = generate_chat_completion(
                 input_message=input_message, system_setup_text=system_setup_text
             )
+            #             error_msg = None
+            #             answer = """
+            # ``` { .lang #example style="color: #333; background: #666666;" }
+            # def foo(a, b):
+            #     return a + b
+            # ```
+            #             """
+            #             print(f"{answer=}")
             self._save_last_qa_question(
                 input_message=input_message, answer=answer, error_msg=error_msg
             )

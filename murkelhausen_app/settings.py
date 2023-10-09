@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django_tables2",
     "django_bootstrap5",
     "django_filters",
+    "markdownify.apps.MarkdownifyConfig",
     "fontawesomefree",
 ]
 
@@ -136,12 +137,21 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# DJANGO_TABLES2_TABLE_ATTRS = {
-#     "class": "table table-hover",
-#     "thead": {
-#         "class": "table-light",
-#     },
-# }
+MARKDOWNIFY = {
+    "default": {
+        "MARKDOWN_EXTENSIONS": [
+            "fenced_code",
+            "attr_list",
+            # "codehilite", # TODO  https://python-markdown.github.io/extensions/code_hilite/
+        ],
+        "MARKDOWN_EXTENSION_CONFIGS": {
+            "fenced_code": {
+                "lang_prefix": "python-",
+            }
+        },
+        "BLEACH": False,  # TODO replace by a correct bleach config
+    }
+}
 
 TRAINER_LAST_N = 5
 TRAINER_RANDOM_OFFSET = 0.2

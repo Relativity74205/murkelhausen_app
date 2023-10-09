@@ -5,11 +5,11 @@ from chat import models
 
 class QAForm(forms.Form):
     input = forms.CharField(
-        widget=forms.TextInput(
+        widget=forms.Textarea(
             attrs={
                 "placeholder": "GPT fragen.",
                 "autocomplete": "off",
-                "style": "width: 400px",
+                "style": "width: 800px",
             }
         ),
         label="",
