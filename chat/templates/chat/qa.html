@@ -4,28 +4,48 @@
 {% load markdownify %}
 {% block content %}
 
-<script>
-setFocusOnField("input");
-</script>
+{#<script>#}
+{#setFocusOnField("input");#}
+{#</script>#}
 
 <p><h2>GPT fragen</h2>
 
-<form method="post" id="qa_form">
+<form id="qa_form">
   {% csrf_token %}
     {% bootstrap_form qa_form %}
-    {% bootstrap_button content="Fragen!" button_type="submit" %}
+    {% bootstrap_button content="Fragen!" id="askGPT" button_type="submit" %}
 </form>
 
-{% if last_qa_question %}
-    <p>
-    {% if last_qa_question.answer %}
-        {{ last_qa_question.answer|markdownify }}
-    {% else %}
-        <mark style="background-color: lightcoral">{{ last_qa_question.error_msg }}</mark>
-    {% endif %}
+{#{% if last_qa_question %}#}
+{#    <p>#}
+{#    {% if last_qa_question.answer %}#}
+{#        {{ last_qa_question.answer|markdownify }}#}
+{#    {% else %}#}
+{#        <mark style="background-color: lightcoral">{{ last_qa_question.error_msg }}</mark>#}
+{#    {% endif %}#}
+{##}
+{#    </p>#}
+{#{% endif %}#}
 
-    </p>
-{% endif %}
+<div id="answer"></div>
 
-{% endblock %}
+<script>
+  (function() {
+    const url = "{% url 'chat:call_openai_api' %}";
+    // POST
+    const qa_form = document.getElementById("qa_form");
+    qa_form.addEventListener("submit", (e) => {
+      // prevent page reload
+      e.preventDefault();
+      // get the values from the form fields
+      const payload = {
+        input: qa_form.elements["input"].value,
+        system: qa_form.elements["system"].value,
+      }
+      call_murkelhausen_gpt_endpoint(url, payload);
+    });
+  })();
+</script>
 
+
+{% endblock content %}

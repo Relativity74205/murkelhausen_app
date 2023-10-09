@@ -1,4 +1,6 @@
-from django.http import HttpResponseRedirect
+import json
+
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
@@ -45,6 +47,7 @@ class QAView(View):
         return render(request, "chat/qa.html", context=context)
 
     def post(self, request, *args, **kwargs):
+        print("foobar")
         chat_form = forms.QAForm(request.POST)
         if chat_form.is_valid():
             input_message = chat_form.cleaned_data["input"]
@@ -98,3 +101,29 @@ class DeleteChatSystemView(DeleteView):
     model = models.ChatSystem
     template_name_suffix = "_delete_form"
     success_url = reverse_lazy("chat:chatsystem_list")
+
+
+def call_openai_api(request):
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+    if not is_ajax or request.method != "POST":
+        return HttpResponseBadRequest("Invalid request")
+
+    data = json.load(request)
+    input_message = data.get("input", None)
+    system_name = data.get("system", None)
+    try:
+        system = models.ChatSystem.objects.get(name=system_name)
+        system_setup_text = system.system_setup_text
+    except (models.ChatSystem.DoesNotExist, AttributeError):
+        system_setup_text = None
+
+    answer, error_msg = generate_chat_completion(
+        input_message=input_message, system_setup_text=system_setup_text
+    )
+
+    response = {
+        "answer": answer,
+        "error_msg": error_msg,
+    }
+
+    return JsonResponse(response)
