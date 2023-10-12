@@ -1,4 +1,5 @@
-from enum import StrEnum, auto
+import functools
+from enum import StrEnum
 
 import openai
 
@@ -35,6 +36,7 @@ def generate_chat_completion(
 
     messages.append({"role": "user", "content": input_message})
 
+    # TODO count tokes with https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken
     try:
         completion = openai.ChatCompletion.create(model=model, messages=messages)
     except openai.error.AuthenticationError:
@@ -43,6 +45,53 @@ def generate_chat_completion(
     answer = completion.choices[0].message.content
 
     return answer, None
+
+
+# TODO save stream object in session/ a dict? to handle parallel requests
+def save_stream(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if not wrapper.results:
+            wrapper.results = func(*args, **kwargs)
+
+        # TODO return more results, if possible
+        delta = next(wrapper.results)
+
+        if delta["choices"][0]["finish_reason"] == "stop":
+            wrapper.results = None
+            return "", True
+
+        return delta["choices"][0]["delta"]["content"], False
+
+    wrapper.results = None
+
+    return wrapper
+
+
+@save_stream
+def generate_chat_completion_stream(
+    *,
+    input_message: str,
+    system_setup_text: str | None,
+    model: OpenAIModel = OpenAIModel.GPT35TURBO
+) -> tuple[str, bool]:
+    """
+    https://platform.openai.com/docs/guides/gpt/chat-completions-api
+    https://platform.openai.com/docs/api-reference/chat/create
+
+    TODOs
+    - [ ] count usage tokens from answer
+    - [ ] evaluate finish_reason
+    """
+    messages = []
+    if system_setup_text is not None:
+        messages.append({"role": "system", "content": system_setup_text})
+
+    messages.append({"role": "user", "content": input_message})
+
+    delta = openai.ChatCompletion.create(model=model, messages=messages, stream=True)
+
+    return delta
 
 
 def speech_to_text():

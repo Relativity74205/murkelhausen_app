@@ -10,7 +10,7 @@ from django_tables2 import SingleTableView, SingleTableMixin
 from pydantic import BaseModel
 
 from chat import forms, models, tables, filters
-from chat.openai.main import generate_chat_completion
+from chat.openai.main import generate_chat_completion, generate_chat_completion_stream
 
 
 def start(request):
@@ -61,14 +61,7 @@ class QAView(View):
             answer, error_msg = generate_chat_completion(
                 input_message=input_message, system_setup_text=system_setup_text
             )
-            #             error_msg = None
-            #             answer = """
-            # ``` { .lang #example style="color: #333; background: #666666;" }
-            # def foo(a, b):
-            #     return a + b
-            # ```
-            #             """
-            #             print(f"{answer=}")
+
             self._save_last_qa_question(
                 input_message=input_message, answer=answer, error_msg=error_msg
             )
@@ -117,13 +110,13 @@ def call_openai_api(request):
     except (models.ChatSystem.DoesNotExist, AttributeError):
         system_setup_text = None
 
-    answer, error_msg = generate_chat_completion(
+    answer, finished = generate_chat_completion_stream(
         input_message=input_message, system_setup_text=system_setup_text
     )
 
     response = {
         "answer": answer,
-        "error_msg": error_msg,
+        "request_finished": finished,
     }
 
     return JsonResponse(response)

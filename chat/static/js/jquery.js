@@ -16,19 +16,24 @@ function getCookie(name) {
 
 
 function call_murkelhausen_gpt_endpoint(url, payload) {
-    fetch(url, {
-          method: "POST",
-          credentials: "same-origin",
-          headers: {
+    return fetch(url, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
             "Content-Type": "application/json",
             "X-Requested-With": "XMLHttpRequest",
             "X-CSRFToken": getCookie("csrftoken"),
-          },
-          body: JSON.stringify(payload)
-        })
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById("answer").textContent = data.answer;
-        })
-    ;
+        },
+        body: JSON.stringify(payload)
+    })
+        .then((response) => {
+            if(response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Server response wasn\'t OK');
+            }
+          })
+        .then((data) => {
+            return data;
+        });
 }
