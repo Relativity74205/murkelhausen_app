@@ -1,31 +1,62 @@
 {% extends 'chat/base.html' %}
 
 {% load django_bootstrap5 %}
-
+{% load markdownify %}
 {% block content %}
 
-<script>
-setFocusOnField("input");
-</script>
+{#<script>#}
+{#setFocusOnField("input");#}
+{#</script>#}
 
-<p><h2>Trainieren</h2></p>
+<p><h2>GPT fragen</h2>
 
-<form method="post" id="qa_form">
+<form id="qa_form">
   {% csrf_token %}
     {% bootstrap_form qa_form %}
-    {% bootstrap_button content="Fragen!" button_type="submit" %}
+    {% bootstrap_button content="Fragen!" id="askGPT" button_type="submit" %}
 </form>
 
-{% if last_qa_question %}
-    <p>
-    {% if last_qa_question.answer %}
-        <mark style="background-color: lightgreen">{{ last_qa_question.answer }}</mark>
-    {% else %}
-        <mark style="background-color: lightcoral">{{ last_qa_question.error_msg }}</mark>
-    {% endif %}
+{#{% if last_qa_question %}#}
+{#    <p>#}
+{#    {% if last_qa_question.answer %}#}
+{#        {{ last_qa_question.answer|markdownify }}#}
+{#    {% else %}#}
+{#        <mark style="background-color: lightcoral">{{ last_qa_question.error_msg }}</mark>#}
+{#    {% endif %}#}
+{##}
+{#    </p>#}
+{#{% endif %}#}
 
-    </p>
-{% endif %}
+<div id="answer"></div>
 
-{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  (async function() {
+    const url = "{% url 'chat:call_openai_api' %}";
+    const qa_form = document.getElementById("qa_form");
 
+
+    qa_form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        let full_answer = "";
+        document.getElementById("answer").innerHTML = "";
+        const payload = {
+            input: qa_form.elements["input"].value,
+            system: qa_form.elements["system"].value,
+        }
+        let i = 0;
+        while (true) {
+            let result = await call_murkelhausen_gpt_endpoint(url, payload)
+            if (result.request_finished) {
+                break;
+            }
+            full_answer += result.answer;
+            document.getElementById("answer").innerHTML = marked.parse(full_answer);
+            i++;
+        }
+    });
+  })();
+</script>
+
+
+{% endblock content %}

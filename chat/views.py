@@ -1,4 +1,6 @@
-from django.http import HttpResponseRedirect
+import json
+
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
@@ -8,7 +10,7 @@ from django_tables2 import SingleTableView, SingleTableMixin
 from pydantic import BaseModel
 
 from chat import forms, models, tables, filters
-from chat.openai.main import generate_chat_completion
+from chat.openai.main import generate_chat_completion, generate_chat_completion_stream
 
 
 def start(request):
@@ -45,6 +47,7 @@ class QAView(View):
         return render(request, "chat/qa.html", context=context)
 
     def post(self, request, *args, **kwargs):
+        print("foobar")
         chat_form = forms.QAForm(request.POST)
         if chat_form.is_valid():
             input_message = chat_form.cleaned_data["input"]
@@ -58,6 +61,7 @@ class QAView(View):
             answer, error_msg = generate_chat_completion(
                 input_message=input_message, system_setup_text=system_setup_text
             )
+
             self._save_last_qa_question(
                 input_message=input_message, answer=answer, error_msg=error_msg
             )
@@ -90,3 +94,42 @@ class DeleteChatSystemView(DeleteView):
     model = models.ChatSystem
     template_name_suffix = "_delete_form"
     success_url = reverse_lazy("chat:chatsystem_list")
+
+
+def call_openai_api(request):
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+    if not is_ajax or request.method != "POST":
+        return HttpResponseBadRequest("Invalid request")
+
+    data = json.load(request)
+    input_message = data.get("input", None)
+    system_id = data.get("system", None)
+    try:
+        system = models.ChatSystem.objects.get(id=system_id)
+        system_setup_text = system.system_setup_text
+    except (models.ChatSystem.DoesNotExist, AttributeError):
+        system_setup_text = None
+
+    answer, finished = get_next_delta(input_message, system_setup_text)
+
+    response = {
+        "answer": answer,
+        "request_finished": finished,
+    }
+
+    return JsonResponse(response)
+
+
+def get_next_delta(
+    input_message: str, system_setup_text: str, count_tokens: int = 5
+) -> tuple[str, bool]:
+    answer = ""
+    for _ in range(count_tokens):
+        single_token, finished = generate_chat_completion_stream(
+            input_message=input_message, system_setup_text=system_setup_text
+        )
+        if finished:
+            return answer, True
+        answer += single_token
+
+    return answer, False

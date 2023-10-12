@@ -18,4 +18,5 @@ urlpatterns = [
         views.DeleteChatSystemView.as_view(),
         name="chatsystem_delete",
     ),
+    path("call_openai_api/", views.call_openai_api, name="call_openai_api"),
 ]
