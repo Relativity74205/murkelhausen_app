@@ -103,16 +103,14 @@ def call_openai_api(request):
 
     data = json.load(request)
     input_message = data.get("input", None)
-    system_name = data.get("system", None)
+    system_id = data.get("system", None)
     try:
-        system = models.ChatSystem.objects.get(name=system_name)
+        system = models.ChatSystem.objects.get(id=system_id)
         system_setup_text = system.system_setup_text
     except (models.ChatSystem.DoesNotExist, AttributeError):
         system_setup_text = None
 
-    answer, finished = generate_chat_completion_stream(
-        input_message=input_message, system_setup_text=system_setup_text
-    )
+    answer, finished = get_next_delta(input_message, system_setup_text)
 
     response = {
         "answer": answer,
@@ -120,3 +118,18 @@ def call_openai_api(request):
     }
 
     return JsonResponse(response)
+
+
+def get_next_delta(
+    input_message: str, system_setup_text: str, count_tokens: int = 5
+) -> tuple[str, bool]:
+    answer = ""
+    for _ in range(count_tokens):
+        single_token, finished = generate_chat_completion_stream(
+            input_message=input_message, system_setup_text=system_setup_text
+        )
+        if finished:
+            return answer, True
+        answer += single_token
+
+    return answer, False

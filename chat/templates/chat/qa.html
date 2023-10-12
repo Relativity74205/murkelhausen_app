@@ -34,10 +34,11 @@
   (async function() {
     const url = "{% url 'chat:call_openai_api' %}";
     const qa_form = document.getElementById("qa_form");
-    let full_answer = "";
+
 
     qa_form.addEventListener("submit", async (e) => {
         e.preventDefault();
+        let full_answer = "";
         document.getElementById("answer").innerHTML = "";
         const payload = {
             input: qa_form.elements["input"].value,
@@ -51,7 +52,6 @@
             }
             full_answer += result.answer;
             document.getElementById("answer").innerHTML = marked.parse(full_answer);
-            {#await new Promise(r => setTimeout(r, 50));#}
             i++;
         }
     });

@@ -9,7 +9,7 @@ class QAForm(forms.Form):
             attrs={
                 "placeholder": "GPT fragen.",
                 "autocomplete": "off",
-                "style": "width: 800px",
+                "style": "height: 100px;",
             }
         ),
         label="",
