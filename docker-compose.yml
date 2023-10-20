@@ -2,6 +2,7 @@ version: '3'
 services:
   murkel:
     image: ghcr.io/relativity74205/murkelhausen_app/murkel_app:1.4.0
+    container_name: murkelhausen
     restart: always
     ports:
       - "80:8000"

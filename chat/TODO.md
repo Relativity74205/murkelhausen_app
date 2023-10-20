@@ -1,10 +1,11 @@
 - [ ] save token usage
   - [ ] calculate price
   - [ ] create eval page
-- [ ] prettify output from gpt
-- [ ] add stream possibility
+- [x] prettify output from gpt
+  - [ ] add code highlighting 
+- [x] add stream possibility
 - [ ] persist questions
-- [ ] build chat gpt
+- [x] build chat gpt
   - [ ] persist chat
 - [ ] multiuser setup
 - [ ] speech to text

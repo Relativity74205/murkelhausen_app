@@ -54,7 +54,6 @@ def save_stream(func):
         if not wrapper.results:
             wrapper.results = func(*args, **kwargs)
 
-        # TODO return more results, if possible
         delta = next(wrapper.results)
 
         if delta["choices"][0]["finish_reason"] == "stop":
@@ -81,7 +80,6 @@ def generate_chat_completion_stream(
 
     TODOs
     - [ ] count usage tokens from answer
-    - [ ] evaluate finish_reason
     """
     messages = []
     if system_setup_text is not None:
