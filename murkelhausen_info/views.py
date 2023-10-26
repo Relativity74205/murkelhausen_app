@@ -1,4 +1,3 @@
-from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.views.generic import ListView
 
@@ -9,12 +8,12 @@ from murkelhausen_info.ruhrbahn.main import get_stations, get_departure_data
 
 class DepartureView(ListView):
     model = DepartureListItem
-    template_name = "murkelhausen_info/foo.html"
+    template_name = "murkelhausen_info/departures.html"
     paginate_by = 10
     station_name = "Lierberg"
 
     def get_queryset(self, **kwargs):
-        station_name_param = self.kwargs.get('station_name', None)
+        station_name_param = self.kwargs.get("station_name", None)
         if station_name_param is not None:
             self.station_name = station_name_param
 
@@ -33,4 +32,8 @@ class DepartureView(ListView):
 
 
 def _get_station_choices() -> dict[int, str]:
-    return dict(StationForm.base_fields['Station'].choices)
+    return dict(StationForm.base_fields["Station"].choices)
+
+
+def start(request):
+    return render(request, "murkelhausen_info/index.html")
