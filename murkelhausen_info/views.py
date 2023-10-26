@@ -37,3 +37,11 @@ def _get_station_choices() -> dict[int, str]:
 
 def start(request):
     return render(request, "murkelhausen_info/index.html")
+
+
+def weather(request):
+    return render(request, "murkelhausen_info/weather.html")
+
+
+def power(request):
+    return render(request, "murkelhausen_info/power.html")

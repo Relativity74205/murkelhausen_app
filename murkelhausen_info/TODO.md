@@ -1,4 +1,4 @@
-- auf neue Formatierung aka zur Trainer App umstellen
+- [x] auf neue Formatierung aka zur Trainer App umstellen
 - Ruhrbahn Info zu Ende bauen
 - Stromverbrauch Page einbauen
 - Wetter Page einbauen
