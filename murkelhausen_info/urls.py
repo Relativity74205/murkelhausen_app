@@ -8,9 +8,9 @@ urlpatterns = [
     path("weather/", views.weather, name="weather"),
     path("power/", views.power, name="power"),
     path("departures/", views.DepartureView.as_view(), name="show_departures"),
-    path(
-        "departures/<str:station_name>/",
-        views.DepartureView.as_view(),
-        name="show_departure",
-    ),
+    # path(
+    #     "departures/<str:station_name>/",
+    #     views.DepartureView.as_view(),
+    #     name="show_departure",
+    # ),
 ]

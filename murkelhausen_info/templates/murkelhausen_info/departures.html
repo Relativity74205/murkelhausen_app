@@ -1,44 +1,17 @@
 {% extends 'murkelhausen_info/base.html' %}
+{% load django_tables2 %}
 {% load django_bootstrap5 %}
 
 {% block content %}
 
 <body>
-<h2>Wähl eine Station aus:</h2>
-<ul>
-    <li><a href={% url 'murkelhausen_info:show_departure' 'Lierberg' %} >Lierberg</a></li>
-    <li><a href={% url 'murkelhausen_info:show_departure' 'Kriegerstr.' %} >Kriegerstr.</a></li>
-</ul>
-{#<form method="post" enctype="multipart/form-data">#}
-{#    {% csrf_token %}#}
-{#    {% bootstrap_form station_form %}#}
-{#    <button type="submit">Get data</button>#}
-{#</form>#}
-
-<p>Departures for <b>{{ selection_station }}</b>:</p>
-{% for departure in object_list %}
-    <ul>
-        <li>Line {{ departure.servingLine.number }} {{ departure.platform }} {{ departure.platformName }}: {{ departure.planned_departure_time }} {% if departure.delay > 0 %} ({{ departure.delay }} Minuten Verspätung) {% endif %} ; direction {{ departure.servingLine.liErgRiProj.direction }} (to {{ departure.servingLine.direction }} from {{ departure.servingLine.directionFrom }})</li>
-    </ul>
-{% endfor %}
+<p><h2>Abfahrten:</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <button class="btn btn-primary" type="submit">Daten anfordern</button>
+</form>
+{% render_table table %}
 </body>
-
-<div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-        </span>
-
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-        {% endif %}
-    </span>
-</div>
 
 {% endblock %}

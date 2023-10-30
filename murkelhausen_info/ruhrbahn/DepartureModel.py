@@ -167,7 +167,9 @@ class DateTime(BaseModel):
     minute: int
 
     def __sub__(self, other):
-        return (self.hour - other.hour) * 60 + self.minute - other.minute  # TODO add handling for bigger deltas
+        return (
+            (self.hour - other.hour) * 60 + self.minute - other.minute
+        )  # TODO add handling for bigger deltas
 
     @property
     def time(self) -> datetime.time:
@@ -225,7 +227,9 @@ class DepartureListItem(BaseModel):
     countdown: str
     dateTime: DateTime
     realDateTime: DateTime | None = None
-    realtimeTripStatus: str | None = None  # TODO check which are possible values; MONITORED
+    realtimeTripStatus: str | None = (
+        None  # TODO check which are possible values; MONITORED
+    )
     servingLine: ServingLine
     operator: Operator | None = None
     attrs: list[Attr] | None = None
@@ -246,6 +250,10 @@ class DepartureListItem(BaseModel):
             return 0
         else:
             return self.realDateTime - self.dateTime
+
+    @property
+    def richtung(self) -> str:
+        return f"{self.servingLine.liErgRiProj.direction} ({self.servingLine.direction} nach {self.servingLine.directionFrom})"
 
 
 class Data(BaseModel):
@@ -301,9 +309,18 @@ class DepartureModel(BaseModel):
         return self.data.departureList
 
     def get_departure_list_per_line(self, line: str) -> list[DepartureListItem]:
-        return [departure for departure in self.data.departureList
-                if departure.servingLine.number == line]
+        return [
+            departure
+            for departure in self.data.departureList
+            if departure.servingLine.number == line
+        ]
 
-    def get_departure_list_per_line_and_direction(self, line: str, direction: str) -> list[DepartureListItem]:
-        return [departure for departure in self.data.departureList
-                if departure.servingLine.number == line and departure.servingLine.direction == direction]
+    def get_departure_list_per_line_and_direction(
+        self, line: str, direction: str
+    ) -> list[DepartureListItem]:
+        return [
+            departure
+            for departure in self.data.departureList
+            if departure.servingLine.number == line
+            and departure.servingLine.direction == direction
+        ]
