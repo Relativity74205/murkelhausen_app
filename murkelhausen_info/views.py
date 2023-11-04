@@ -20,14 +20,6 @@ def power(request):
     return render(request, "murkelhausen_info/power.html")
 
 
-def show_departures(request):
-    data = get_data()
-
-    table = DeparturesTable(data)
-
-    return render(request, "murkelhausen_info/departures.html", {"table": table})
-
-
 def get_data(station: str):
     station_id = get_stations().get_station_id(station, "Mülheim")
 
@@ -44,7 +36,7 @@ def get_data(station: str):
         for departure in departures
     ]
 
-    return data[:10]
+    return data
 
 
 class DepartureView(View, FormMixin):
@@ -57,13 +49,13 @@ class DepartureView(View, FormMixin):
         form = StationForm()
         form.initial["station"] = STATIONS.index(station)
         table = DeparturesTable(get_data(station))
+        table.paginate(page=request.GET.get("page", 1), per_page=12)
         return render(request, self.template_name, {"form": form, "table": table})
 
     def post(self, request, *args, **kwargs):
         form = StationForm(request.POST)
         if form.is_valid():
             station_position = form.cleaned_data["station"]
-            print(station_position)
             station = STATIONS[int(station_position)]
             self.request.session["station"] = station
 
