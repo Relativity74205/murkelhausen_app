@@ -1,11 +1,18 @@
 {% extends 'murkelhausen_info/base.html' %}
+{% load django_tables2 %}
 {% load django_bootstrap5 %}
+{% load static %}
 
 {% block content %}
 
 
 <p><h2>Wetter in Mülheim</h2>
 <body>
+
+{% for weather_state in weather_data.current.weather %}
+    <p><img src="{% static 'icons/'|add:weather_state.icon|add:'.png' %}">{{ weather_state.description }}</p>
+{% endfor %}
+{% render_table weather_table %}
 </body>
 
 {% endblock %}

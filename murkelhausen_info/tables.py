@@ -34,3 +34,12 @@ class DeparturesTable(tables.Table):
             return "background-color: lightyellow;"
         else:
             return "background-color: white;"
+
+
+class WeatherTable(tables.Table):
+    attribute = Column(verbose_name="Attribut")
+    value = Column(verbose_name="Wert")
+    comment = Column(verbose_name="Kommentar")
+
+    class Meta:
+        template_name = "django_tables2/bootstrap5.html"

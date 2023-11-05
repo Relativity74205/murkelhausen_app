@@ -1,6 +1,9 @@
 """
 https://api.met.no/weatherapi/
 https://www.yr.no/en/details/table/2-6553027/Germany/North%20Rhine-Westphalia/D%C3%BCsseldorf%20District/M%C3%BClheim
+
+url_compact = "https://api.met.no/weatherapi/locationforecast/2.0/compact"
+url_complete = "https://api.met.no/weatherapi/locationforecast/2.0/complete"
 """
 from logging import getLogger
 
