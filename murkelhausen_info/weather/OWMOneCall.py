@@ -156,4 +156,4 @@ class OWMOneCall(BaseModel):
     minutely: tuple[MinutelyItem, ...]
     hourly: tuple[HourlyItem, ...]
     daily: tuple[DailyItem, ...]
-    alerts: tuple[Alert, ...]
+    alerts: tuple[Alert, ...] = ()

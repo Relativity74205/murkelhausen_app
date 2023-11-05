@@ -34,6 +34,7 @@ class OWMConfig:
 
 
 MUELHEIM = City(name="Mülheim", gps_lat=51.418568, gps_lon=6.884523)
+FREIBURG = City(name="Freiburg", gps_lat=47.9990, gps_lon=7.8421)
 
 
 def query_one_call_api(city: City, owm_config: OWMConfig) -> OWMOneCall:
@@ -80,25 +81,4 @@ def get_weather_data_muelheim() -> OWMOneCall:
         api_key=settings.OPENWEATHERMAP_API_KEY,
     )
 
-    return query_one_call_api(MUELHEIM, owm_config)
-
-
-a = 1
-# print(json.dumps(data, indent=4))
-
-# with open("owm.json", "w") as f:
-#     json.dump(data, f, indent=4)
-
-# def get_weather_map(layer: str, owm_settings: WeatherOWM):
-#     """
-#     https://openweathermap.org/api/weathermaps
-#     https://github.com/google/maps-for-work-samples/blob/master/samples/maps/OpenWeatherMapLayer/OpenWeatherMapLayer.pdf
-#     """
-#     pass
-#
-#
-# def query_air_pollution():
-#     """
-#     https://openweathermap.org/api/air-pollution
-#     """
-#     pass
+    return query_one_call_api(FREIBURG, owm_config)

@@ -108,43 +108,45 @@ class WeatherView(View):
             if owm_data.current.snow is not None
             else None
         )
-        # weather_states = []
-        # for weather_state in owm_data.current.weather:
-        #     weather_states.append(f"{weather_state}")
+
         data = {
-            "Temperatur": f"{owm_data.current.temp} °C",
-            "Gefühlt": f"{owm_data.current.feels_like} °C",
-            "Luftfeuchtigkeit": f"{owm_data.current.humidity} %",
-            "Taupunkt": f"{owm_data.current.dew_point} °C",
-            "UV Index": (
-                f"{owm_data.current.uvi} ({self._get_uv_index_category(owm_data.current.uvi)})",
-                mark_safe(
+            "Temperatur": {
+                "current": f"{owm_data.current.temp} °C",
+                "forecast": f"{owm_data.daily[0].temp.min}-{owm_data.daily[0].temp.max} °C",
+            },
+            "Gefühlt": {"current": f"{owm_data.current.feels_like} °C"},
+            "Luftfeuchtigkeit": {"current": f"{owm_data.current.humidity} %"},
+            "Taupunkt": {"current": f"{owm_data.current.dew_point} °C"},
+            "UV Index": {
+                "current": f"{owm_data.current.uvi} ({self._get_uv_index_category(owm_data.current.uvi)})",
+                "comment": mark_safe(
                     "<a href='https://de.wikipedia.org/wiki/UV-Index' target='_blank'>0 - 11+</a>"
                 ),
-            ),
-            "Bewölkung": f"{owm_data.current.clouds} %",
-            "Sichtweite": (f"{owm_data.current.visibility} m", "max. 10 km"),
-            "Regen": rain_data,
-            "Schnee": snow_data,
-            "Windgeschwindigkeit": f"{owm_data.current.wind_speed} m/s",
-            "Windrichtung": (
-                self._get_wind_direction(owm_data.current.wind_deg),
-                "aus welcher Richtung der Wind kommt",
-            ),
-            "Sonnenaufgang": f"{owm_data.current.sunrise_timestamp}",
-            "Sonnenuntergang": f"{owm_data.current.sunset_timestamp}",
+            },
+            "Bewölkung": {"current": f"{owm_data.current.clouds} %"},
+            "Sichtweite": {
+                "current": (f"{owm_data.current.visibility} m", "max. 10 km")
+            },
+            "Regen": {"current": rain_data},
+            "Schnee": {"current": snow_data},
+            "Windgeschwindigkeit": {"current": f"{owm_data.current.wind_speed} m/s"},
+            "Windrichtung": {
+                "current": self._get_wind_direction(owm_data.current.wind_deg)
+            },
+            "Sonnenaufgang": {"current": owm_data.current.sunrise_timestamp},
+            "Sonnenuntergang": {"current": owm_data.current.sunset_timestamp},
         }
 
         transformed_data = []
-        for attribute, value in data.items():
-            if type(value) is tuple:
-                transformed_data.append(
-                    {"attribute": attribute, "value": value[0], "comment": value[1]}
-                )
-            else:
-                transformed_data.append(
-                    {"attribute": attribute, "value": value, "comment": ""}
-                )
+        for attribute, values in data.items():
+            transformed_data.append(
+                {
+                    "attribute": attribute,
+                    "current": values["current"],
+                    "forecast": values.get("forecast", None),
+                    "comment": values.get("comment", ""),
+                }
+            )
         return transformed_data
 
     def get(self, request, *args, **kwargs):

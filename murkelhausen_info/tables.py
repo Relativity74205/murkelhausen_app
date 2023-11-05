@@ -37,8 +37,9 @@ class DeparturesTable(tables.Table):
 
 
 class WeatherTable(tables.Table):
-    attribute = Column(verbose_name="Attribut")
-    value = Column(verbose_name="Wert")
+    attribute = Column(verbose_name="")
+    current = Column(verbose_name="aktuell")
+    forecast = Column(verbose_name="Vorhersage")
     comment = Column(verbose_name="Kommentar")
 
     class Meta:
