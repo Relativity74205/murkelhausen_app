@@ -1,7 +1,10 @@
 from django import forms
 
+from murkelhausen_info.ruhrbahn.main import STATIONS
+
 
 class StationForm(forms.Form):
-    Station = forms.ChoiceField(
-        choices=((0, 'Lierberg'), (1, 'Kriegerstr.'), ),
+    station = forms.ChoiceField(
+        choices=[(i, station) for i, station in enumerate(STATIONS)],
+        label="Station",
     )
