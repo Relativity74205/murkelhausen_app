@@ -35,16 +35,64 @@ class Current(BaseModel):
     weather: tuple[WeatherItem, ...]
 
     @property
+    def temp_unit(self) -> str:
+        return f"{self.temp:.1f} °C"
+
+    @property
+    def feels_like_unit(self) -> str:
+        return f"{self.feels_like:.1f} °C"
+
+    @property
     def timestamp(self) -> datetime:
         return datetime.fromtimestamp(self.dt)
 
     @property
-    def sunrise_timestamp(self) -> datetime:
-        return datetime.fromtimestamp(self.sunrise)
+    def pressure_unit(self) -> str:
+        return f"{self.pressure} hPa"
 
     @property
-    def sunset_timestamp(self) -> datetime:
-        return datetime.fromtimestamp(self.sunset)
+    def humidity_unit(self) -> str:
+        return f"{self.humidity} %"
+
+    @property
+    def dew_point_unit(self) -> str:
+        return f"{self.dew_point:.1f} °C"
+
+    @property
+    def uvi_unit(self) -> str:
+        return f"{self.uvi} ({_get_uv_index_category(self.uvi)})"
+
+    @property
+    def clouds_unit(self) -> str:
+        return f"{self.clouds} %"
+
+    @property
+    def visibility_unit(self) -> str:
+        return f"{self.visibility} m"
+
+    @property
+    def wind_speed_unit(self) -> str:
+        return f"{self.wind_speed:.0f} m/s"
+
+    @property
+    def wind_direction(self) -> str:
+        return _get_wind_direction(self.wind_deg)
+
+    @property
+    def sunrise_time(self) -> str:
+        return datetime.fromtimestamp(self.sunrise).strftime("%H:%M")
+
+    @property
+    def sunset_time(self) -> str:
+        return datetime.fromtimestamp(self.sunset).strftime("%H:%M")
+
+    @property
+    def rain_unit(self) -> str | None:
+        return f"{self.rain.get('1h', None)} mm/h" if self.rain is not None else None
+
+    @property
+    def snow_unit(self) -> str | None:
+        return f"{self.snow.get('1h', None)} mm/h" if self.snow is not None else None
 
 
 class MinutelyItem(BaseModel):
@@ -77,11 +125,21 @@ class HourlyItem(BaseModel):
     pop: float
     rain: Rain | None = None
 
+    @property
+    def time(self) -> str:
+        return datetime.fromtimestamp(self.dt).strftime("%H:%M")
+
+    def rain_(self) -> float:
+        if self.rain is None:
+            return 0
+        else:
+            return self.rain.field_1h
+
 
 class Temp(BaseModel):
-    day: float
     min: float
     max: float
+    day: float
     night: float
     eve: float
     morn: float
@@ -118,16 +176,74 @@ class DailyItem(BaseModel):
     uvi: float
 
     @property
+    def temp_unit(self) -> str:
+        # return f"{self.temp.min:.1f}-{self.temp.max:.1f} °C ({self.temp.morn:.1f} °C Morgens; {self.temp.eve:.1f} °C Abends)"
+        return f"{self.temp.min:.1f}-{self.temp.max:.1f} °C"
+
+    @property
+    def feels_like_unit(self) -> str:
+        # return f"{self.feels_like_today_min:.1f}-{self.feels_like_today_max:.1f} °C ({self.feels_like.morn:.1f} °C Morgens; {self.feels_like.eve:.1f} °C Abends)"
+        return f"{self.feels_like_today_min:.1f}-{self.feels_like_today_max:.1f} °C"
+
+    @property
+    def pressure_unit(self) -> str:
+        return f"{self.pressure} hPa"
+
+    @property
+    def humidity_unit(self) -> str:
+        return f"{self.humidity} %"
+
+    @property
+    def dew_point_unit(self) -> str:
+        return f"{self.dew_point:.1f} °C"
+
+    @property
+    def wind_speed_unit(self) -> str:
+        return f"{self.wind_speed:.0f} m/s"
+
+    @property
     def day(self) -> date:
         return date.fromtimestamp(self.dt)
 
     @property
-    def sunrise_timestamp(self) -> datetime:
-        return datetime.fromtimestamp(self.sunrise)
+    def sunrise_time(self) -> str:
+        return datetime.fromtimestamp(self.sunrise).strftime("%H:%M")
 
     @property
-    def sunset_timestamp(self) -> datetime:
-        return datetime.fromtimestamp(self.sunset)
+    def sunset_time(self) -> str:
+        return datetime.fromtimestamp(self.sunset).strftime("%H:%M")
+
+    @property
+    def moon_phase_string(self) -> str:
+        return _get_moon_phase_string(self.moon_phase)
+
+    @property
+    def feels_like_today_min(self) -> float:
+        return min(self.feels_like.__dict__.values())
+
+    @property
+    def feels_like_today_max(self) -> float:
+        return max(self.feels_like.__dict__.values())
+
+    @property
+    def wind_direction(self) -> str:
+        return _get_wind_direction(self.wind_deg)
+
+    @property
+    def clouds_unit(self) -> str:
+        return f"{self.clouds} %"
+
+    @property
+    def pop_unit(self) -> str:
+        return f"{self.pop * 100:.0f} %"
+
+    @property
+    def rain_unit(self) -> str | None:
+        return f"{self.rain} mm" if self.rain is not None else None
+
+    @property
+    def snow_unit(self) -> str | None:
+        return f"{self.snow} mm" if self.snow is not None else None
 
 
 class Alert(BaseModel):
@@ -153,7 +269,70 @@ class OWMOneCall(BaseModel):
     timezone: str
     timezone_offset: int
     current: Current
-    minutely: tuple[MinutelyItem, ...]
+    minutely: tuple[MinutelyItem, ...] = ()
     hourly: tuple[HourlyItem, ...]
     daily: tuple[DailyItem, ...]
     alerts: tuple[Alert, ...] = ()
+
+    @property
+    def current_pop_unit(self) -> str:
+        return f"{self.hourly[0].pop * 100:.0f} %"
+
+
+def _get_wind_direction(degrees: int) -> str:
+    if degrees is None:
+        return ""
+    if degrees < 22.5:
+        return "N"
+    elif degrees < 67.5:
+        return "NO"
+    elif degrees < 112.5:
+        return "O"
+    elif degrees < 157.5:
+        return "SO"
+    elif degrees < 202.5:
+        return "S"
+    elif degrees < 247.5:
+        return "SW"
+    elif degrees < 292.5:
+        return "W"
+    elif degrees < 337.5:
+        return "NW"
+    else:
+        return "N"
+
+
+def _get_moon_phase_string(moon_phase: float) -> str:
+    if moon_phase < 0.025:
+        s = "Neumond"
+    elif moon_phase < 0.225:
+        s = "zunehmende Sichel"
+    elif moon_phase < 0.275:
+        s = "erstes Viertel"
+    elif moon_phase < 0.475:
+        s = "zunehmender Halbmond"
+    elif moon_phase < 0.525:
+        s = "Neumond"
+    elif moon_phase < 0.725:
+        s = "abnehmender Halbmond"
+    elif moon_phase < 0.775:
+        s = "letztes Viertel"
+    elif moon_phase < 0.975:
+        s = "abnehmende Sichel"
+    else:
+        s = "Neumond"
+
+    return s + f" ({moon_phase * 100:.0f} %)"
+
+
+def _get_uv_index_category(uv_index: float) -> str:
+    if uv_index < 3:
+        return "keine bis gering"
+    elif uv_index < 6:
+        return "mittel"
+    elif uv_index < 8:
+        return "hoch"
+    elif uv_index < 11:
+        return "sehr hoch"
+    else:
+        return "extrem hoch"

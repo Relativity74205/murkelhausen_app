@@ -39,8 +39,10 @@ class DeparturesTable(tables.Table):
 class WeatherTable(tables.Table):
     attribute = Column(verbose_name="")
     current = Column(verbose_name="aktuell")
-    forecast = Column(verbose_name="Vorhersage")
+    forecast_today = Column(verbose_name="Vorhersage für heute")
+    forecast_tomorrow = Column(verbose_name="Vorhersage für morgen")
     comment = Column(verbose_name="Kommentar")
 
     class Meta:
+        orderable = False
         template_name = "django_tables2/bootstrap5.html"

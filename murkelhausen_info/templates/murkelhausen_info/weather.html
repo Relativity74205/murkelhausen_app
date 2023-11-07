@@ -10,21 +10,21 @@
 <body>
 
 {% for weather_state in weather_data.current.weather %}
-    <p><img src="{% static 'icons/'|add:weather_state.icon|add:'.png' %}">{{ weather_state.description }}</p>
+    <p><img src="{% static 'icons/'|add:weather_state.icon|add:'.png' %}">Aktuell: {{ weather_state.description }}</p>
 {% endfor %}
-{% render_table weather_table %}
-
+{#<p>{{ weather_data.daily.0.summary }}</p> TODO #}
+<p>
+    Sonnenaufgang: {{ weather_data.daily.0.sunrise_time }}<br>
+    Sonnenuntergang: {{ weather_data.daily.0.sunset_time }}<br>
+    Mondphase: {{ weather_data.daily.0.moon_phase_string }}<br>
+</p>
+<p> DWD Alarme: </p>
 <p><ul>
 {% for alert in weather_data.alerts %}
     <li>{{ alert.event }} von {{ alert.start_timestamp }} bis {{ alert.end_timestamp }}</li>
 {% endfor %}
 </ul>
-
-<p><ul>
-{% for day in weather_data.daily %}
-    <li>{{ day.day }}: {{ day.temp }}</li>
-{% endfor %}
-</ul>
+{% render_table weather_table %}
 
 </body>
 

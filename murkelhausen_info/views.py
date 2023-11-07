@@ -62,79 +62,78 @@ class DepartureView(View, FormMixin):
 
 class WeatherView(View):
     @staticmethod
-    def _get_uv_index_category(uv_index: float) -> str:
-        if uv_index < 3:
-            return "keine bis gering"
-        elif uv_index < 6:
-            return "mittel"
-        elif uv_index < 8:
-            return "hoch"
-        elif uv_index < 11:
-            return "sehr hoch"
-        else:
-            return "extrem hoch"
-
-    @staticmethod
-    def _get_wind_direction(degrees: int) -> str:
-        if degrees is None:
-            return ""
-        if degrees < 22.5:
-            return "N"
-        elif degrees < 67.5:
-            return "NO"
-        elif degrees < 112.5:
-            return "O"
-        elif degrees < 157.5:
-            return "SO"
-        elif degrees < 202.5:
-            return "S"
-        elif degrees < 247.5:
-            return "SW"
-        elif degrees < 292.5:
-            return "W"
-        elif degrees < 337.5:
-            return "NW"
-        else:
-            return "N"
-
-    def _get_weather_table_data(self, owm_data: weather.OWMOneCall) -> list[dict]:
-        rain_data = (
-            f"{owm_data.current.rain.get('1h', None)} mm/h"
-            if owm_data.current.rain is not None
-            else None
-        )
-        snow_data = (
-            f"{owm_data.current.snow.get('1h', None)} mm/h"
-            if owm_data.current.snow is not None
-            else None
-        )
-
+    def _get_weather_table_data(owm_data: weather.OWMOneCall) -> list[dict]:
+        today = owm_data.daily[0]
+        tomorrow = owm_data.daily[1]
         data = {
             "Temperatur": {
-                "current": f"{owm_data.current.temp} °C",
-                "forecast": f"{owm_data.daily[0].temp.min}-{owm_data.daily[0].temp.max} °C",
+                "current": owm_data.current.temp_unit,
+                "forecast_today": today.temp_unit,
+                "forecast_tomorrow": tomorrow.temp_unit,
             },
-            "Gefühlt": {"current": f"{owm_data.current.feels_like} °C"},
-            "Luftfeuchtigkeit": {"current": f"{owm_data.current.humidity} %"},
-            "Taupunkt": {"current": f"{owm_data.current.dew_point} °C"},
+            "Gefühlt": {
+                "current": owm_data.current.feels_like_unit,
+                "forecast_today": today.feels_like_unit,
+                "forecast_tomorrow": tomorrow.feels_like_unit,
+            },
+            "Luftfeuchtigkeit": {
+                "current": owm_data.current.humidity_unit,
+                "forecast_today": today.humidity_unit,
+                "forecast_tomorrow": tomorrow.humidity_unit,
+            },
+            "Taupunkt": {
+                "current": owm_data.current.dew_point_unit,
+                "forecast_today": today.dew_point_unit,
+                "forecast_tomorrow": tomorrow.dew_point_unit,
+                "comment": mark_safe(
+                    "<a href='https://https://de.wikipedia.org/wiki/Taupunkt' target='_blank'>Wikipedia</a>"
+                ),
+            },
+            "Luftdruck": {
+                "current": owm_data.current.pressure_unit,
+                "forecast_today": today.pressure_unit,
+                "forecast_tomorrow": tomorrow.pressure_unit,
+            },
             "UV Index": {
-                "current": f"{owm_data.current.uvi} ({self._get_uv_index_category(owm_data.current.uvi)})",
+                "current": owm_data.current.uvi_unit,
                 "comment": mark_safe(
                     "<a href='https://de.wikipedia.org/wiki/UV-Index' target='_blank'>0 - 11+</a>"
                 ),
             },
-            "Bewölkung": {"current": f"{owm_data.current.clouds} %"},
+            "Bewölkung": {
+                "current": owm_data.current.clouds_unit,
+                "forecast_today": today.clouds_unit,
+                "forecast_tomorrow": tomorrow.clouds_unit,
+            },
             "Sichtweite": {
-                "current": (f"{owm_data.current.visibility} m", "max. 10 km")
+                "current": owm_data.current.visibility_unit,
+                "comment": "max. 10 km",
             },
-            "Regen": {"current": rain_data},
-            "Schnee": {"current": snow_data},
-            "Windgeschwindigkeit": {"current": f"{owm_data.current.wind_speed} m/s"},
+            "Regen": {
+                "current": owm_data.current.rain_unit,
+                "forecast_today": today.rain_unit,
+                "forecast_tomorrow": tomorrow.rain_unit,
+            },
+            "Regenwahrscheinlichkeit": {
+                "current": owm_data.current_pop_unit,
+                "forecast_today": today.pop_unit,
+                "forecast_tomorrow": tomorrow.pop_unit,
+            },
+            "Schnee": {
+                "current": owm_data.current.snow_unit,
+                "forecast_today": today.snow_unit,
+                "forecast_tomorrow": tomorrow.snow_unit,
+            },
+            "Windgeschwindigkeit": {
+                "current": owm_data.current.wind_speed_unit,
+                "forecast_today": today.wind_speed_unit,
+                "forecast_tomorrow": tomorrow.wind_speed_unit,
+            },
             "Windrichtung": {
-                "current": self._get_wind_direction(owm_data.current.wind_deg)
+                "current": owm_data.current.wind_direction,
+                "forecast_today": today.wind_direction,
+                "forecast_tomorrow": tomorrow.wind_direction,
             },
-            "Sonnenaufgang": {"current": owm_data.current.sunrise_timestamp},
-            "Sonnenuntergang": {"current": owm_data.current.sunset_timestamp},
         }
 
         transformed_data = []
@@ -142,8 +141,9 @@ class WeatherView(View):
             transformed_data.append(
                 {
                     "attribute": attribute,
-                    "current": values["current"],
-                    "forecast": values.get("forecast", None),
+                    "current": values.get("current", None),
+                    "forecast_today": values.get("forecast_today", None),
+                    "forecast_tomorrow": values.get("forecast_tomorrow", None),
                     "comment": values.get("comment", ""),
                 }
             )
@@ -152,8 +152,28 @@ class WeatherView(View):
     def get(self, request, *args, **kwargs):
         owm_data = weather.get_weather_data_muelheim()
         weather_table = WeatherTable(self._get_weather_table_data(owm_data))
+
         return render(
             request,
             "murkelhausen_info/weather.html",
-            {"weather_data": owm_data, "weather_table": weather_table},
+            context={
+                "weather_data": owm_data,
+                "weather_table": weather_table,
+            },
+        )
+
+
+class WeatherViewTest(View):
+    def get(self, request, *args, **kwargs):
+        owm_data = weather.get_weather_data_muelheim()
+        time_hourly = [hour.time for hour in owm_data.hourly]
+        pop_hourly = [hour.rain_ for hour in owm_data.hourly]
+
+        return render(
+            request,
+            "murkelhausen_info/weather_test.html",
+            context={
+                "time_hourly": time_hourly,
+                "pop_hourly": pop_hourly,
+            },
         )
