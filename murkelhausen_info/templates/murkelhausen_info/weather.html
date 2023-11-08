@@ -1,5 +1,4 @@
 {% extends 'murkelhausen_info/base.html' %}
-{% load django_tables2 %}
 {% load django_bootstrap5 %}
 {% load static %}
 
@@ -8,23 +7,32 @@
 
 <p><h2>Wetter in Mülheim</h2>
 <body>
-
-{% for weather_state in weather_data.current.weather %}
-    <p><img src="{% static 'icons/'|add:weather_state.icon|add:'.png' %}">Aktuell: {{ weather_state.description }}</p>
-{% endfor %}
-{#<p>{{ weather_data.daily.0.summary }}</p> TODO #}
-<p>
-    Sonnenaufgang: {{ weather_data.daily.0.sunrise_time }}<br>
-    Sonnenuntergang: {{ weather_data.daily.0.sunset_time }}<br>
-    Mondphase: {{ weather_data.daily.0.moon_phase_string }}<br>
-</p>
-<p> DWD Alarme: </p>
-<p><ul>
-{% for alert in weather_data.alerts %}
-    <li>{{ alert.event }} von {{ alert.start_timestamp }} bis {{ alert.end_timestamp }}</li>
-{% endfor %}
+<br>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#current" type="button" role="tab" aria-controls="current" aria-selected="true">aktuell</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#future" type="button" role="tab" aria-controls="future" aria-selected="false">Vorhersage</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#past" type="button" role="tab" aria-controls="past" aria-selected="false">Vergangenheit</button>
+  </li>
 </ul>
-{% render_table weather_table %}
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="current" role="tabpanel" aria-labelledby="home-tab">
+      {% include "murkelhausen_info/weather_current.html" %}
+  </div>
+  <div class="tab-pane fade" id="future" role="tabpanel" aria-labelledby="profile-tab">
+      {% include "murkelhausen_info/weather_forecast.html" %}
+  </div>
+  <div class="tab-pane fade" id="past" role="tabpanel" aria-labelledby="contact-tab">
+      NotImplementedError
+  </div>
+</div>
+
+{% block content2 %}
+{% endblock %}
 
 </body>
 

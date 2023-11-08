@@ -1,0 +1,20 @@
+{% load django_tables2 %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% for weather_state in weather_data.current.weather %}
+    <p><img src="{% static 'icons/'|add:weather_state.icon|add:'.png' %}">Aktuell: {{ weather_state.description }}</p>
+{% endfor %}
+{#<p>{{ weather_data.daily.0.summary }}</p> TODO #}
+<p>
+    Sonnenaufgang: {{ weather_data.daily.0.sunrise_time }}<br>
+    Sonnenuntergang: {{ weather_data.daily.0.sunset_time }}<br>
+    Mondphase: {{ weather_data.daily.0.moon_phase_string }}<br>
+</p>
+<p> DWD Alarme: </p>
+<p><ul>
+{% for alert in weather_data.alerts %}
+    <li>{{ alert.event }} von {{ alert.start_timestamp }} bis {{ alert.end_timestamp }}</li>
+{% endfor %}
+</ul>
+{% render_table weather_table %}
