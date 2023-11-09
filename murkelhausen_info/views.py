@@ -151,8 +151,6 @@ class WeatherView(View):
 
     def get(self, request, *args, **kwargs):
         owm_data = weather.get_weather_data_muelheim()
-        time_hourly = [hour.time for hour in owm_data.hourly]
-        pop_hourly = [hour.rain_ for hour in owm_data.hourly]
         weather_table = WeatherTable(self._get_weather_table_data(owm_data))
 
         return render(
@@ -161,7 +159,5 @@ class WeatherView(View):
             context={
                 "weather_data": owm_data,
                 "weather_table": weather_table,
-                "time_hourly": time_hourly,
-                "pop_hourly": pop_hourly,
             },
         )

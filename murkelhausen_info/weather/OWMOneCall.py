@@ -123,17 +123,18 @@ class HourlyItem(BaseModel):
     wind_gust: float
     weather: tuple[WeatherItem, ...]
     pop: float
-    rain: Rain | None = None
+    rain1h: Rain | None = Field(None, alias="rain")
 
     @property
     def time(self) -> str:
         return datetime.fromtimestamp(self.dt).strftime("%H:%M")
 
-    def rain_(self) -> float:
-        if self.rain is None:
+    @property
+    def rain(self) -> float:
+        if self.rain1h is None:
             return 0
         else:
-            return self.rain.field_1h
+            return self.rain1h.field_1h
 
 
 class Temp(BaseModel):
