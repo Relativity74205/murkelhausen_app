@@ -1,52 +1,29 @@
 <!-- base.html -->
 <html lang="de">
+{% load static %}
 {% load django_bootstrap5 %}
 {% bootstrap_css %}
 {% bootstrap_javascript %}
-{% load static %}
 <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.png' %}" >
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'home' %}">Murkelhausen Home {{ version }}</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-  <div class="collapse navbar-collapse" id="navbarText">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'murkelhausen_info:start' %}">Start</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'murkelhausen_info:weather' %}">Wetter</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'murkelhausen_info:show_departures' %}">Abfahrten</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'murkelhausen_info:power' %}">Stromverbrauch</a>
-      </li>
-    </ul>
-  </div>
-</div>
+        <a class="navbar-brand" href="{% url 'home' %}">Home</a>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <div class="navbar-nav">
+                <a class="nav-link" href="{% url 'murkelhausen_info:start' %}">Start</a>
+                <a class="nav-link" href="{% url 'murkelhausen_info:weather' %}">Wetter</a>
+                <a class="nav-link" href="{% url 'murkelhausen_info:show_departures' %}">Abfahrten</a>
+                <a class="nav-link" href="{% url 'murkelhausen_info:power' %}">Stromverbrauch</a>
+            </div>
+        </div>
+    </div>
 </nav>
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        const url = window.location;
-        $('ul.navbar-nav a[href="'+ url +'"]').addClass('active').attr('aria-current', 'page');
-        $('ul.navbar-nav a').filter(function() {
-             return this.href == url;
-        }).addClass('active').attr('aria-current', 'page');
-    });
-</script>
-
-{% load static %}
+<script src="{% static 'js/navbar-active.js' %}"></script>
 
 <head>
     <title>Murkelhausen Infos</title>
-    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/table_styles.css' %}">
 </head>
 <body>
