@@ -76,39 +76,6 @@ class WeatherView(View):
                 "forecast_today": today.feels_like_unit,
                 "forecast_tomorrow": tomorrow.feels_like_unit,
             },
-            "Luftfeuchtigkeit": {
-                "current": owm_data.current.humidity_unit,
-                "forecast_today": today.humidity_unit,
-                "forecast_tomorrow": tomorrow.humidity_unit,
-            },
-            "Taupunkt": {
-                "current": owm_data.current.dew_point_unit,
-                "forecast_today": today.dew_point_unit,
-                "forecast_tomorrow": tomorrow.dew_point_unit,
-                "comment": mark_safe(
-                    "<a href='https://https://de.wikipedia.org/wiki/Taupunkt' target='_blank'>Wikipedia</a>"
-                ),
-            },
-            "Luftdruck": {
-                "current": owm_data.current.pressure_unit,
-                "forecast_today": today.pressure_unit,
-                "forecast_tomorrow": tomorrow.pressure_unit,
-            },
-            "UV Index": {
-                "current": owm_data.current.uvi_unit,
-                "comment": mark_safe(
-                    "<a href='https://de.wikipedia.org/wiki/UV-Index' target='_blank'>0 - 11+</a>"
-                ),
-            },
-            "Bewölkung": {
-                "current": owm_data.current.clouds_unit,
-                "forecast_today": today.clouds_unit,
-                "forecast_tomorrow": tomorrow.clouds_unit,
-            },
-            "Sichtweite": {
-                "current": owm_data.current.visibility_unit,
-                "comment": "max. 10 km",
-            },
             "Regen": {
                 "current": owm_data.current.rain_unit,
                 "forecast_today": today.rain_unit,
@@ -124,6 +91,16 @@ class WeatherView(View):
                 "forecast_today": today.snow_unit,
                 "forecast_tomorrow": tomorrow.snow_unit,
             },
+            "Luftfeuchtigkeit": {
+                "current": owm_data.current.humidity_unit,
+                "forecast_today": today.humidity_unit,
+                "forecast_tomorrow": tomorrow.humidity_unit,
+            },
+            "Bewölkung": {
+                "current": owm_data.current.clouds_unit,
+                "forecast_today": today.clouds_unit,
+                "forecast_tomorrow": tomorrow.clouds_unit,
+            },
             "Windgeschwindigkeit": {
                 "current": owm_data.current.wind_speed_unit,
                 "forecast_today": today.wind_speed_unit,
@@ -134,7 +111,36 @@ class WeatherView(View):
                 "forecast_today": today.wind_direction,
                 "forecast_tomorrow": tomorrow.wind_direction,
             },
+            "Sichtweite": {
+                "current": owm_data.current.visibility_unit,
+                "forecast_today": " ",
+                "forecast_tomorrow": " ",
+                "comment": "max. 10 km",
+            },
+            "UV Index": {
+                "current": owm_data.current.uvi_unit,
+                "forecast_today": " ",
+                "forecast_tomorrow": " ",
+                "comment": mark_safe(
+                    "<a href='https://de.wikipedia.org/wiki/UV-Index' target='_blank'>0 - 11+</a>"
+                ),
+            },
+            "Taupunkt": {
+                "current": owm_data.current.dew_point_unit,
+                "forecast_today": today.dew_point_unit,
+                "forecast_tomorrow": tomorrow.dew_point_unit,
+                "comment": mark_safe(
+                    "<a href='https://https://de.wikipedia.org/wiki/Taupunkt' target='_blank'>Wikipedia</a>"
+                ),
+            },
+            "Luftdruck": {
+                "current": owm_data.current.pressure_unit,
+                "forecast_today": today.pressure_unit,
+                "forecast_tomorrow": tomorrow.pressure_unit,
+            },
         }
+        if not (owm_data.current.snow_unit or today.snow_unit or tomorrow.snow_unit):
+            del data["Schnee"]
 
         transformed_data = []
         for attribute, values in data.items():

@@ -41,7 +41,7 @@ class WeatherTable(tables.Table):
     current = Column(verbose_name="aktuell")
     forecast_today = Column(verbose_name="Vorhersage für heute")
     forecast_tomorrow = Column(verbose_name="Vorhersage für morgen")
-    comment = Column(verbose_name="Kommentar")
+    comment = Column(verbose_name="Kommentar", default=" ")
 
     class Meta:
         orderable = False
