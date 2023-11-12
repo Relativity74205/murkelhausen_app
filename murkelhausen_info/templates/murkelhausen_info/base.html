@@ -18,31 +18,30 @@
         <a class="nav-link" href="{% url 'murkelhausen_info:start' %}">Start</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'murkelhausen_info:show_departures' %}">Departures</a>
+        <a class="nav-link" href="{% url 'murkelhausen_info:weather' %}">Wetter</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'murkelhausen_info:weather' %}">Wetter</a>
+        <a class="nav-link" href="{% url 'murkelhausen_info:show_departures' %}">Abfahrten</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="{% url 'murkelhausen_info:power' %}">Stromverbrauch</a>
       </li>
-{#        <li class="nav-item dropdown">#}
-{#          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">#}
-{#            Dropdown link#}
-{#          </a>#}
-{#          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">#}
-{#            <li><a class="dropdown-item" href="#">Action</a></li>#}
-{#            <li><a class="dropdown-item" href="#">Another action</a></li>#}
-{#            <li><a class="dropdown-item" href="#">Something else here</a></li>#}
-{#          </ul>#}
-{#        </li>#}
     </ul>
   </div>
-    </div>
+</div>
 </nav>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        const url = window.location;
+        $('ul.navbar-nav a[href="'+ url +'"]').addClass('active').attr('aria-current', 'page');
+        $('ul.navbar-nav a').filter(function() {
+             return this.href == url;
+        }).addClass('active').attr('aria-current', 'page');
+    });
+</script>
 
 {% load static %}
-<script src="{% static 'js/form_focus.js' %}"></script>
 
 <head>
     <title>Murkelhausen Infos</title>

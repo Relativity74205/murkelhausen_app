@@ -1,5 +1,6 @@
 {% extends 'trainer/base.html' %}
 
+{% load static %}
 {% load django_bootstrap5 %}
 
 {% block content %}
@@ -15,7 +16,7 @@ setFocusOnField("id_englisch");
     {% bootstrap_form group_select_form %}
 </form>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 <script>
     // Use jQuery to submit the form when the choice field changes
     $(document).ready(function () {
