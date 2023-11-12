@@ -1,23 +1,71 @@
-<canvas id="myChart" width="800" height="400"></canvas>
+<canvas id="48hours_forecast" width="800" height="400"></canvas>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-  const ctx = document.getElementById('myChart').getContext('2d');
+  const ctx = document.getElementById('48hours_forecast').getContext('2d');
   const myChart = new Chart(ctx, {
-      type: 'bar',
+      type: 'line',
       data: {
-        labels: [{% for item in time_hourly %}"{{ item }}",{% endfor %}],
-          datasets: [{
-            label: "Bite exercises complete per month",
-            data: [{% for item in pop_hourly %}{{ item }},{% endfor %}],
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1
-          }]
+          labels: [{% for hour in weather_data.hourly %}"{{ hour.time }}",{% endfor %}],
+          datasets: [
+              {
+                  label: "Erwarteter Regen",
+                  data: [{% for hour in weather_data.hourly %}{{ hour.rain }}, {% endfor %}],
+                  backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1,
+                  type: 'bar',
+                  yAxisID: 'y2',
+                  order: 0,
+              },
+              {
+                  label: "Temperatur",
+                  data: [{% for hour in weather_data.hourly %}{{ hour.temp }}, {% endfor %}],
+                  borderColor: 'red',
+                  type: 'line',
+                  yAxisID: 'y1',
+                    order: 1,
+              },
+              {
+                  label: "Gefühlte Temperatur",
+                  data: [{% for hour in weather_data.hourly %}{{ hour.feels_like }}, {% endfor %}],
+                  borderColor: 'orange',
+                  type: 'line',
+                  yAxisID: 'y1',
+                  order: 1,
+              }
+          ]
       },
       options: {
+          responsive: true,
+          plugins: {
+              legend: {
+                  position: 'bottom',
+              },
+              title: {
+                  display: true,
+                  text: 'Vorhersage für die nächsten 48 Stunden'
+              }
+          },
           scales: {
-              y: {
-                  beginAtZero: true
+              y1: {
+                  beginAtZero: true,
+                  position: 'left',
+                  title: {
+                      display: true,
+                      text: 'Temperatur in °C'
+                  },
+              },
+              y2: {
+                  beginAtZero: true,
+                  position: 'right',
+                  // grid line settings
+                  grid: {
+                      drawOnChartArea: false, // only want the grid lines for one axis to show up
+                  },
+                  title: {
+                      display: true,
+                      text: 'Regen in mm/h'
+                  },
               }
           }
       }

@@ -4,10 +4,12 @@ https://openweathermap.org/api/one-call-3
 https://openweathermap.org/current
 
 name = "Mülheim"
-gps_lat = 51.418568
-gps_lon = 6.884523
+gps_lat = 51.4300
+gps_lon = 6.8264
 """
+import time
 from dataclasses import dataclass
+from functools import lru_cache
 from logging import getLogger
 from django.conf import settings
 
@@ -33,8 +35,7 @@ class OWMConfig:
     api_key: str
 
 
-MUELHEIM = City(name="Mülheim", gps_lat=51.418568, gps_lon=6.884523)
-FREIBURG = City(name="Freiburg", gps_lat=47.9990, gps_lon=7.8421)
+MUELHEIM = City(name="Mülheim", gps_lat=51.4300, gps_lon=6.8264)
 
 
 def query_one_call_api(city: City, owm_config: OWMConfig) -> OWMOneCall:
@@ -73,7 +74,8 @@ def _query_owm(url: str, city: City, api_key: str, units: str) -> dict:
         )
 
 
-def get_weather_data_muelheim() -> OWMOneCall:
+@lru_cache(maxsize=1)
+def _get_weather_data_muelheim(_: int = None) -> OWMOneCall:
     owm_config = OWMConfig(
         url_weather="https://api.openweathermap.org/data/2.5/weather",
         url_onecall="https://api.openweathermap.org/data/3.0/onecall",
@@ -81,4 +83,9 @@ def get_weather_data_muelheim() -> OWMOneCall:
         api_key=settings.OPENWEATHERMAP_API_KEY,
     )
 
-    return query_one_call_api(FREIBURG, owm_config)
+    return query_one_call_api(MUELHEIM, owm_config)
+
+
+def get_weather_data_muelheim() -> OWMOneCall:
+    # TODO add 120 value to config
+    return _get_weather_data_muelheim(round(time.time() / 120))
