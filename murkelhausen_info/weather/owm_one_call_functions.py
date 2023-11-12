@@ -68,3 +68,11 @@ def _unix_timestamp_to_met_hour(unix_timestamp: int) -> str:
         .astimezone(pytz.timezone("Europe/Berlin"))
         .strftime("%H:%M")
     )
+
+
+def _unix_timestamp_to_met_timestamp(unix_timestamp: int) -> str:
+    return (
+        datetime.fromtimestamp(unix_timestamp, tz=pytz.UTC)
+        .astimezone(pytz.timezone("Europe/Berlin"))
+        .strftime("%d.%m.%Y %H:%M")
+    )
