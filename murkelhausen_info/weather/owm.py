@@ -87,5 +87,6 @@ def _get_weather_data_muelheim(_: int = None) -> OWMOneCall:
 
 
 def get_weather_data_muelheim() -> OWMOneCall:
-    # TODO add 120 value to config
-    return _get_weather_data_muelheim(round(time.time() / 120))
+    # TODO add ttl_second value to config
+    ttl_seconds = 120
+    return _get_weather_data_muelheim(round(time.time() / ttl_seconds))

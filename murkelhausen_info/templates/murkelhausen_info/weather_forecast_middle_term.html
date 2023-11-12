@@ -1,8 +1,8 @@
-<canvas id="48hours_forecast" width="800" height="400"></canvas>
+<canvas id="middle_term" width="800" height="400"></canvas>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-  const ctx = document.getElementById('48hours_forecast').getContext('2d');
-  const myChart = new Chart(ctx, {
+  const ctx_middle_term = document.getElementById('middle_term').getContext('2d');
+  const chart_middle_term = new Chart(ctx_middle_term, {
       type: 'line',
       data: {
           labels: [{% for hour in weather_data.hourly %}"{{ hour.time }}",{% endfor %}],

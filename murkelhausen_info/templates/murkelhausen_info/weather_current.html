@@ -14,7 +14,8 @@
 <p> DWD Alarme: </p>
 <p><ul>
 {% for alert in weather_data.alerts %}
-    <li>{{ alert.event }} von {{ alert.start_timestamp }} bis {{ alert.end_timestamp }}</li>
+{#    # TODO: translate alert.event#}
+    <li>{{ alert.event }} von {{ alert.start_timestamp }} Uhr  bis {{ alert.end_timestamp }} Uhr.</li>
 {% endfor %}
 </ul>
 {% render_table weather_table %}

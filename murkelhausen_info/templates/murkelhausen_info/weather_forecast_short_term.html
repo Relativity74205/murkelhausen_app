@@ -1,0 +1,45 @@
+<canvas id="short_term" width="800" height="400"></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+  const ctx_short_term = document.getElementById('short_term').getContext('2d');
+  const chart_short_term = new Chart(ctx_short_term, {
+      type: 'line',
+      data: {
+          labels: [{% for minute in weather_data.minutely %}"{{ minute.time }}",{% endfor %}],
+          datasets: [
+              {
+                  label: "Erwarteter Regen",
+                  data: [{% for minute in weather_data.minutely %}{{ minute.rain }}, {% endfor %}],
+                  backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1,
+                  type: 'bar',
+                  yAxisID: 'y1',
+                  order: 0,
+              },
+          ]
+      },
+      options: {
+          responsive: true,
+          plugins: {
+              legend: {
+                  position: 'bottom',
+              },
+              title: {
+                  display: true,
+                  text: 'Regen-Vorhersage für die nächsten 60 Minuten'
+              }
+          },
+          scales: {
+              y1: {
+                  beginAtZero: true,
+                  position: 'left',
+                  title: {
+                      display: true,
+                      text: 'Regen in mm/h'
+                  },
+              },
+          }
+      }
+  });
+  </script>
