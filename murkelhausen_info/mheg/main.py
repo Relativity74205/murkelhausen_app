@@ -5,6 +5,7 @@ from functools import lru_cache
 import requests
 from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel
+from babel.dates import format_date
 
 BASE_URL = "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/"
 
@@ -41,10 +42,7 @@ class MuellTermine(BaseModel):
 
     @property
     def day(self) -> str:
-        from babel.dates import format_date
-
         return format_date(self.datum, format="EEE, d.M.yyyy", locale="de_DE")
-        # return foo.strftime("%a") + " " + self.datum.strftime("%d.%m.%Y")
 
 
 @lru_cache(maxsize=1)
