@@ -1,0 +1,12 @@
+{% extends 'murkelhausen_info/base.html' %}
+{% load django_tables2 %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<body>
+<p><h2>Müllabfuhr Termine</h2>
+{% render_table table %}
+</body>
+
+{% endblock %}

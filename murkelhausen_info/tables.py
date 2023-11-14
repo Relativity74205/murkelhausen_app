@@ -46,3 +46,26 @@ class WeatherTable(tables.Table):
     class Meta:
         orderable = False
         template_name = "django_tables2/bootstrap5.html"
+
+
+class MuellTable(tables.Table):
+    day = Column(verbose_name="Datum")
+    art = Column(verbose_name="Tonne")
+    delta_days = Column(verbose_name="in Tagen")
+
+    class Meta:
+        template_name = "django_tables2/bootstrap5.html"
+        row_attrs = {
+            "style": lambda record: MuellTable._get_background_color(
+                record["delta_days"]
+            )
+        }
+
+    @staticmethod
+    def _get_background_color(value):
+        if value == 0:
+            return "background-color: lightred;"
+        if value == 1:
+            return "background-color: yellow;"
+        else:
+            return "background-color: white;"

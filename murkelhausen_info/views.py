@@ -5,8 +5,9 @@ from django.views import View
 from django.views.generic.edit import FormMixin
 
 from murkelhausen_info.forms import StationForm
+from murkelhausen_info.mheg import get_termine_for_home
 from murkelhausen_info.ruhrbahn.main import get_departure_data, get_stations, STATIONS
-from murkelhausen_info.tables import DeparturesTable, WeatherTable
+from murkelhausen_info.tables import DeparturesTable, WeatherTable, MuellTable
 from murkelhausen_info import weather
 
 
@@ -168,3 +169,21 @@ class WeatherView(View):
                 "weather_table": weather_table,
             },
         )
+
+
+class MuellView(View):
+    template_name = "murkelhausen_info/muell.html"
+
+    def get(self, request, *args, **kwargs):
+        termine = get_termine_for_home()
+        data = [
+            {
+                "day": termin.day,
+                "art": termin.art,
+                "delta_days": termin.delta_days,
+            }
+            for termin in termine
+        ]
+        table = MuellTable(data)
+        table.paginate(page=request.GET.get("page", 1), per_page=20)
+        return render(request, self.template_name, {"table": table})
