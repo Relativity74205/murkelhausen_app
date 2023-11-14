@@ -25,6 +25,7 @@ COPY statements statements
 COPY trainer trainer
 COPY pages pages
 COPY chat chat
+COPY static static
 COPY manage.py entrypoint.sh pyproject.toml poetry.lock* README.md ./
 
 RUN poetry config installer.max-workers 10 && \

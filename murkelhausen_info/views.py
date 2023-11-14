@@ -46,8 +46,9 @@ class DepartureView(View, FormMixin):
             station = STATIONS[0]
         form = StationForm()
         form.initial["station"] = STATIONS.index(station)
-        table = DeparturesTable(self._get_data(station))
-        table.paginate(page=request.GET.get("page", 1), per_page=12)
+        departure_data = self._get_data(station)
+        table = DeparturesTable(departure_data[:20])
+        table.paginate(page=request.GET.get("page", 1), per_page=20)
         return render(request, self.template_name, {"form": form, "table": table})
 
     def post(self, request, *args, **kwargs):

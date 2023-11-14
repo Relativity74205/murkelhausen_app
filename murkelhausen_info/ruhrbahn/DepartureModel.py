@@ -253,7 +253,7 @@ class DepartureListItem(BaseModel):
 
     @property
     def richtung(self) -> str:
-        return f"{self.servingLine.liErgRiProj.direction} ({self.servingLine.direction} nach {self.servingLine.directionFrom})"
+        return f"{self.servingLine.direction} (aus {self.servingLine.directionFrom})"
 
 
 class Data(BaseModel):
