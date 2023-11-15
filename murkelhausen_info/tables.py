@@ -27,7 +27,7 @@ class DeparturesTable(tables.Table):
     @staticmethod
     def _get_background_color(value):
         if value >= 5:
-            return "background-color: lightred;"
+            return "background-color: orange;"
         if value > 1:
             return "background-color: yellow;"
         if value > 0:
@@ -64,8 +64,8 @@ class MuellTable(tables.Table):
     @staticmethod
     def _get_background_color(value):
         if value == 0:
-            return "background-color: lightred;"
-        if value == 1:
+            return "background-color: orange;"
+        elif value == 1:
             return "background-color: yellow;"
         else:
             return "background-color: white;"
