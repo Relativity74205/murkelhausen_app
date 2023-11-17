@@ -1,12 +1,13 @@
 {% extends 'chat/base.html' %}
 
+{% load static %}
 {% load django_bootstrap5 %}
 {% load markdownify %}
 {% block content %}
 
-{#<script>#}
-{#setFocusOnField("input");#}
-{#</script>#}
+<script>
+setFocusOnField("id_input");
+</script>
 
 <p><h2>GPT fragen</h2>
 
@@ -16,25 +17,14 @@
     {% bootstrap_button content="Fragen!" id="askGPT" button_type="submit" %}
 </form>
 
-{#{% if last_qa_question %}#}
-{#    <p>#}
-{#    {% if last_qa_question.answer %}#}
-{#        {{ last_qa_question.answer|markdownify }}#}
-{#    {% else %}#}
-{#        <mark style="background-color: lightcoral">{{ last_qa_question.error_msg }}</mark>#}
-{#    {% endif %}#}
-{##}
-{#    </p>#}
-{#{% endif %}#}
-
 <div id="answer"></div>
 
+<script src="{% static 'js/jquery_murkelhausen_chat.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
   (async function() {
     const url = "{% url 'chat:call_openai_api' %}";
     const qa_form = document.getElementById("qa_form");
-
 
     qa_form.addEventListener("submit", async (e) => {
         e.preventDefault();

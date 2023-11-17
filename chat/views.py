@@ -106,7 +106,7 @@ def call_openai_api(request):
     try:
         system = models.ChatSystem.objects.get(id=system_id)
         system_setup_text = system.system_setup_text
-    except (models.ChatSystem.DoesNotExist, AttributeError):
+    except (models.ChatSystem.DoesNotExist, AttributeError, ValueError):
         system_setup_text = None
 
     answer, finished = get_next_delta(input_message, system_setup_text)
