@@ -184,9 +184,24 @@ class DailyItem(BaseModel):
     weather: tuple[WeatherItem, ...]
     clouds: int
     pop: float
-    rain: float | None = None
+    rain_: float | None = Field(None, alias="rain")
     snow: float | None = None
     uvi: float
+
+    @property
+    def temp_min(self) -> float:
+        return min(self.temp.eve, self.temp.day, self.temp.morn)
+
+    @property
+    def temp_max(self) -> float:
+        return max(self.temp.eve, self.temp.day, self.temp.morn)
+
+    @property
+    def rain(self) -> float:
+        if self.rain_ is None:
+            return 0
+        else:
+            return self.rain_
 
     @property
     def temp_unit(self) -> str:

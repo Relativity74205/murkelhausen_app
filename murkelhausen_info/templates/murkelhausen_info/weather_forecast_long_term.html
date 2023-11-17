@@ -1,15 +1,15 @@
-<canvas id="middle_term" width="800" height="400"></canvas>
+<canvas id="long_term" width="800" height="400"></canvas>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-  const ctx_middle_term = document.getElementById('middle_term').getContext('2d');
-  const chart_middle_term = new Chart(ctx_middle_term, {
+  const ctx_long_term = document.getElementById('long_term').getContext('2d');
+  const chart_long_term = new Chart(ctx_long_term, {
       type: 'line',
       data: {
-          labels: [{% for hour in weather_data.hourly %}"{{ hour.time }}",{% endfor %}],
+          labels: [{% for day in weather_data.daily %}"{{ day.day }}",{% endfor %}],
           datasets: [
               {
                   label: "Erwarteter Regen",
-                  data: [{% for hour in weather_data.hourly %}{{ hour.rain }}, {% endfor %}],
+                  data: [{% for day in weather_data.daily %}{{ day.rain }}, {% endfor %}],
                   backgroundColor: 'rgba(75, 192, 192, 0.5)',
                   borderColor: 'rgba(75, 192, 192, 1)',
                   borderWidth: 1,
@@ -18,24 +18,27 @@
                   order: 0,
               },
               {
-                  label: "Temperatur",
-                  data: [{% for hour in weather_data.hourly %}{{ hour.temp }}, {% endfor %}],
-                  borderColor: 'red',
+                  label: "Temperatur Minimum",
+                  data: [{% for day in weather_data.daily %}{{ day.temp_min }}, {% endfor %}],
+                  borderColor: 'rgba(255, 99, 132, 0.9)',
                   type: 'line',
                   yAxisID: 'y1',
                   order: 1,
                   cubicInterpolationMode: 'monotone',
                   pointStyle: false,
+                  backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                  fill: 1,
               },
               {
-                  label: "Gefühlte Temperatur",
-                  data: [{% for hour in weather_data.hourly %}{{ hour.feels_like }}, {% endfor %}],
-                  borderColor: 'orange',
+                  label: "Temperatur Maximum",
+                  data: [{% for day in weather_data.daily %}{{ day.temp_max }}, {% endfor %}],
+                  borderColor: 'rgba(255, 99, 132, 0.9)',
                   type: 'line',
                   yAxisID: 'y1',
-                  order: 1,
                   cubicInterpolationMode: 'monotone',
                   pointStyle: false,
+                  order: 1,
+                  fill: '-1',
               }
           ]
       },
@@ -47,7 +50,13 @@
               },
               title: {
                   display: true,
-                  text: 'Vorhersage für die nächsten 48 Stunden'
+                  text: 'Vorhersage für die nächsten 7 Tage'
+              },
+              filler: {
+                  propagate: true
+              },
+              'samples-filler-analyser': {
+                  target: 'chart-analyser'
               }
           },
           scales: {
