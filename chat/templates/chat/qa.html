@@ -37,11 +37,11 @@ setFocusOnField("id_input");
         let i = 0;
         while (true) {
             let result = await call_murkelhausen_gpt_endpoint(url, payload)
+            full_answer += result.answer;
+            document.getElementById("answer").innerHTML = marked.parse(full_answer);
             if (result.request_finished) {
                 break;
             }
-            full_answer += result.answer;
-            document.getElementById("answer").innerHTML = marked.parse(full_answer);
             i++;
         }
     });
