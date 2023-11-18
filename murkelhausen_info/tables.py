@@ -48,6 +48,16 @@ class WeatherTable(tables.Table):
         template_name = "django_tables2/bootstrap5.html"
 
 
+class TemperatureTable(tables.Table):
+    zeitpunkt = Column(verbose_name="")
+    wert = Column(verbose_name="")
+
+    class Meta:
+        orderable = False
+        template_name = "django_tables2/table.html"
+        show_header = False
+
+
 class MuellTable(tables.Table):
     day = Column(verbose_name="Datum")
     art = Column(verbose_name="Tonne")

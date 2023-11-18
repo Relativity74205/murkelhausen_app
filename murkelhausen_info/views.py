@@ -7,7 +7,12 @@ from django.views.generic.edit import FormMixin
 from murkelhausen_info.forms import StationForm
 from murkelhausen_info.mheg import get_termine_for_home
 from murkelhausen_info.ruhrbahn.main import get_departure_data, get_stations, STATIONS
-from murkelhausen_info.tables import DeparturesTable, WeatherTable, MuellTable
+from murkelhausen_info.tables import (
+    DeparturesTable,
+    WeatherTable,
+    MuellTable,
+    TemperatureTable,
+)
 from murkelhausen_info import weather
 
 
@@ -64,19 +69,50 @@ class DepartureView(View, FormMixin):
 
 class WeatherView(View):
     @staticmethod
-    def _get_weather_table_data(owm_data: weather.OWMOneCall) -> list[dict]:
+    def _get_weather_table_data(owm_data: weather.OWMOneCall, request) -> list[dict]:
         today = owm_data.daily[0]
         tomorrow = owm_data.daily[1]
         data = {
             "Temperatur": {
                 "current": owm_data.current.temp_unit,
-                "forecast_today": today.temp_unit,
-                "forecast_tomorrow": tomorrow.temp_unit,
+                "forecast_today": TemperatureTable(
+                    [
+                        {"zeitpunkt": "Morgens", "wert": today.temp.morn_unit},
+                        {"zeitpunkt": "Tags", "wert": today.temp.day_unit},
+                        {"zeitpunkt": "Abends", "wert": today.temp.eve_unit},
+                        {"zeitpunkt": "Nachts", "wert": today.temp.night_unit},
+                    ]
+                ).as_html(request),
+                "forecast_tomorrow": TemperatureTable(
+                    [
+                        {"zeitpunkt": "Morgens", "wert": tomorrow.temp.morn_unit},
+                        {"zeitpunkt": "Tags", "wert": tomorrow.temp.day_unit},
+                        {"zeitpunkt": "Abends", "wert": tomorrow.temp.eve_unit},
+                        {"zeitpunkt": "Nachts", "wert": tomorrow.temp.night_unit},
+                    ]
+                ).as_html(request),
             },
             "Gefühlt": {
                 "current": owm_data.current.feels_like_unit,
-                "forecast_today": today.feels_like_unit,
-                "forecast_tomorrow": tomorrow.feels_like_unit,
+                "forecast_today": TemperatureTable(
+                    [
+                        {"zeitpunkt": "Morgens", "wert": today.feels_like.morn_unit},
+                        {"zeitpunkt": "Tags", "wert": today.feels_like.day_unit},
+                        {"zeitpunkt": "Abends", "wert": today.feels_like.eve_unit},
+                        {"zeitpunkt": "Nachts", "wert": today.feels_like.night_unit},
+                    ]
+                ).as_html(request),
+                "forecast_tomorrow": TemperatureTable(
+                    [
+                        {
+                            "zeitpunkt": "Morgens",
+                            "wert": tomorrow.feels_like.morn_unit,
+                        },
+                        {"zeitpunkt": "Tags", "wert": tomorrow.feels_like.day_unit},
+                        {"zeitpunkt": "Abends", "wert": tomorrow.feels_like.eve_unit},
+                        {"zeitpunkt": "Nachts", "wert": tomorrow.feels_like.night_unit},
+                    ]
+                ).as_html(request),
             },
             "Regen": {
                 "current": owm_data.current.rain_unit,
@@ -159,7 +195,7 @@ class WeatherView(View):
 
     def get(self, request, *args, **kwargs):
         owm_data = weather.get_weather_data_muelheim()
-        weather_table = WeatherTable(self._get_weather_table_data(owm_data))
+        weather_table = WeatherTable(self._get_weather_table_data(owm_data, request))
 
         return render(
             request,
@@ -167,6 +203,9 @@ class WeatherView(View):
             context={
                 "weather_data": owm_data,
                 "weather_table": weather_table,
+                "foo_table": TemperatureTable({"foo": "42", "bar": "23"}).as_html(
+                    request
+                ),
             },
         )
 

@@ -157,12 +157,52 @@ class Temp(BaseModel):
     eve: float
     morn: float
 
+    @property
+    def min_unit(self) -> str:
+        return f"{self.min:.1f} °C"
+
+    @property
+    def max_unit(self) -> str:
+        return f"{self.max:.1f} °C"
+
+    @property
+    def day_unit(self) -> str:
+        return f"{self.day:.1f} °C"
+
+    @property
+    def night_unit(self) -> str:
+        return f"{self.night:.1f} °C"
+
+    @property
+    def eve_unit(self) -> str:
+        return f"{self.eve:.1f} °C"
+
+    @property
+    def morn_unit(self) -> str:
+        return f"{self.morn:.1f} °C"
+
 
 class FeelsLike(BaseModel):
     day: float
     night: float
     eve: float
     morn: float
+
+    @property
+    def day_unit(self) -> str:
+        return f"{self.day:.1f} °C"
+
+    @property
+    def night_unit(self) -> str:
+        return f"{self.night:.1f} °C"
+
+    @property
+    def eve_unit(self) -> str:
+        return f"{self.eve:.1f} °C"
+
+    @property
+    def morn_unit(self) -> str:
+        return f"{self.morn:.1f} °C"
 
 
 class DailyItem(BaseModel):
