@@ -4,7 +4,7 @@ from . import views
 
 app_name = "murkelhausen_info"
 urlpatterns = [
-    path("", views.start, name="start"),
+    path("", views.IndexView.as_view(), name="start"),
     path("weather/", views.WeatherView.as_view(), name="weather"),
     path("power/", views.power, name="power"),
     path("departures/", views.DepartureView.as_view(), name="departures"),

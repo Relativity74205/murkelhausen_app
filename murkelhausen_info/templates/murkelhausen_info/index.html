@@ -4,4 +4,15 @@
 
 <p><h1>Willkommen zu Murkelhausen Infos!</h1>
 
+<p><h4>Müllabfuhren für diese Woche:</h4>
+<ul>
+    {% if muell_termine %}
+    {% for muell_termin in muell_termine %}
+        <li>{{ muell_termin.datum|date:"l (d. M)" }}: {{ muell_termin.art }}</li>
+    {% endfor %}
+    {% else %}
+            <li><p>Keine Termine gefunden.</p></li>
+    {% endif %}
+</ul>
+
 {% endblock %}

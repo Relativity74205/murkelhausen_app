@@ -1,5 +1,5 @@
 import time
-from datetime import date
+from datetime import date, timedelta
 from functools import lru_cache
 
 import requests
@@ -202,7 +202,7 @@ def get_termine(hausnummer_id: int, _: int) -> list[dict]:
     return termine
 
 
-def get_termine_for_home() -> list[MuellTermine]:
+def get_muelltermine_for_home() -> list[MuellTermine]:
     hausnummer_id = get_friedhofstrassen_62_id()
 
     ttl_seconds = 60 * 60 * 24  # 1 day
@@ -212,6 +212,19 @@ def get_termine_for_home() -> list[MuellTermine]:
     termine = sorted(termine, key=lambda termin: termin.datum)
 
     return termine
+
+
+def get_muelltermine_for_this_week() -> list[MuellTermine]:
+    termine = get_muelltermine_for_home()
+    termine = filter_termine(termine, month_limit=1)
+    termine = sorted(termine, key=lambda termin: termin.datum)
+    today = date.today() + timedelta(days=1)
+    start_this_week = today - timedelta(days=today.weekday())
+    end_this_week = start_this_week + timedelta(days=6)
+
+    return [
+        termin for termin in termine if start_this_week <= termin.datum <= end_this_week
+    ]
 
 
 def filter_termine(

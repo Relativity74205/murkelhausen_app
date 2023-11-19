@@ -5,7 +5,8 @@ from django.views import View
 from django.views.generic.edit import FormMixin
 
 from murkelhausen_info.forms import StationForm
-from murkelhausen_info.mheg import get_termine_for_home
+from murkelhausen_info.mheg import get_muelltermine_for_home
+from murkelhausen_info.mheg.main import get_muelltermine_for_this_week
 from murkelhausen_info.ruhrbahn.main import get_departure_data, get_stations, STATIONS
 from murkelhausen_info.tables import (
     DeparturesTable,
@@ -16,8 +17,18 @@ from murkelhausen_info.tables import (
 from murkelhausen_info import weather
 
 
-def start(request):
-    return render(request, "murkelhausen_info/index.html")
+class IndexView(View):
+    template_name = "murkelhausen_info/index.html"
+
+    def get(self, request, *args, **kwargs):
+        muell_termine = get_muelltermine_for_this_week()
+        owm_data = weather.get_weather_data_muelheim()
+
+        context = {
+            "weather_data": owm_data,
+            "muell_termine": muell_termine,
+        }
+        return render(request, self.template_name, context)
 
 
 def power(request):
@@ -203,9 +214,6 @@ class WeatherView(View):
             context={
                 "weather_data": owm_data,
                 "weather_table": weather_table,
-                "foo_table": TemperatureTable({"foo": "42", "bar": "23"}).as_html(
-                    request
-                ),
             },
         )
 
@@ -214,7 +222,7 @@ class MuellView(View):
     template_name = "murkelhausen_info/muell.html"
 
     def get(self, request, *args, **kwargs):
-        termine = get_termine_for_home()
+        termine = get_muelltermine_for_home()
         data = [
             {
                 "day": termin.day,
