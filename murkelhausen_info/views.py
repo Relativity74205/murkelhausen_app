@@ -32,10 +32,12 @@ class IndexView(View):
         return render(request, self.template_name, context)
 
 
-def power(request):
-    foo = PowerData.objects.using("data").get(id=1000)
-    print(foo)
-    return render(request, "murkelhausen_info/power.html")
+class PowerView(View):
+    def get(self, request, *args, **kwargs):
+        power_data = PowerData.objects.using("data").get(id=1000)
+        return render(
+            request, "murkelhausen_info/power.html", context={"power_data": power_data}
+        )
 
 
 class DepartureView(View, FormMixin):

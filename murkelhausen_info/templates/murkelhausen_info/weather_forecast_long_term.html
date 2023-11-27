@@ -1,5 +1,6 @@
+{% load static %}
 <canvas id="long_term" width="800" height="400"></canvas>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'js/chartjs/dist/chart.umd.js' %}"></script>
   <script>
   const ctx_long_term = document.getElementById('long_term').getContext('2d');
   const chart_long_term = new Chart(ctx_long_term, {
