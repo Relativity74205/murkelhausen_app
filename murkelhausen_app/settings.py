@@ -136,6 +136,7 @@ LANGUAGE_CODE = "de-DE"
 
 TIME_ZONE = "UTC"
 
+USE_L10N = False
 USE_I18N = True
 
 USE_TZ = True
