@@ -1,5 +1,6 @@
+{% load static %}
 <canvas id="middle_term" width="800" height="400"></canvas>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static "js/chart.umd.js" %}"></script>
   <script>
   const ctx_middle_term = document.getElementById('middle_term').getContext('2d');
   const chart_middle_term = new Chart(ctx_middle_term, {

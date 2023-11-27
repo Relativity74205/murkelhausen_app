@@ -94,8 +94,21 @@ DATABASES = {
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
         "TIME_ZONE": "Europe/Berlin",
         "NAME": os.environ.get("POSTGRES_DBNAME"),
-    }
+    },
+    "data": {
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": "192.168.1.69",
+        "USER": os.environ.get("POSTGRES_USER"),
+        "DBNAME": "murkelhausen_datastore",
+        "OPTIONS": {"options": "-c search_path=report"},
+        "PORT": 5432,
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+        "TIME_ZONE": "Europe/Berlin",
+        "NAME": "murkelhausen_datastore",
+    },
 }
+
+DATABASE_ROUTERS = ["murkelhausen_info.routers.MurkelhausenInfoRouter"]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -123,6 +136,7 @@ LANGUAGE_CODE = "de-DE"
 
 TIME_ZONE = "UTC"
 
+USE_L10N = False
 USE_I18N = True
 
 USE_TZ = True

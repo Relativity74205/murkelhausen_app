@@ -7,6 +7,7 @@ from django.views.generic.edit import FormMixin
 from murkelhausen_info.forms import StationForm
 from murkelhausen_info.mheg import get_muelltermine_for_home
 from murkelhausen_info.mheg.main import get_muelltermine_for_this_week
+from murkelhausen_info.models import PowerData
 from murkelhausen_info.ruhrbahn.main import get_departure_data, get_stations, STATIONS
 from murkelhausen_info.tables import (
     DeparturesTable,
@@ -31,8 +32,12 @@ class IndexView(View):
         return render(request, self.template_name, context)
 
 
-def power(request):
-    return render(request, "murkelhausen_info/power.html")
+class PowerView(View):
+    def get(self, request, *args, **kwargs):
+        power_data = PowerData.objects.using("data").get(id=1000)
+        return render(
+            request, "murkelhausen_info/power.html", context={"power_data": power_data}
+        )
 
 
 class DepartureView(View, FormMixin):
