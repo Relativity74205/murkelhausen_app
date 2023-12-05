@@ -40,6 +40,7 @@
                 name: 'Haushalt',
                 data: [{% for element in power_data_haushalt %}[
                     {{ element.tstamp }},{{ element.power_current|floatformat }}], {% endfor %}],
+                type: 'spline',
                 tooltip: {
                     valueDecimals: 0,
                 },
@@ -47,6 +48,7 @@
                 name: 'Wärmepumpe',
                 data: [{% for element in power_data_waermepumpe %}[
                     {{ element.tstamp }},{{ element.power_current|floatformat }}], {% endfor %}],
+                type: 'spline',
                 tooltip: {
                     valueDecimals: 0,
                 },
