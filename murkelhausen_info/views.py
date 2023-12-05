@@ -1,3 +1,5 @@
+from django.db.models import Sum, Avg, DateField, IntegerField
+from django.db.models.functions import TruncDay, Cast, TruncHour, Extract
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
@@ -33,10 +35,28 @@ class IndexView(View):
 
 
 class PowerView(View):
+    def _get_power_data(self, sensor_name: str) -> list[dict]:
+        power_data = (
+            PowerData.objects.annotate(tstamp_truncated=TruncHour("tstamp"))
+            .values("tstamp_truncated", "sensorname")
+            .annotate(power_current=Cast(Avg("power_current"), IntegerField()))
+            .annotate(power_total=Cast(Avg("power_total"), IntegerField()))
+            .filter(sensorname__icontains=sensor_name)
+            .values("tstamp_truncated", "sensorname", "power_current", "power_total")
+            .annotate(tstamp=Extract("tstamp_truncated", "epoch") * 1000)
+        )
+        return list(power_data)
+
     def get(self, request, *args, **kwargs):
-        power_data = PowerData.objects.using("data").get(id=1000)
+        power_data_haushalt = self._get_power_data("stromhaushalt")
+        power_data_waermepumpe = self._get_power_data("stromwaermepumpe")
         return render(
-            request, "murkelhausen_info/power.html", context={"power_data": power_data}
+            request,
+            "murkelhausen_info/power.html",
+            context={
+                "power_data_haushalt": power_data_haushalt,
+                "power_data_waermepumpe": power_data_waermepumpe,
+            },
         )
 
 
