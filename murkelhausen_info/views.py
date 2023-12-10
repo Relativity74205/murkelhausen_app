@@ -1,5 +1,9 @@
+import logging
+from typing import Callable
+
 from django.db.models import Sum, Avg, DateField, IntegerField
 from django.db.models.functions import TruncDay, Cast, TruncHour, Extract
+from django.db.models.functions.datetime import TruncBase
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
@@ -35,9 +39,13 @@ class IndexView(View):
 
 
 class PowerView(View):
-    def _get_power_data(self, sensor_name: str) -> list[dict]:
+    def _get_power_data(
+        self, sensor_name: str, time_aggregate_callable: Callable
+    ) -> list[dict]:
         power_data = (
-            PowerData.objects.annotate(tstamp_truncated=TruncHour("tstamp"))
+            PowerData.objects.annotate(
+                tstamp_truncated=time_aggregate_callable("tstamp")
+            )
             .values("tstamp_truncated", "sensorname")
             .annotate(power_current=Cast(Avg("power_current"), IntegerField()))
             .annotate(power_total=Cast(Avg("power_total"), IntegerField()))
@@ -48,8 +56,11 @@ class PowerView(View):
         return list(power_data)
 
     def get(self, request, *args, **kwargs):
-        power_data_haushalt = self._get_power_data("stromhaushalt")
-        power_data_waermepumpe = self._get_power_data("stromwaermepumpe")
+        logging.info("Getting haushalt power data.")
+        power_data_haushalt = self._get_power_data("stromhaushalt", TruncHour)
+        logging.info("Getting waermepumpe power data.")
+        power_data_waermepumpe = self._get_power_data("stromwaermepumpe", TruncHour)
+        logging.info("Rendering power template.")
         return render(
             request,
             "murkelhausen_info/power.html",
