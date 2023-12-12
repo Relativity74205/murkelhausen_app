@@ -1,0 +1,36 @@
+<div id="container_power_last_week" style="width:100%; height:600px;"></div>
+<script>
+    let chart_power_last_week;
+    document.addEventListener('DOMContentLoaded', function () {
+        chart_power_last_week = Highcharts.stockChart('container_power_last_week', {
+            rangeSelector: {
+                enabled: false
+            },
+            legend: {
+                enabled: true
+            },
+            yAxis: {
+                title: {text: 'Watt'},
+                opposite: false
+            },
+            series: [{
+                name: 'Haushalt',
+                data: [{% for element in power_data_haushalt_last_week %}[
+                    {{ element.tstamp_epoch }},{{ element.power_current|floatformat }}], {% endfor %}],
+                type: 'spline',
+                tooltip: {
+                    valueDecimals: 0,
+                },
+            }, {
+                name: 'Wärmepumpe',
+                data: [{% for element in power_data_waermepumpe_last_week %}[
+                    {{ element.tstamp_epoch }},{{ element.power_current|floatformat }}], {% endfor %}],
+                type: 'spline',
+                tooltip: {
+                    valueDecimals: 0,
+                },
+            }
+            ],
+        });
+    });
+</script>
