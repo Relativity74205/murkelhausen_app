@@ -3,9 +3,8 @@ from datetime import datetime, timedelta
 from typing import Callable
 
 from cachetools import cached, TTLCache
-from django.db.models import Sum, Avg, DateField, IntegerField
-from django.db.models.functions import TruncDay, Cast, TruncHour, Extract
-from django.db.models.functions.datetime import TruncBase
+from django.db.models import Avg, IntegerField
+from django.db.models.functions import Cast, TruncHour, Extract
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
