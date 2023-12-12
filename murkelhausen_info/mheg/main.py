@@ -1,8 +1,7 @@
-import time
 from datetime import date, timedelta
-from functools import lru_cache
 
 import requests
+from cachetools import TTLCache, cached
 from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel
 from babel.dates import format_date
@@ -45,8 +44,8 @@ class MuellTermine(BaseModel):
         return format_date(self.datum, format="EEE, d.M.yyyy", locale="de_DE")
 
 
-@lru_cache(maxsize=1)
-def get_orte(_: int) -> list[dict]:
+@cached(cache=TTLCache(maxsize=1, ttl=60 * 60 * 24 * 7))  # 7 days
+def get_orte() -> list[dict]:
     """
     Request url: https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/orte
     Example response: [{"id":4103948,"name":"Mülheim"}]
@@ -60,15 +59,14 @@ def get_orte(_: int) -> list[dict]:
 
 
 def get_muelheim_id() -> int:
-    ttl_seconds = 60 * 60 * 24 * 7  # 7 days
-    orte = get_orte(round(time.time() / ttl_seconds))
+    orte = get_orte()
     muelheim_id = next((ort["id"] for ort in orte if ort["name"] == "Mülheim"), None)
 
     return muelheim_id
 
 
-@lru_cache(maxsize=1)
-def get_strassen(muelheim_id: int, _: int) -> list[dict]:
+@cached(cache=TTLCache(maxsize=1, ttl=60 * 60 * 24 * 7))  # 7 days
+def get_strassen(muelheim_id: int) -> list[dict]:
     """
     Example request url: "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/orte/4103948/strassen"
     Example response:
@@ -109,9 +107,8 @@ def get_strassen(muelheim_id: int, _: int) -> list[dict]:
 
 def get_friedhofstrassen_id() -> int:
     target_street = "Friedhofstraße"
-    ttl_seconds = 60 * 60 * 24 * 7  # 7 days
     muelheim_id = get_muelheim_id()
-    strassen = get_strassen(muelheim_id, round(time.time() / ttl_seconds))
+    strassen = get_strassen(muelheim_id)
     friedhofstrassen_id = next(
         (strasse["id"] for strasse in strassen if strasse["name"] == target_street),
         None,
@@ -120,8 +117,8 @@ def get_friedhofstrassen_id() -> int:
     return friedhofstrassen_id
 
 
-@lru_cache(maxsize=1)
-def get_hausnummern(strassen_id: int, _: int) -> list[dict]:
+@cached(cache=TTLCache(maxsize=1, ttl=60 * 60 * 24 * 7))  # 7 days
+def get_hausnummern(strassen_id: int) -> list[dict]:
     """
     Example request url: "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/strassen/4112491"
     Example response:
@@ -163,8 +160,7 @@ def get_hausnummern(strassen_id: int, _: int) -> list[dict]:
 def get_friedhofstrassen_62_id() -> int:
     target_hausnummer = 62
     strassen_id = get_friedhofstrassen_id()
-    ttl_seconds = 60 * 60 * 24 * 7  # 7 days
-    hausnummern = get_hausnummern(strassen_id, round(time.time() / ttl_seconds))
+    hausnummern = get_hausnummern(strassen_id)
     friedhofstrassen_62_id = next(
         (
             hausnummer["id"]
@@ -177,8 +173,8 @@ def get_friedhofstrassen_62_id() -> int:
     return friedhofstrassen_62_id
 
 
-@lru_cache(maxsize=1)
-def get_termine(hausnummer_id: int, _: int) -> list[dict]:
+@cached(cache=TTLCache(maxsize=1, ttl=60 * 60 * 24))  # 1 day
+def get_termine(hausnummer_id: int) -> list[dict]:
     """
     Example request url: "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/hausnummern/4112605/termine"
     Example response:
@@ -205,8 +201,7 @@ def get_termine(hausnummer_id: int, _: int) -> list[dict]:
 def get_muelltermine_for_home() -> list[MuellTermine]:
     hausnummer_id = get_friedhofstrassen_62_id()
 
-    ttl_seconds = 60 * 60 * 24  # 1 day
-    termine_dict = get_termine(hausnummer_id, round(time.time() / ttl_seconds))
+    termine_dict = get_termine(hausnummer_id)
     termine = [MuellTermine(**termin) for termin in termine_dict]
     termine = filter_termine(termine)
     termine = sorted(termine, key=lambda termin: termin.datum)

@@ -24,6 +24,10 @@
     <orderEntry type="library" name="jquery-3.6.0" level="application" />
     <orderEntry type="library" name="Chart.js" level="application" />
     <orderEntry type="library" name="Chart" level="application" />
+    <orderEntry type="library" name="echarts" level="application" />
+    <orderEntry type="library" name="highcharts" level="application" />
+    <orderEntry type="library" name="apexcharts" level="application" />
+    <orderEntry type="library" name="stock" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />

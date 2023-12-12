@@ -1,17 +1,39 @@
 {% extends 'murkelhausen_info/base.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
 
 {% block content %}
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/stock.js"></script>
 
-<p><h2>Murkelhausen Stromverbrauch</h2>
+    <p><h2>Murkelhausen Stromverbrauch</h2>
+    <body>
+    <br>
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#last_week" type="button"
+                    role="tab" aria-controls="last_week" aria-selected="true">letzte Woche
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#complete"
+                    type="button"
+                    role="tab" aria-controls="complete" aria-selected="false">komplett
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="last_week" role="tabpanel" aria-labelledby="home-tab">
+            {% include "murkelhausen_info/power_highcharts_last_week.html" %}
+        </div>
+        <div class="tab-pane fade" id="complete" role="tabpanel" aria-labelledby="profile-tab">
+            {% include "murkelhausen_info/power_highcharts_complete.html" %}
+        </div>
+    </div>
 
-    {% include "murkelhausen_info/power_foo.html" %}
+    {% block content2 %}
+    {% endblock %}
 
-{#<iframe#}
-{#  width="600"#}
-{#  height="400"#}
-{#  src="http://192.168.1.69:8088/superset/explore/p/4wKnA0XZvXP/?standalone=1&height=400"#}
-{#>#}
-{#</iframe>#}
-
+    </body>
 
 {% endblock %}

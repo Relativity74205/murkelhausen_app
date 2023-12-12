@@ -1,3 +1,10 @@
+import logging
+from datetime import datetime, timedelta
+from typing import Callable
+
+from cachetools import cached, TTLCache
+from django.db.models import Avg, IntegerField
+from django.db.models.functions import Cast, TruncHour, Extract
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
@@ -33,10 +40,62 @@ class IndexView(View):
 
 
 class PowerView(View):
+    @staticmethod
+    @cached(cache=TTLCache(maxsize=10, ttl=60 * 60 * 1))  # 1 hour
+    def _get_power_data_complete(
+        sensor_name: str, time_aggregate_callable: Callable
+    ) -> list[dict]:
+        power_data = (
+            PowerData.objects.filter(sensorname__icontains=sensor_name)
+            .annotate(tstamp_truncated=time_aggregate_callable("tstamp"))
+            .values("tstamp_truncated")
+            .annotate(power_current=Cast(Avg("power_current"), IntegerField()))
+            .annotate(power_total=Cast(Avg("power_total"), IntegerField()))
+            .annotate(tstamp_epoch=Extract("tstamp_truncated", "epoch") * 1000)
+            .values("tstamp_epoch", "power_current", "power_total")
+        )
+        return list(power_data)
+
+    @staticmethod
+    @cached(cache=TTLCache(maxsize=10, ttl=60 * 60 * 1))  # 1 hour
+    def _get_power_data_all_last_week(sensor_name: str) -> list[dict]:
+        power_data = (
+            PowerData.objects.filter(sensorname__icontains=sensor_name)
+            .values("tstamp", "sensorname", "power_current", "power_total")
+            .filter(tstamp__gte=(datetime.now() - timedelta(days=1)).date().isoformat())
+            .annotate(tstamp_epoch=Extract("tstamp", "epoch") * 1000)
+            .order_by("tstamp_epoch")
+            .values("tstamp_epoch", "sensorname", "power_current", "power_total")
+        )
+        return list(power_data)
+
     def get(self, request, *args, **kwargs):
-        power_data = PowerData.objects.using("data").get(id=1000)
+        logging.info("Getting haushalt power data complete.")
+        power_data_haushalt_complete = self._get_power_data_complete(
+            "stromhaushalt", TruncHour
+        )
+        logging.info("Getting haushalt power data last week minutely.")
+        power_data_haushalt_last_week = self._get_power_data_all_last_week(
+            "stromhaushalt"
+        )
+        logging.info("Getting waermepumpe power data complete.")
+        power_data_waermepumpe_complete = self._get_power_data_complete(
+            "stromwaermepumpe", TruncHour
+        )
+        logging.info("Getting waermepumpe power data last week minutely.")
+        power_data_waermepumpe_last_week = self._get_power_data_all_last_week(
+            "stromwaermepumpe"
+        )
+        logging.info("Rendering power template.")
         return render(
-            request, "murkelhausen_info/power.html", context={"power_data": power_data}
+            request,
+            "murkelhausen_info/power.html",
+            context={
+                "power_data_haushalt_complete": power_data_haushalt_complete,
+                "power_data_haushalt_last_week": power_data_haushalt_last_week,
+                "power_data_waermepumpe_complete": power_data_waermepumpe_complete,
+                "power_data_waermepumpe_last_week": power_data_waermepumpe_last_week,
+            },
         )
 
 

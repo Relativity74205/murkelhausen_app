@@ -2,17 +2,53 @@
 
 {% block content %}
 
-<p><h1>Willkommen zu Murkelhausen Infos!</h1>
+    <p><h1>Willkommen zu Murkelhausen Infos!</h1>
+    <br>
 
-<p><h4>Müllabfuhren für diese Woche:</h4>
-<ul>
-    {% if muell_termine %}
-    {% for muell_termin in muell_termine %}
-        <li>{{ muell_termin.datum|date:"l (d. M)" }}: {{ muell_termin.art }}</li>
-    {% endfor %}
-    {% else %}
+    <p><h5><a href="{% url 'murkelhausen_info:weather' %}">Wetter</a></h5>
+
+    <p><h6>Heute</h6>
+
+    <p>TODO</p>
+
+    <p><h6>Morgen</h6>
+    <table class="table table-striped" style="width: max-content; text-align: right">
+        <tbody>
+        <tr>
+            <td>Temperatur</td>
+            <td>{{ weather_data.daily.0.temp.morn_unit }} - {{ weather_data.daily.0.temp.eve_unit }}</td>
+        </tr>
+        <tr>
+            <td>Temperatur gefühlt</td>
+            <td>{{ weather_data.daily.0.feels_like.morn_unit }} - {{ weather_data.daily.0.feels_like.eve_unit }}</td>
+        </tr>
+        <tr>
+            <td>Regen</td>
+            <td>{{ weather_data.daily.0.rain_unit }}</td>
+        </tr>
+        {% if weather_data.daily.0.snow_unit %}
+            <tr>
+                <td>Schnee</td>
+                <td>{{ weather_data.daily.0.snow_unit }}</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+    <br>
+
+    <p><h5><a href="{% url 'murkelhausen_info:muell' %}">Müllabfuhren für diese Woche</a></h5>
+    <p><ul>
+        {% if muell_termine %}
+            {% for muell_termin in muell_termine %}
+                <li>{{ muell_termin.datum|date:"l (d. M)" }}: {{ muell_termin.art }}</li>
+            {% endfor %}
+        {% else %}
             <li><p>Keine Termine gefunden.</p></li>
-    {% endif %}
-</ul>
+        {% endif %}
+    </ul></p>
+    <br>
+
+    <p><h5><a href="{% url 'murkelhausen_info:power' %}">Stromverbrauch</a></h5>
+    <p>TODO</p>
 
 {% endblock %}

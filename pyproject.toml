@@ -23,6 +23,7 @@ psycopg = "^3.1.10"
 openai = "^0.28.1"
 django-markdownify = "^0.9.3"
 babel = "^2.13.1"
+cachetools = "^5.3.2"
 
 [build-system]
 requires = ["poetry-core"]

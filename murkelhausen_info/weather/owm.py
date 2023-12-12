@@ -7,10 +7,10 @@ name = "Mülheim"
 gps_lat = 51.4300
 gps_lon = 6.8264
 """
-import time
 from dataclasses import dataclass
-from functools import lru_cache
 from logging import getLogger
+
+from cachetools import cached, TTLCache
 from django.conf import settings
 
 import requests
@@ -74,8 +74,8 @@ def _query_owm(url: str, city: City, api_key: str, units: str) -> dict:
         )
 
 
-@lru_cache(maxsize=1)
-def _get_weather_data_muelheim(_: int = None) -> OWMOneCall:
+@cached(cache=TTLCache(maxsize=1, ttl=120))
+def get_weather_data_muelheim() -> OWMOneCall:
     owm_config = OWMConfig(
         url_weather="https://api.openweathermap.org/data/2.5/weather",
         url_onecall="https://api.openweathermap.org/data/3.0/onecall",
@@ -84,9 +84,3 @@ def _get_weather_data_muelheim(_: int = None) -> OWMOneCall:
     )
 
     return query_one_call_api(MUELHEIM, owm_config)
-
-
-def get_weather_data_muelheim() -> OWMOneCall:
-    # TODO add ttl_second value to config
-    ttl_seconds = 120
-    return _get_weather_data_muelheim(round(time.time() / ttl_seconds))
