@@ -78,7 +78,9 @@ def get_github_repo() -> Repository:
 def get_last_tag(repo: Repository) -> tuple[Tag | None, datetime | None]:
     tags = repo.get_tags()
     try:
-        last_tag = sorted(tags, key=lambda x: Tag.from_tag_name(x.name), reverse=True)[0]
+        last_tag = sorted(tags, key=lambda x: Tag.from_tag_name(x.name), reverse=True)[
+            0
+        ]
         return Tag.from_tag_name(last_tag.name), last_tag.commit.commit.author.date
     except IndexError:
         return None, None
