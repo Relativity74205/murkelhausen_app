@@ -32,6 +32,19 @@ class Tag:
             and self.patch == other.patch
         )
 
+    def __lt__(self, other):
+        if not isinstance(other, Tag):
+            return NotImplemented
+        if self.major < other.major:
+            return True
+        elif self.major == other.major:
+            if self.minor < other.minor:
+                return True
+            elif self.minor == other.minor:
+                if self.patch < other.patch:
+                    return True
+        return False
+
     @staticmethod
     def as_string(major: int, minor: int, patch: int):
         return f"{major}.{minor}.{patch}"
@@ -65,7 +78,7 @@ def get_github_repo() -> Repository:
 def get_last_tag(repo: Repository) -> tuple[Tag | None, datetime | None]:
     tags = repo.get_tags()
     try:
-        last_tag = sorted(tags, key=lambda x: x.name)[-1]
+        last_tag = sorted(tags, key=lambda x: Tag.from_tag_name(x.name), reverse=True)[0]
         return Tag.from_tag_name(last_tag.name), last_tag.commit.commit.author.date
     except IndexError:
         return None, None
