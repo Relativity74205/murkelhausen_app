@@ -1,46 +1,41 @@
-{% load static %}
-<canvas id="short_term" width="800" height="400"></canvas>
-  <script src="{% static "js/chart.umd.js" %}"></script>
-  <script>
-  const ctx_short_term = document.getElementById('short_term').getContext('2d');
-  const chart_short_term = new Chart(ctx_short_term, {
-      type: 'line',
-      data: {
-          labels: [{% for minute in weather_data.minutely %}"{{ minute.time }}",{% endfor %}],
-          datasets: [
-              {
-                  label: "Erwarteter Regen",
-                  data: [{% for minute in weather_data.minutely %}{{ minute.rain }}, {% endfor %}],
-                  backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                  borderColor: 'rgba(75, 192, 192, 1)',
-                  borderWidth: 1,
-                  type: 'bar',
-                  yAxisID: 'y1',
-                  order: 0,
-              },
-          ]
-      },
-      options: {
-          responsive: true,
-          plugins: {
-              legend: {
-                  position: 'bottom',
-              },
-              title: {
-                  display: true,
-                  text: 'Regen-Vorhersage für die nächsten 60 Minuten'
-              }
-          },
-          scales: {
-              y1: {
-                  beginAtZero: true,
-                  position: 'left',
-                  title: {
-                      display: true,
-                      text: 'Regen in mm/h'
-                  },
-              },
-          }
-      }
-  });
-  </script>
+{#{% load static %}#}
+
+<div id="container_weather_short_term" style="width:100%; height:600px;"></div>
+<script>
+    let chart_weather_short_term; // globally available
+    document.addEventListener('DOMContentLoaded', function () {
+        chart_power_complete = Highcharts.chart('container_weather_short_term', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Regen-Vorhersage für die nächsten 60 Minuten',
+                {#align: 'left'#}
+            },
+            legend: {
+                enabled: false
+            },
+            xAxis: {
+                type: 'category',
+                labels: {
+                    step: 5
+                }
+            },
+            yAxis: {
+                title: {text: 'Erwarteter Regen in mm/h'},
+                opposite: false
+            },
+            series: [{
+                name: 'Erwarteter Regen in mm/h',
+                {#TODO: finalize color scheme#}
+                colors: [{% for minute in weather_data.minutely %}"{% if minute.rain > 0.5 %}#0000FF{% else %}#8888e3{% endif %}",{% endfor %}],
+                colorByPoint: true,
+                data: [{% for minute in weather_data.minutely %}["{{ minute.time }}",{{ minute.rain }}], {% endfor %}],
+                tooltip: {
+                    valueDecimals: 1,
+                },
+            }
+            ],
+        });
+    });
+</script>
