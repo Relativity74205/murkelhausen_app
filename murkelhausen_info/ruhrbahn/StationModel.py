@@ -54,7 +54,7 @@ class Station(BaseModel):
     escalators: list[Escalator]
     stops: list[Stop]
     id: str
-    globalID: int
+    globalID: str
     name: str
     city: str
     coords: Coords
@@ -68,6 +68,10 @@ class StationModel(BaseModel):
 
     def get_station_id(self, station_name: str, city: str) -> str:
         try:
-            return next(station.id for station in self.stations if station.name == station_name and station.city == city)
+            return next(
+                station.id
+                for station in self.stations
+                if station.name == station_name and station.city == city
+            )
         except StopIteration:
             raise ValueError(f"Station with id {station_name} not found")

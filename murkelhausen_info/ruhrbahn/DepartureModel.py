@@ -291,7 +291,7 @@ class Station(BaseModel):
     escalators: list
     stops: list[Stop]
     id: str
-    globalID: int
+    globalID: str
     name: str
     city: str
     coords: Coords
