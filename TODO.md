@@ -8,6 +8,8 @@
 - automatisches Pull der Container auf Beowulf und Starten der Container einbauen: portainer
   - [x] portainer auf beowulf installieren
   - portainer backup
+- [] prometheus und graphana
+  - [] ... 
 - weitere Ideen:
   - Familienkalender
   - TODO
