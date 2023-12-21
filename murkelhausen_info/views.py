@@ -12,6 +12,7 @@ from django.views import View
 from django.views.generic.edit import FormMixin
 
 from murkelhausen_info.forms import StationForm
+from murkelhausen_info.gymbroich import get_vertretungsplan_dates, get_vertretungsplan
 from murkelhausen_info.mheg import get_muelltermine_for_home
 from murkelhausen_info.mheg.main import get_muelltermine_for_this_week
 from murkelhausen_info.models import PowerData
@@ -21,6 +22,7 @@ from murkelhausen_info.tables import (
     WeatherTable,
     MuellTable,
     TemperatureTable,
+    VertretungsplanTable,
 )
 from murkelhausen_info import weather
 
@@ -41,7 +43,7 @@ class IndexView(View):
 
 class PowerView(View):
     @staticmethod
-    @cached(cache=TTLCache(maxsize=10, ttl=60 * 60 * 1))  # 1 hour
+    @cached(cache=TTLCache(maxsize=10, ttl=60 * 5))  # 5 minutes
     def _get_power_data_complete(
         sensor_name: str, time_aggregate_callable: Callable
     ) -> list[dict]:
@@ -57,7 +59,7 @@ class PowerView(View):
         return list(power_data)
 
     @staticmethod
-    @cached(cache=TTLCache(maxsize=10, ttl=60 * 60 * 1))  # 1 hour
+    @cached(cache=TTLCache(maxsize=10, ttl=60 * 5))  # 5 minutes
     def _get_power_data_all_last_week(sensor_name: str) -> list[dict]:
         power_data = (
             PowerData.objects.filter(sensorname__icontains=sensor_name)
@@ -298,3 +300,53 @@ class MuellView(View):
         table = MuellTable(data)
         table.paginate(page=request.GET.get("page", 1), per_page=20)
         return render(request, self.template_name, {"table": table})
+
+
+class VertretungsplanView(View):
+    template_name = "murkelhausen_info/vertretungsplan.html"
+
+    def get(self, request, *args, **kwargs):
+        dates = get_vertretungsplan_dates()
+
+        vertretungsplaene = []
+        for date in dates:
+            plan = get_vertretungsplan(date)
+
+            plaene_transformed = [
+                {
+                    "classes": ", ".join(event.classes),
+                    "lessons": ", ".join(str(ele) for ele in event.lessons),
+                    "previousSubject": event.previousSubject,
+                    "subject": event.subject,
+                    "previousRoom": event.previousRoom,
+                    "room": event.room,
+                    "vertretungstext": event.texts.text,
+                    "cancelled": event.texts.cancelled,
+                }
+                for event in plan.events
+            ]
+
+            for i, event in enumerate(plaene_transformed):
+                if event["lessons"] == "0":
+                    plaene_transformed[i + 1]["vertretungstext"] += (
+                        " " + plaene_transformed[i]["vertretungstext"]
+                    )
+
+            plaene_transformed_cleaned = [
+                event for event in plaene_transformed if event["lessons"] != "0"
+            ]
+
+            vertretungsplaene.append(
+                {
+                    "first_plan": True if date == dates[0] else False,
+                    "date": plan.date,
+                    "version": plan.version,
+                    "table": VertretungsplanTable(plaene_transformed_cleaned),
+                }
+            )
+
+        return render(
+            request,
+            self.template_name,
+            context={"vertretungsplaene": vertretungsplaene},
+        )

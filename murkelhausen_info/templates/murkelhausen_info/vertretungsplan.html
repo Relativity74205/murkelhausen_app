@@ -1,0 +1,43 @@
+{% extends 'murkelhausen_info/base.html' %}
+{% load django_tables2 %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<body>
+<p><h2>Vertretungsplaene</h2>
+{#{% for vertretungsplan in vertretungsplaene %}#}
+{#    <h3>{{ vertretungsplan.date }}</h3>#}
+{#    {% render_table vertretungsplan.table %}#}
+{#{% endfor %}#}
+<ul class="nav nav-tabs" role="tablist">
+    {% for vertretungsplan in vertretungsplaene %}
+    <li class="nav-item" role="presentation">
+        {% if vertretungsplan.first_plan %}
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#plan_{{ vertretungsplan.date|date:"dmY" }}" type="button" role="tab" aria-controls="plan_{{ vertretungsplan.date }}" aria-selected="true">{{ vertretungsplan.date|date:"d.m.Y" }}
+        {% else %}
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#plan_{{ vertretungsplan.date|date:"dmY" }}" type="button" role="tab" aria-controls="plan_{{ vertretungsplan.date }}" aria-selected="false">{{ vertretungsplan.date|date:"d.m.Y" }}
+        {% endif %}
+        </button>
+    </li>
+{% endfor %}
+</ul>
+<div class="tab-content">
+    {% for vertretungsplan in vertretungsplaene %}
+        {% if vertretungsplan.first_plan %}
+            <div class="tab-pane fade show active" id="plan_{{ vertretungsplan.date|date:"dmY" }}" role="tabpanel" aria-labelledby="home-tab">
+        {% else %}
+            <div class="tab-pane fade" id="plan_{{ vertretungsplan.date|date:"dmY" }}" role="tabpanel" aria-labelledby="home-tab">
+        {% endif %}
+
+                <p><h5>Stand: {{ vertretungsplan.version|date:"d.m.Y H:i" }}</h5>
+                {% render_table vertretungsplan.table %}
+            </div>
+    {% endfor %}
+</div>
+
+
+
+</body>
+
+{% endblock %}

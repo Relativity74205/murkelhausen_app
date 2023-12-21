@@ -2,6 +2,7 @@ from datetime import date, datetime
 from typing import Annotated
 
 import requests
+from cachetools import cached, TTLCache
 from pydantic import BaseModel, field_validator, BeforeValidator
 
 
@@ -50,7 +51,8 @@ class Vertretungsplan(BaseModel):
     events: tuple[VertretungsplanEvent, ...]
 
 
-def get_dates() -> tuple[date, ...]:
+@cached(cache=TTLCache(maxsize=1, ttl=60))
+def get_vertretungsplan_dates() -> tuple[date, ...]:
     url = "https://assets.gymnasium-broich.de/vplan/api/dates"
     # TODO add error handling
     data = requests.get(url).json()
@@ -58,6 +60,7 @@ def get_dates() -> tuple[date, ...]:
     return tuple(date.fromisoformat(d) for d in data)
 
 
+@cached(cache=TTLCache(maxsize=1, ttl=60))
 def get_vertretungsplan(datum: date) -> Vertretungsplan:
     base_url = "https://assets.gymnasium-broich.de/vplan/api/"
     # TODO add error handling

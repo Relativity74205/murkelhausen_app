@@ -1,4 +1,5 @@
-from django_tables2 import tables, Column
+from django.utils.safestring import mark_safe
+from django_tables2 import tables, Column, LinkColumn
 
 
 class DelayColumn(Column):
@@ -56,6 +57,48 @@ class TemperatureTable(tables.Table):
         orderable = False
         template_name = "django_tables2/table.html"
         show_header = False
+
+
+class CancelledColumn(Column):
+    def render(self, value):
+        if value is True:
+            return mark_safe('<i class="fas fa-times" style="color: red;"></i>')
+        else:
+            return ""
+
+
+class VertretungsplanTable(tables.Table):
+    classes = Column(verbose_name="Klasse(n)", default=" ")
+    lessons = Column(verbose_name="Stunde(n)", default=" ")
+    previousSubject = Column(verbose_name="altes Fach", default=" ")
+    subject = Column(verbose_name="neues fach", default=" ")
+    previousRoom = Column(verbose_name="alter Raum", default=" ")
+    room = Column(verbose_name="neuer Raum", default=" ")
+    vertretungstext = Column(verbose_name="Vertretungstext")
+    cancelled = CancelledColumn(
+        verbose_name="entfällt",
+        attrs={
+            "td": {"style": "text-align: center"},
+            "th": {"style": "text-align: center"},
+        },
+    )
+
+    class Meta:
+        template_name = "django_tables2/bootstrap5.html"
+        orderable = False
+        row_attrs = {
+            "style": lambda record: VertretungsplanTable._get_background_color(
+                record["classes"]
+            )
+        }
+
+    @staticmethod
+    def _get_background_color(value):
+        # TODO: move class of Mattis to config
+        if "5B" in value:
+            return "background-color: yellow;"
+
+        return None
 
 
 class MuellTable(tables.Table):
