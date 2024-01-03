@@ -32,6 +32,8 @@ class MuellTermine(BaseModel):
                 return "Gelbe Tonne"
             case 3:
                 return "Biotonne"
+            case 4:
+                return "Weihnachtsbaum"
             case _:
                 return "Unbekannt"
 
@@ -48,7 +50,7 @@ class MuellTermine(BaseModel):
 def get_orte() -> list[dict]:
     """
     Request url: https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/orte
-    Example response: [{"id":4103948,"name":"Mülheim"}]
+    Example response: [{"id":4546575,"name":"Mülheim"}]
     """
     # TODO add error handling
     url = BASE_URL + "orte"
@@ -68,7 +70,7 @@ def get_muelheim_id() -> int:
 @cached(cache=TTLCache(maxsize=1, ttl=60 * 60 * 24 * 7))  # 7 days
 def get_strassen(muelheim_id: int) -> list[dict]:
     """
-    Example request url: "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/orte/4103948/strassen"
+    Example request url: "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/orte/4546575/strassen"
     Example response:
     [{
         "id": 4134672,
@@ -120,10 +122,10 @@ def get_friedhofstrassen_id() -> int:
 @cached(cache=TTLCache(maxsize=1, ttl=60 * 60 * 24 * 7))  # 7 days
 def get_hausnummern(strassen_id: int) -> list[dict]:
     """
-    Example request url: "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/strassen/4112491"
+    Example request url: "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/strassen/4555127"
     Example response:
     {
-        "id": 4112491,
+        "id": 4555127,
         "name": "Friedhofstraße",
         "staticId": "TfxsaGVpbWRlZmF1bHRGcmllZGhvZnN0cmHfZQ==",
         "hausNrList": [
