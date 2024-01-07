@@ -1,4 +1,7 @@
 {% load static %}
+{% load weathertags %}
+{% load mathtags %}
+
 <canvas id="middle_term" width="800" height="400"></canvas>
   <script src="{% static "js/chart.umd.js" %}"></script>
   <script>
@@ -8,26 +11,6 @@
       data: {
           labels: [{% for hour in weather_data.hourly %}"{{ hour.time }}",{% endfor %}],
           datasets: [
-              {
-                  label: "Erwarteter Regen",
-                  data: [{% for hour in weather_data.hourly %}{{ hour.rain }}, {% endfor %}],
-                  backgroundColor: 'rgba(96,162,255,0.5)',
-                  borderColor: 'rgba(75, 192, 192, 1)',
-                  borderWidth: 1,
-                  type: 'bar',
-                  yAxisID: 'y2',
-                  order: 0,
-              },
-              {
-                  label: "Erwarteter Schnee",
-                  data: [{% for hour in weather_data.hourly %}{{ hour.snow }}, {% endfor %}],
-                  backgroundColor: 'rgba(229,245,245,0.5)',
-                  borderColor: 'rgba(75, 192, 192, 1)',
-                  borderWidth: 1,
-                  type: 'bar',
-                  yAxisID: 'y2',
-                  order: 0,
-              },
               {
                   label: "Temperatur",
                   data: [{% for hour in weather_data.hourly %}{{ hour.temp }}, {% endfor %}],
@@ -48,18 +31,36 @@
                   cubicInterpolationMode: 'monotone',
                   pointStyle: false,
               },
-{% comment %}              {
-                  label: "Regenwahrscheinlichkeit",
-                  data: [{% for hour in weather_data.hourly %}{{ hour.pop }}, {% endfor %}],
-                  borderColor: 'blue',
-                  borderDash: [5, 5],
+              {
+                  label: "Erwarteter Regen",
+                  data: [{% for hour in weather_data.hourly %}{{ hour.rain }}, {% endfor %}],
+                  backgroundColor: [{% for hour in weather_data.hourly %}"{{ hour.rain|rain_color }}",{% endfor %}],
+                  borderColor: 'rgba(75, 192, 192, 1)',
                   borderWidth: 1,
-                  type: 'line',
+                  type: 'bar',
                   yAxisID: 'y2',
                   order: 0,
-                  cubicInterpolationMode: 'monotone',
-                  pointStyle: false,
-              },{% endcomment %}
+              },
+              {% if weather_data.max_snow_hourly > 0 %}
+              {
+                  label: "Erwarteter Schnee",
+                  data: [{% for hour in weather_data.hourly %}{{ hour.snow }}, {% endfor %}],
+                  backgroundColor: 'rgba(229,245,245,0.5)',
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1,
+                  type: 'bar',
+                  yAxisID: 'y2',
+                  order: 0,
+              },
+              {% endif %}
+              {
+                  label: "Regenwahrscheinlichkeit",
+                  data: [{% for hour in weather_data.hourly %}{ x: "{{ hour.time }}", y: 0, r: {{ hour.pop|multiply:10 }} }, {% endfor %}],
+                  borderColor: 'blue',
+                  type: 'bubble',
+                  yAxisID: 'y2',
+                  order: 0,
+              },
           ]
       },
       options: {
