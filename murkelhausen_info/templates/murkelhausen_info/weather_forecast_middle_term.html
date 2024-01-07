@@ -11,7 +11,17 @@
               {
                   label: "Erwarteter Regen",
                   data: [{% for hour in weather_data.hourly %}{{ hour.rain }}, {% endfor %}],
-                  backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                  backgroundColor: 'rgba(96,162,255,0.5)',
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1,
+                  type: 'bar',
+                  yAxisID: 'y2',
+                  order: 0,
+              },
+              {
+                  label: "Erwarteter Schnee",
+                  data: [{% for hour in weather_data.hourly %}{{ hour.snow }}, {% endfor %}],
+                  backgroundColor: 'rgba(229,245,245,0.5)',
                   borderColor: 'rgba(75, 192, 192, 1)',
                   borderWidth: 1,
                   type: 'bar',
@@ -37,7 +47,19 @@
                   order: 1,
                   cubicInterpolationMode: 'monotone',
                   pointStyle: false,
-              }
+              },
+{% comment %}              {
+                  label: "Regenwahrscheinlichkeit",
+                  data: [{% for hour in weather_data.hourly %}{{ hour.pop }}, {% endfor %}],
+                  borderColor: 'blue',
+                  borderDash: [5, 5],
+                  borderWidth: 1,
+                  type: 'line',
+                  yAxisID: 'y2',
+                  order: 0,
+                  cubicInterpolationMode: 'monotone',
+                  pointStyle: false,
+              },{% endcomment %}
           ]
       },
       options: {

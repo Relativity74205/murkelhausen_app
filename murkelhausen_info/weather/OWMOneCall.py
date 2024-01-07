@@ -136,6 +136,7 @@ class HourlyItem(BaseModel):
     weather: tuple[WeatherItem, ...]
     pop: float
     rain1h: Rain | None = Field(None, alias="rain")
+    snow1h: Rain | None = Field(None, alias="snow")
 
     @property
     def time(self) -> str:
@@ -147,6 +148,13 @@ class HourlyItem(BaseModel):
             return 0
         else:
             return self.rain1h.field_1h
+
+    @property
+    def snow(self) -> float:
+        if self.snow1h is None:
+            return 0
+        else:
+            return self.snow1h.field_1h
 
 
 class Temp(BaseModel):
@@ -225,7 +233,7 @@ class DailyItem(BaseModel):
     clouds: int
     pop: float
     rain_: float | None = Field(None, alias="rain")
-    snow: float | None = None
+    snow_: float | None = Field(None, alias="snow")
     uvi: float
 
     @property
@@ -242,6 +250,13 @@ class DailyItem(BaseModel):
             return 0
         else:
             return self.rain_
+
+    @property
+    def snow(self) -> float:
+        if self.snow_ is None:
+            return 0
+        else:
+            return self.snow_
 
     @property
     def temp_unit(self) -> str:
@@ -343,3 +358,7 @@ class OWMOneCall(BaseModel):
     @property
     def current_pop_unit(self) -> str:
         return f"{self.hourly[0].pop * 100:.0f} %"
+
+    @property
+    def max_rain_daily(self) -> float:
+        return max([d.rain for d in self.daily])

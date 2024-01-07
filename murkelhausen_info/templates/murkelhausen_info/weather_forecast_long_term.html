@@ -1,4 +1,6 @@
 {% load static %}
+{% load mathtags %}
+
 <canvas id="long_term" width="800" height="400"></canvas>
   <script src="{% static "js/chart.umd.js" %}"></script>
   <script>
@@ -11,7 +13,17 @@
               {
                   label: "Erwarteter Regen",
                   data: [{% for day in weather_data.daily %}{{ day.rain }}, {% endfor %}],
-                  backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                  backgroundColor: 'rgba(96,162,255,0.5)',
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1,
+                  type: 'bar',
+                  yAxisID: 'y2',
+                  order: 0,
+              },
+              {
+                  label: "Erwarteter Schnee",
+                  data: [{% for day in weather_data.daily %}{{ day.snow }}, {% endfor %}],
+                  backgroundColor: 'rgba(229,245,245,0.5)',
                   borderColor: 'rgba(75, 192, 192, 1)',
                   borderWidth: 1,
                   type: 'bar',
@@ -40,7 +52,19 @@
                   pointStyle: false,
                   order: 1,
                   fill: '-1',
-              }
+              },
+{% comment %}              {
+                  label: "Regenwahrscheinlichkeit",
+                  data: [{% for day in weather_data.daily %}{{ day.pop|multiply:weather_data.max_rain_daily }}, {% endfor %}],
+                  borderColor: 'blue',
+                  borderDash: [5, 5],
+                  borderWidth: 1,
+                  type: 'line',
+                  yAxisID: 'y2',
+                  order: 2,
+                  cubicInterpolationMode: 'monotone',
+                  pointStyle: false,
+              },{% endcomment %}
           ]
       },
       options: {

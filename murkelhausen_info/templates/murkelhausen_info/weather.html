@@ -15,6 +15,12 @@
             </button>
         </li>
         <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#radar"
+                    type="button"
+                    role="tab" aria-controls="radar" aria-selected="false">Regen-Radar
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
             <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#future_short_term"
                     type="button"
                     role="tab" aria-controls="future_short_term" aria-selected="false">Regen-Vorhersage 1 Stunde
@@ -39,6 +45,9 @@
     <div class="tab-content">
         <div class="tab-pane fade show active" id="current" role="tabpanel" aria-labelledby="home-tab">
             {% include "murkelhausen_info/weather_current.html" %}
+        </div>
+        <div class="tab-pane fade" id="radar" role="tabpanel" aria-labelledby="profile-tab">
+            {% include "murkelhausen_info/weather_radar.html" %}
         </div>
         <div class="tab-pane fade" id="future_short_term" role="tabpanel" aria-labelledby="profile-tab">
             {% include "murkelhausen_info/weather_forecast_short_term.html" %}

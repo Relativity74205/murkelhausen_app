@@ -64,7 +64,7 @@ class PowerView(View):
         power_data = (
             PowerData.objects.filter(sensorname__icontains=sensor_name)
             .values("tstamp", "sensorname", "power_current", "power_total")
-            .filter(tstamp__gte=(datetime.now() - timedelta(days=1)).date().isoformat())
+            .filter(tstamp__gte=(datetime.now() - timedelta(days=7)).date().isoformat())
             .annotate(tstamp_epoch=Extract("tstamp", "epoch") * 1000)
             .order_by("tstamp_epoch")
             .values("tstamp_epoch", "sensorname", "power_current", "power_total")

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "statements.apps.StatementsConfig",
     "trainer.apps.TrainerConfig",
     "murkelhausen_info.apps.MurkelhausenInfoConfig",
+    "murkelhausen_info.templatetags.mathtags",
     "chat.apps.ChatConfig",
     "pages.apps.PagesConfig",
     "django_tables2",

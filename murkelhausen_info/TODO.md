@@ -7,3 +7,4 @@
 - [x] Wetter Page einbauen
   - langfristiger Wetterbericht 
   - historische Wetterdaten
+- [] Button um Cache zu leeren, z.B. fuer Muellabfuhr

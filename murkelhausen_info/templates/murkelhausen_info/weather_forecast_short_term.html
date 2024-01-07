@@ -23,7 +23,9 @@
             },
             yAxis: {
                 title: {text: 'Erwarteter Regen in mm/h'},
-                opposite: false
+                opposite: false,
+                min: 0,
+                {#max: 100, TODO: calculate max value out of real values #}
             },
             series: [{
                 name: 'Erwarteter Regen in mm/h',
