@@ -12,21 +12,29 @@
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#last_week" type="button"
-                    role="tab" aria-controls="last_week" aria-selected="true">letzte Woche
+                    role="tab" aria-controls="last_week" aria-selected="true">Verbrauch letzte Woche
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#complete" type="button"
-                    role="tab" aria-controls="complete" aria-selected="false">komplett
+                    role="tab" aria-controls="complete" aria-selected="false">Verbrauch gesamter Zeitraum
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#cumulated" type="button"
+                    role="tab" aria-controls="cumulated" aria-selected="false">kummulierter Verbrauch
             </button>
         </li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane fade show active" id="last_week" role="tabpanel" aria-labelledby="home-tab">
-            {% include "murkelhausen_info/power_highcharts_last_week.html" %}
+            {% include "murkelhausen_info/power_last_week.html" %}
         </div>
         <div class="tab-pane fade" id="complete" role="tabpanel" aria-labelledby="profile-tab">
-            {% include "murkelhausen_info/power_highcharts_complete.html" %}
+            {% include "murkelhausen_info/power_complete.html" %}
+        </div>
+        <div class="tab-pane fade" id="cumulated" role="tabpanel" aria-labelledby="profile-tab">
+            {% include "murkelhausen_info/power_cumulated.html" %}
         </div>
     </div>
     </body>

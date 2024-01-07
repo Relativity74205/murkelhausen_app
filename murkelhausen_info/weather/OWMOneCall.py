@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, date
-
+import random
 from pydantic import BaseModel, Field
 
 from murkelhausen_info.weather.owm_one_call_functions import (
@@ -360,5 +360,17 @@ class OWMOneCall(BaseModel):
         return f"{self.hourly[0].pop * 100:.0f} %"
 
     @property
-    def max_rain_daily(self) -> float:
-        return max([d.rain for d in self.daily])
+    def max_rain_minutely(self) -> float:
+        max_rain = max([minute.rain for minute in self.minutely])
+        if max_rain == 0:
+            return 0.1
+        else:
+            return max_rain
+
+    @property
+    def max_snow_hourly(self) -> float:
+        return max([hour.snow for hour in self.hourly])
+
+    @property
+    def max_snow_daily(self) -> float:
+        return max([day.snow for day in self.daily])

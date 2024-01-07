@@ -1,5 +1,6 @@
 {% load static %}
 {% load mathtags %}
+{% load weathertags %}
 
 <canvas id="long_term" width="800" height="400"></canvas>
   <script src="{% static "js/chart.umd.js" %}"></script>
@@ -13,13 +14,14 @@
               {
                   label: "Erwarteter Regen",
                   data: [{% for day in weather_data.daily %}{{ day.rain }}, {% endfor %}],
-                  backgroundColor: 'rgba(96,162,255,0.5)',
+                  backgroundColor: [{% for day in weather_data.daily %}"{{ day.rain|rain_color }}",{% endfor %}],
                   borderColor: 'rgba(75, 192, 192, 1)',
                   borderWidth: 1,
                   type: 'bar',
                   yAxisID: 'y2',
                   order: 0,
               },
+                {% if weather_data.max_snow_daily > 0 %}
               {
                   label: "Erwarteter Schnee",
                   data: [{% for day in weather_data.daily %}{{ day.snow }}, {% endfor %}],
@@ -30,6 +32,7 @@
                   yAxisID: 'y2',
                   order: 0,
               },
+              {% endif %}
               {
                   label: "Temperatur Minimum",
                   data: [{% for day in weather_data.daily %}{{ day.temp_min }}, {% endfor %}],
@@ -53,18 +56,14 @@
                   order: 1,
                   fill: '-1',
               },
-{% comment %}              {
+              {
                   label: "Regenwahrscheinlichkeit",
-                  data: [{% for day in weather_data.daily %}{{ day.pop|multiply:weather_data.max_rain_daily }}, {% endfor %}],
+                  data: [{% for day in weather_data.daily %}{ x: "{{ day.day }}", y: 0, r: {{ day.pop|multiply:20 }} }, {% endfor %}],
                   borderColor: 'blue',
-                  borderDash: [5, 5],
-                  borderWidth: 1,
-                  type: 'line',
+                  type: 'bubble',
                   yAxisID: 'y2',
-                  order: 2,
-                  cubicInterpolationMode: 'monotone',
-                  pointStyle: false,
-              },{% endcomment %}
+                  order: 0,
+              },
           ]
       },
       options: {
