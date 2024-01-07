@@ -360,5 +360,9 @@ class OWMOneCall(BaseModel):
         return f"{self.hourly[0].pop * 100:.0f} %"
 
     @property
-    def max_rain_daily(self) -> float:
-        return max([d.rain for d in self.daily])
+    def max_rain_minutely(self) -> float:
+        max_rain = max([d.rain for d in self.minutely])
+        if max_rain == 0:
+            return 0.1
+        else:
+            return max_rain

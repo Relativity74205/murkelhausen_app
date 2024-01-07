@@ -25,7 +25,7 @@
                 title: {text: 'Erwarteter Regen in mm/h'},
                 opposite: false,
                 min: 0,
-                {#max: 100, TODO: calculate max value out of real values #}
+                max: {{ weather_data.max_rain_minutely }},
             },
             series: [{
                 name: 'Erwarteter Regen in mm/h',
