@@ -9,6 +9,8 @@ from pydantic import BaseModel
 
 BASE_URL = "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/"
 
+logger = logging.getLogger(__name__)
+
 
 class Bezirk(BaseModel):
     id: int

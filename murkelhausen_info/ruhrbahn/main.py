@@ -1,8 +1,12 @@
 import requests
 from cachetools import TTLCache, cached
+import logging
 
 from murkelhausen_info.ruhrbahn.DepartureModel import DepartureModel
 from murkelhausen_info.ruhrbahn.StationModel import StationModel
+
+logger = logging.getLogger(__name__)
+
 
 STATIONS = ("Lierberg", "Kriegerstr.")
 URLS = {
@@ -19,6 +23,9 @@ URLS = {
 @cached(cache=TTLCache(maxsize=1, ttl=60))
 def get_departure_data(station_id: str, _: int = None) -> DepartureModel:
     json_data = requests.get(URLS["departure"] + station_id).json()
+    logger.info(
+        f"Retrieved departure data from the Ruhrbahn API for station {station_id}."
+    )
     return DepartureModel(**json_data)
 
 
@@ -26,6 +33,7 @@ def get_departure_data(station_id: str, _: int = None) -> DepartureModel:
 def get_stations(_: int = None) -> StationModel:
     json_data = requests.get(URLS["stations"]).json()
     data = {"stations": json_data}
+    logger.info(f"Retrieved stations data from the Ruhrbahn API.")
     return StationModel(**data)
 
 

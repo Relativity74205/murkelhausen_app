@@ -1,9 +1,12 @@
 from datetime import date, datetime
 from typing import Annotated
+import logging
 
 import requests
 from cachetools import TTLCache, cached
 from pydantic import BaseModel, BeforeValidator, field_validator
+
+logger = logging.getLogger(__name__)
 
 
 def replace_empty_str_with_none(v: str) -> str | None:
@@ -54,8 +57,10 @@ class Vertretungsplan(BaseModel):
 @cached(cache=TTLCache(maxsize=1, ttl=60))
 def get_vertretungsplan_dates() -> tuple[date, ...]:
     url = "https://assets.gymnasium-broich.de/vplan/api/dates"
-    # TODO add error handling
     data = requests.get(url).json()
+    logger.info(
+        f"Retrieved {len(data)} dates of the Vertretungsplan API for which Vertretungsplaene exist."
+    )
 
     return tuple(date.fromisoformat(d) for d in data)
 
@@ -63,7 +68,7 @@ def get_vertretungsplan_dates() -> tuple[date, ...]:
 @cached(cache=TTLCache(maxsize=1, ttl=60))
 def get_vertretungsplan(datum: date) -> Vertretungsplan:
     base_url = "https://assets.gymnasium-broich.de/vplan/api/"
-    # TODO add error handling
     data: dict = requests.get(base_url + datum.isoformat()).json()
+    logger.info(f"Retrieved Vertretungsplan for {datum}.")
 
     return Vertretungsplan(**data)

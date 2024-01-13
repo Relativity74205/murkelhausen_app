@@ -109,6 +109,7 @@ class DepartureView(View, FormMixin):
     @staticmethod
     def _get_data(station: str) -> list[dict]:
         station_id = ruhrbahn.get_stations().get_station_id(station, "Mülheim")
+        logger.info(f"Retrieved station id {station_id} for station {station}.")
 
         departure_data = ruhrbahn.get_departure_data(station_id)
         departures = departure_data.get_departure_list()
@@ -122,6 +123,7 @@ class DepartureView(View, FormMixin):
             }
             for departure in departures
         ]
+        logger.info(f"Retrieved {len(data)} departures for station {station}.")
 
         return data
 
@@ -129,11 +131,15 @@ class DepartureView(View, FormMixin):
         station = self.request.session.get("station")
         if station is None:
             station = ruhrbahn.STATIONS[0]
+            logger.info(
+                f"Setting station to default ({station}) as station is empty in session cache."
+            )
         form = StationForm()
         form.initial["station"] = ruhrbahn.STATIONS.index(station)
         departure_data = self._get_data(station)
         table = DeparturesTable(departure_data[:20])
         table.paginate(page=request.GET.get("page", 1), per_page=20)
+        logger.info(f"Rendering departures template for {station=}.")
         return render(request, self.template_name, {"form": form, "table": table})
 
     def post(self, request, *args, **kwargs):
@@ -141,6 +147,7 @@ class DepartureView(View, FormMixin):
         if form.is_valid():
             station_position = form.cleaned_data["station"]
             station = ruhrbahn.STATIONS[int(station_position)]
+            logger.info(f"Setting station to {station} in session cache.")
             self.request.session["station"] = station
 
         return HttpResponseRedirect(request.path_info)
@@ -313,6 +320,7 @@ class VertretungsplanView(View):
 
         vertretungsplaene = []
         for date in dates:
+            logger.info(f"Generating vertretungsplan table for {date=}.")
             plan = gymbroich.get_vertretungsplan(date)
 
             plaene_transformed = [
@@ -347,6 +355,8 @@ class VertretungsplanView(View):
                     "table": VertretungsplanTable(plaene_transformed_cleaned),
                 }
             )
+
+        logger.info(f"Rendering vertretungsplan template.")
 
         return render(
             request,
