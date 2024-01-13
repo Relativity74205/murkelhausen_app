@@ -7,11 +7,33 @@
 
     <p><h5><a href="{% url 'murkelhausen_info:weather' %}">Wetter</a></h5>
 
+    <p><h6>Aktuell</h6>
+    <table class="table table-striped" style="width: max-content; text-align: right">
+        <tbody>
+        <tr>
+            <td>Temperatur</td>
+            <td>{{ weather_data.current.temp_unit }}</td>
+        </tr>
+        <tr>
+            <td>Temperatur gefühlt</td>
+            <td>{{ weather_data.current.feels_like_unit }}</td>
+        </tr>
+        {% if weather_data.current.rain_unit %}
+            <tr>
+                <td>Regen</td>
+                <td>{{ weather_data.current.rain_unit }}</td>
+            </tr>
+        {% endif %}
+        {% if weather_data.current.rain_unit %}
+            <tr>
+                <td>Schnee</td>
+                <td>{{ weather_data.current.snow_unit }}</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
     <p><h6>Heute</h6>
-
-    <p>TODO</p>
-
-    <p><h6>Morgen</h6>
     <table class="table table-striped" style="width: max-content; text-align: right">
         <tbody>
         <tr>
@@ -30,6 +52,30 @@
             <tr>
                 <td>Schnee</td>
                 <td>{{ weather_data.daily.0.snow_unit }}</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    <p><h6>Morgen</h6>
+    <table class="table table-striped" style="width: max-content; text-align: right">
+        <tbody>
+        <tr>
+            <td>Temperatur</td>
+            <td>{{ weather_data.daily.1.temp.morn_unit }} - {{ weather_data.daily.1.temp.eve_unit }}</td>
+        </tr>
+        <tr>
+            <td>Temperatur gefühlt</td>
+            <td>{{ weather_data.daily.1.feels_like.morn_unit }} - {{ weather_data.daily.1.feels_like.eve_unit }}</td>
+        </tr>
+        <tr>
+            <td>Regen</td>
+            <td>{{ weather_data.daily.1.rain_unit }}</td>
+        </tr>
+        {% if weather_data.daily.1.snow_unit %}
+            <tr>
+                <td>Schnee</td>
+                <td>{{ weather_data.daily.1.snow_unit }}</td>
             </tr>
         {% endif %}
         </tbody>
