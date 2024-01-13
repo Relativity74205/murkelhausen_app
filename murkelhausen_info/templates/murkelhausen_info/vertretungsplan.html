@@ -5,11 +5,8 @@
 {% block content %}
 
 <body>
-<p><h2>Vertretungsplaene</h2>
-{#{% for vertretungsplan in vertretungsplaene %}#}
-{#    <h3>{{ vertretungsplan.date }}</h3>#}
-{#    {% render_table vertretungsplan.table %}#}
-{#{% endfor %}#}
+<p><h2>Vertretungspläne</h2>
+
 <ul class="nav nav-tabs" role="tablist">
     {% for vertretungsplan in vertretungsplaene %}
     <li class="nav-item" role="presentation">
