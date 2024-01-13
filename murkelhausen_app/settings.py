@@ -180,19 +180,36 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "simple": {
+        "default": {
             "format": "{levelname} {asctime} {module} {message}",
             "style": "{",
         },
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "simple",
+        "base": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s - %(message)s",
+        },
+        "routes": {
+            "format": "%(asctime)s - %(message)s",
         },
     },
-    "root": {
-        "handlers": ["console"],
-        "level": "INFO",
+    "handlers": {
+        "base": {
+            "class": "logging.StreamHandler",
+            "formatter": "base",
+        },
+        "routes": {
+            "class": "logging.StreamHandler",
+            "formatter": "routes",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["routes"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "root": {
+            "handlers": ["base"],
+            "level": "INFO",
+        },
     },
 }

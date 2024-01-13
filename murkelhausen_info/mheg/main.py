@@ -54,7 +54,7 @@ def get_orte() -> list[dict]:
     Example response: [{"id":4546575,"name":"Mülheim"}]
     """
     orte = requests.get(BASE_URL + "orte").json()
-    logging.info(f"Retrieved {len(orte)} Orte of the MHEG API.")
+    logger.info(f"Retrieved {len(orte)} Orte of the MHEG API.")
 
     return orte
 
@@ -62,7 +62,7 @@ def get_orte() -> list[dict]:
 def get_muelheim_id() -> int:
     orte = get_orte()
     muelheim_id = next((ort["id"] for ort in orte if ort["name"] == "Mülheim"), None)
-    logging.info(f"Retrieved Mülheim id ({muelheim_id}) of the MHEG API.")
+    logger.info(f"Retrieved Mülheim id ({muelheim_id}) of the MHEG API.")
 
     return muelheim_id
 
@@ -99,7 +99,7 @@ def get_strassen(muelheim_id: int) -> list[dict]:
     ...]
     """
     strassen = requests.get(BASE_URL + f"orte/{muelheim_id}/strassen").json()
-    logging.info(
+    logger.info(
         f"Retrieved {len(strassen)} Straßen for {muelheim_id=} of the MHEG API."
     )
 
@@ -114,9 +114,7 @@ def get_friedhofstrassen_id() -> int:
         (strasse["id"] for strasse in strassen if strasse["name"] == target_street),
         None,
     )
-    logging.info(
-        f"Retrieved Friedhofstraße id ({friedhofstrassen_id}) of the MHEG API."
-    )
+    logger.info(f"Retrieved Friedhofstraße id ({friedhofstrassen_id}) of the MHEG API.")
 
     return friedhofstrassen_id
 
@@ -154,7 +152,7 @@ def get_hausnummern(strassen_id: int) -> list[dict]:
     }
     """
     strassen = requests.get(BASE_URL + f"strassen/{strassen_id}").json()
-    logging.info(
+    logger.info(
         f"Retrieved {len(strassen['hausNrList'])} Hausnummern for {strassen_id=} of the MHEG API."
     )
 
@@ -173,7 +171,7 @@ def get_friedhofstrassen_62_id() -> int:
         ),
         None,
     )
-    logging.info(
+    logger.info(
         f"Retrieved Friedhofstraße 62 id ({friedhofstrassen_62_id}) of the MHEG API."
     )
 
@@ -199,7 +197,7 @@ def get_termine(hausnummer_id: int) -> list[dict]:
     ]
     """
     termine = requests.get(BASE_URL + f"hausnummern/{hausnummer_id}/termine").json()
-    logging.info(
+    logger.info(
         f"Retrieved {len(termine)} Termine for {hausnummer_id=} of the MHEG API."
     )
 
@@ -210,13 +208,13 @@ def get_muelltermine_for_home() -> list[MuellTermine]:
     hausnummer_id = get_friedhofstrassen_62_id()
 
     termine_dict = get_termine(hausnummer_id)
-    logging.info(
+    logger.info(
         f"Retrieved {len(termine_dict)} Termine for Home Address of the MHEG API."
     )
     termine = [MuellTermine(**termin) for termin in termine_dict]
     termine = filter_termine(termine, month_limit=2)
     termine = sorted(termine, key=lambda termin: termin.datum)
-    logging.info(
+    logger.info(
         f"Filtered ({len(termine)}) and sorted Termine for Home Address of the MHEG API."
     )
 
@@ -233,7 +231,7 @@ def get_muelltermine_for_this_week() -> list[MuellTermine]:
     filtered_termine = [
         termin for termin in termine if start_this_week <= termin.datum <= end_this_week
     ]
-    logging.info(
+    logger.info(
         f"Filtered ({len(filtered_termine)}) Termine for this week of the MHEG API "
         f"with {start_this_week=} and {end_this_week=}."
     )

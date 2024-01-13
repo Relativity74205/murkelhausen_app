@@ -22,6 +22,8 @@ from murkelhausen_info.tables import (
     WeatherTable,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class IndexView(View):
     template_name = "murkelhausen_info/index.html"
@@ -52,9 +54,7 @@ class PowerView(View):
             .annotate(tstamp_epoch=Extract("tstamp_truncated", "epoch") * 1000)
             .values("tstamp_epoch", "power_current", "power_total")
         )
-        logging.info(
-            f"Retrieved {len(power_data)} aggregated power data from database."
-        )
+        logger.info(f"Retrieved {len(power_data)} aggregated power data from database.")
         return list(power_data)
 
     @staticmethod
@@ -68,29 +68,29 @@ class PowerView(View):
             .order_by("tstamp_epoch")
             .values("tstamp_epoch", "sensorname", "power_current", "power_total")
         )
-        logging.info(
+        logger.info(
             f"Retrieved {len(power_data)} fine grained power data for last week from database."
         )
         return list(power_data)
 
     def get(self, request, *args, **kwargs):
-        logging.info("Getting haushalt power data complete.")
+        logger.info("Getting haushalt power data complete.")
         power_data_haushalt_complete = self._get_power_data_complete(
             "stromhaushalt", TruncHour
         )
-        logging.info("Getting haushalt power data last week minutely.")
+        logger.info("Getting haushalt power data last week minutely.")
         power_data_haushalt_last_week = self._get_power_data_all_last_week(
             "stromhaushalt"
         )
-        logging.info("Getting waermepumpe power data complete.")
+        logger.info("Getting waermepumpe power data complete.")
         power_data_waermepumpe_complete = self._get_power_data_complete(
             "stromwaermepumpe", TruncHour
         )
-        logging.info("Getting waermepumpe power data last week minutely.")
+        logger.info("Getting waermepumpe power data last week minutely.")
         power_data_waermepumpe_last_week = self._get_power_data_all_last_week(
             "stromwaermepumpe"
         )
-        logging.info("Rendering power template.")
+        logger.info("Rendering power template.")
         return render(
             request,
             "murkelhausen_info/power.html",
@@ -291,7 +291,7 @@ class MuellView(View):
 
     def get(self, request, *args, **kwargs):
         termine = mheg.get_muelltermine_for_home()
-        logging.info(f"Retrieved {len(termine)} Mülltermine from unofficial API.")
+        logger.info(f"Retrieved {len(termine)} Mülltermine from unofficial API.")
         data = [
             {
                 "day": termin.day,
