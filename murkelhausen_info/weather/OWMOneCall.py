@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from datetime import datetime, date
-import random
+from datetime import date, datetime
+
 from pydantic import BaseModel, Field
 
 from murkelhausen_info.weather.owm_one_call_functions import (
+    _get_moon_phase_string,
     _get_uv_index_category,
     _get_wind_direction,
-    _get_moon_phase_string,
     _unix_timestamp_to_met_hour,
     _unix_timestamp_to_met_timestamp,
 )

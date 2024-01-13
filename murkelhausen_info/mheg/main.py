@@ -1,10 +1,11 @@
+import logging
 from datetime import date, timedelta
 
 import requests
+from babel.dates import format_date
 from cachetools import TTLCache, cached
 from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel
-from babel.dates import format_date
 
 BASE_URL = "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/"
 
@@ -52,10 +53,8 @@ def get_orte() -> list[dict]:
     Request url: https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/orte
     Example response: [{"id":4546575,"name":"Mülheim"}]
     """
-    # TODO add error handling
-    url = BASE_URL + "orte"
-    r = requests.get(url)
-    orte = r.json()
+    orte = requests.get(BASE_URL + "orte").json()
+    logging.info(f"Retrieved {len(orte)} Orte of the MHEG API.")
 
     return orte
 
@@ -63,6 +62,7 @@ def get_orte() -> list[dict]:
 def get_muelheim_id() -> int:
     orte = get_orte()
     muelheim_id = next((ort["id"] for ort in orte if ort["name"] == "Mülheim"), None)
+    logging.info(f"Retrieved Mülheim id ({muelheim_id}) of the MHEG API.")
 
     return muelheim_id
 
@@ -98,11 +98,10 @@ def get_strassen(muelheim_id: int) -> list[dict]:
       },
     ...]
     """
-
-    # TODO add error handling
-    url = BASE_URL + f"orte/{muelheim_id}/strassen"
-    r = requests.get(url)
-    strassen = r.json()
+    strassen = requests.get(BASE_URL + f"orte/{muelheim_id}/strassen").json()
+    logging.info(
+        f"Retrieved {len(strassen)} Straßen for {muelheim_id=} of the MHEG API."
+    )
 
     return strassen
 
@@ -114,6 +113,9 @@ def get_friedhofstrassen_id() -> int:
     friedhofstrassen_id = next(
         (strasse["id"] for strasse in strassen if strasse["name"] == target_street),
         None,
+    )
+    logging.info(
+        f"Retrieved Friedhofstraße id ({friedhofstrassen_id}) of the MHEG API."
     )
 
     return friedhofstrassen_id
@@ -151,10 +153,10 @@ def get_hausnummern(strassen_id: int) -> list[dict]:
         }
     }
     """
-    # TODO add error handling
-    url = BASE_URL + f"strassen/{strassen_id}"
-    r = requests.get(url)
-    strassen = r.json()
+    strassen = requests.get(BASE_URL + f"strassen/{strassen_id}").json()
+    logging.info(
+        f"Retrieved {len(strassen['hausNrList'])} Hausnummern for {strassen_id=} of the MHEG API."
+    )
 
     return strassen
 
@@ -170,6 +172,9 @@ def get_friedhofstrassen_62_id() -> int:
             if hausnummer["nr"] == str(target_hausnummer)
         ),
         None,
+    )
+    logging.info(
+        f"Retrieved Friedhofstraße 62 id ({friedhofstrassen_62_id}) of the MHEG API."
     )
 
     return friedhofstrassen_62_id
@@ -193,9 +198,10 @@ def get_termine(hausnummer_id: int) -> list[dict]:
     ...
     ]
     """
-    url = BASE_URL + f"hausnummern/{hausnummer_id}/termine"
-    r = requests.get(url)
-    termine = r.json()
+    termine = requests.get(BASE_URL + f"hausnummern/{hausnummer_id}/termine").json()
+    logging.info(
+        f"Retrieved {len(termine)} Termine for {hausnummer_id=} of the MHEG API."
+    )
 
     return termine
 
@@ -204,9 +210,15 @@ def get_muelltermine_for_home() -> list[MuellTermine]:
     hausnummer_id = get_friedhofstrassen_62_id()
 
     termine_dict = get_termine(hausnummer_id)
+    logging.info(
+        f"Retrieved {len(termine_dict)} Termine for Home Address of the MHEG API."
+    )
     termine = [MuellTermine(**termin) for termin in termine_dict]
-    termine = filter_termine(termine)
+    termine = filter_termine(termine, month_limit=2)
     termine = sorted(termine, key=lambda termin: termin.datum)
+    logging.info(
+        f"Filtered ({len(termine)}) and sorted Termine for Home Address of the MHEG API."
+    )
 
     return termine
 
@@ -218,15 +230,18 @@ def get_muelltermine_for_this_week() -> list[MuellTermine]:
     today = date.today() + timedelta(days=1)
     start_this_week = today - timedelta(days=today.weekday())
     end_this_week = start_this_week + timedelta(days=6)
-
-    return [
+    filtered_termine = [
         termin for termin in termine if start_this_week <= termin.datum <= end_this_week
     ]
+    logging.info(
+        f"Filtered ({len(filtered_termine)}) Termine for this week of the MHEG API "
+        f"with {start_this_week=} and {end_this_week=}."
+    )
+
+    return filtered_termine
 
 
-def filter_termine(
-    termine: list[MuellTermine], month_limit: int = 2
-) -> list[MuellTermine]:
+def filter_termine(termine: list[MuellTermine], month_limit: int) -> list[MuellTermine]:
     """Returns termine after today and within the next month_limit months."""
     return [
         termin

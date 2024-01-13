@@ -1,5 +1,5 @@
 from django.utils.safestring import mark_safe
-from django_tables2 import tables, Column, LinkColumn
+from django_tables2 import Column, tables
 
 
 class DelayColumn(Column):

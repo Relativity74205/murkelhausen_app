@@ -1,9 +1,9 @@
 - [x] auf neue Formatierung aka zur Trainer App umstellen
 - [x] Ruhrbahn Info zu Ende bauen
 - [x] Stromverbrauch Page einbauen
-  - [] Absolute Werte einbauen
+  - [x] Absolute Werte einbauen
   - [] gestrigen Verbrauch einbauen
-  - [] Verbrauch der letzten 7 Tage einbauen
+  - [x] Verbrauch der letzten 7 Tage einbauen
 - [x] Wetter Page einbauen
   - langfristiger Wetterbericht 
   - historische Wetterdaten

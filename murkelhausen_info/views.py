@@ -2,36 +2,32 @@ import logging
 from datetime import datetime, timedelta
 from typing import Callable
 
-from cachetools import cached, TTLCache
+from cachetools import TTLCache, cached
 from django.db.models import Avg, IntegerField
-from django.db.models.functions import Cast, TruncHour, Extract
+from django.db.models.functions import Cast, Extract, TruncHour
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from django.views import View
 from django.views.generic.edit import FormMixin
 
+from murkelhausen_info import gymbroich, mheg, ruhrbahn, weather
 from murkelhausen_info.forms import StationForm
-from murkelhausen_info.gymbroich import get_vertretungsplan_dates, get_vertretungsplan
-from murkelhausen_info.mheg import get_muelltermine_for_home
-from murkelhausen_info.mheg.main import get_muelltermine_for_this_week
 from murkelhausen_info.models import PowerData
-from murkelhausen_info.ruhrbahn.main import get_departure_data, get_stations, STATIONS
 from murkelhausen_info.tables import (
     DeparturesTable,
-    WeatherTable,
     MuellTable,
     TemperatureTable,
     VertretungsplanTable,
+    WeatherTable,
 )
-from murkelhausen_info import weather
 
 
 class IndexView(View):
     template_name = "murkelhausen_info/index.html"
 
     def get(self, request, *args, **kwargs):
-        muell_termine = get_muelltermine_for_this_week()
+        muell_termine = mheg.get_muelltermine_for_this_week()
         owm_data = weather.get_weather_data_muelheim()
 
         context = {
@@ -106,9 +102,9 @@ class DepartureView(View, FormMixin):
 
     @staticmethod
     def _get_data(station: str) -> list[dict]:
-        station_id = get_stations().get_station_id(station, "Mülheim")
+        station_id = ruhrbahn.get_stations().get_station_id(station, "Mülheim")
 
-        departure_data = get_departure_data(station_id)
+        departure_data = ruhrbahn.get_departure_data(station_id)
         departures = departure_data.get_departure_list()
         data = [
             {
@@ -126,9 +122,9 @@ class DepartureView(View, FormMixin):
     def get(self, request, *args, **kwargs):
         station = self.request.session.get("station")
         if station is None:
-            station = STATIONS[0]
+            station = ruhrbahn.STATIONS[0]
         form = StationForm()
-        form.initial["station"] = STATIONS.index(station)
+        form.initial["station"] = ruhrbahn.STATIONS.index(station)
         departure_data = self._get_data(station)
         table = DeparturesTable(departure_data[:20])
         table.paginate(page=request.GET.get("page", 1), per_page=20)
@@ -138,7 +134,7 @@ class DepartureView(View, FormMixin):
         form = StationForm(request.POST)
         if form.is_valid():
             station_position = form.cleaned_data["station"]
-            station = STATIONS[int(station_position)]
+            station = ruhrbahn.STATIONS[int(station_position)]
             self.request.session["station"] = station
 
         return HttpResponseRedirect(request.path_info)
@@ -288,7 +284,8 @@ class MuellView(View):
     template_name = "murkelhausen_info/muell.html"
 
     def get(self, request, *args, **kwargs):
-        termine = get_muelltermine_for_home()
+        termine = mheg.get_muelltermine_for_home()
+        logging.info(f"Retrieved {len(termine)} Mülltermine from unofficial API.")
         data = [
             {
                 "day": termin.day,
@@ -306,11 +303,11 @@ class VertretungsplanView(View):
     template_name = "murkelhausen_info/vertretungsplan.html"
 
     def get(self, request, *args, **kwargs):
-        dates = get_vertretungsplan_dates()
+        dates = gymbroich.get_vertretungsplan_dates()
 
         vertretungsplaene = []
         for date in dates:
-            plan = get_vertretungsplan(date)
+            plan = gymbroich.get_vertretungsplan(date)
 
             plaene_transformed = [
                 {

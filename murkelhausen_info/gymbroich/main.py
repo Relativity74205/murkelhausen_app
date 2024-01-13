@@ -2,8 +2,8 @@ from datetime import date, datetime
 from typing import Annotated
 
 import requests
-from cachetools import cached, TTLCache
-from pydantic import BaseModel, field_validator, BeforeValidator
+from cachetools import TTLCache, cached
+from pydantic import BaseModel, BeforeValidator, field_validator
 
 
 def replace_empty_str_with_none(v: str) -> str | None:

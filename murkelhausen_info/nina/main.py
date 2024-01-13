@@ -1,5 +1,4 @@
 import requests
-import json
 
 # Gebietscode von https://www.xrepository.de/api/xrepository/urn:de:bund:destatis:bevoelkerungsstatistik:schluessel:rs_2021-07-31/download/Regionalschl_ssel_2021-07-31.json
 # ab Stelle 6 nur Nullen verwenden!

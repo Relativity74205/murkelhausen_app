@@ -7,11 +7,10 @@ url_complete = "https://api.met.no/weatherapi/locationforecast/2.0/complete"
 """
 from logging import getLogger
 
-import requests
-from prefect import task
 import prefect
-
-from murkelhausen.config import WeatherNMI, City
+import requests
+from murkelhausen.config import City, WeatherNMI
+from prefect import task
 
 log = getLogger(__name__)
 

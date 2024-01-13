@@ -10,10 +10,9 @@ gps_lon = 6.8264
 from dataclasses import dataclass
 from logging import getLogger
 
-from cachetools import cached, TTLCache
-from django.conf import settings
-
 import requests
+from cachetools import TTLCache, cached
+from django.conf import settings
 
 from murkelhausen_info.weather.OWMOneCall import OWMOneCall
 

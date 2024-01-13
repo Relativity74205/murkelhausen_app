@@ -1,12 +1,19 @@
 import requests
-from cachetools import cached, TTLCache
+from cachetools import TTLCache, cached
 
-from murkelhausen_info.ruhrbahn import URLS
 from murkelhausen_info.ruhrbahn.DepartureModel import DepartureModel
 from murkelhausen_info.ruhrbahn.StationModel import StationModel
 
-
 STATIONS = ("Lierberg", "Kriegerstr.")
+URLS = {
+    "stations": "https://ifa.ruhrbahn.de/stations",
+    "routes": "https://ifa.ruhrbahn.de/routes",
+    "locations": "https://ifa.ruhrbahn.de/locations",
+    "stopFinder": "https://ifa.ruhrbahn.de/stopFinder/",
+    "departure": "https://ifa.ruhrbahn.de/departure/",
+    "trafficinfos": "https://ifa.ruhrbahn.de/trafficinfos",
+    "tripRequest": "https://ifa.ruhrbahn.de/tripRequest/20015062/20015065/20230806/21:25/dep",
+}
 
 
 @cached(cache=TTLCache(maxsize=1, ttl=60))
