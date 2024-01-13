@@ -52,6 +52,9 @@ class PowerView(View):
             .annotate(tstamp_epoch=Extract("tstamp_truncated", "epoch") * 1000)
             .values("tstamp_epoch", "power_current", "power_total")
         )
+        logging.info(
+            f"Retrieved {len(power_data)} aggregated power data from database."
+        )
         return list(power_data)
 
     @staticmethod
@@ -64,6 +67,9 @@ class PowerView(View):
             .annotate(tstamp_epoch=Extract("tstamp", "epoch") * 1000)
             .order_by("tstamp_epoch")
             .values("tstamp_epoch", "sensorname", "power_current", "power_total")
+        )
+        logging.info(
+            f"Retrieved {len(power_data)} fine grained power data for last week from database."
         )
         return list(power_data)
 
