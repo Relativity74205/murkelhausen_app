@@ -352,6 +352,7 @@ class VertretungsplanView(View):
                     "first_plan": True if date == dates[0] else False,
                     "date": plan.date,
                     "version": plan.version,
+                    "infos": plan.infos,
                     "table": VertretungsplanTable(plaene_transformed_cleaned),
                 }
             )

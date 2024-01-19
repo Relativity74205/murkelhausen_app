@@ -27,7 +27,13 @@
             <div class="tab-pane fade" id="plan_{{ vertretungsplan.date|date:"dmY" }}" role="tabpanel" aria-labelledby="home-tab">
         {% endif %}
 
-                <p><h5>Stand: {{ vertretungsplan.version|date:"d.m.Y H:i" }}</h5>
+                <p>Stand: {{ vertretungsplaene.0.version|date:"d.m.Y H:i" }}
+
+                <ul>
+                {% for info in vertretungsplan.infos %}
+                    <li>{{ info }}
+                {% endfor %}
+                </ul>
                 {% render_table vertretungsplan.table %}
             </div>
     {% endfor %}
