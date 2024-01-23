@@ -1,7 +1,7 @@
 version: '3'
 services:
   murkel:
-    image: ghcr.io/relativity74205/murkelhausen_app/murkel_app:1.11.6
+    image: ghcr.io/relativity74205/murkelhausen_app/murkel_app:1.11.7
     container_name: murkelhausen
     restart: always
     ports:
