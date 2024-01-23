@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from typing import Callable
 
 from cachetools import TTLCache, cached
@@ -13,6 +13,7 @@ from django.views.generic.edit import FormMixin
 
 from murkelhausen_info import gymbroich, mheg, ruhrbahn, weather
 from murkelhausen_info.forms import StationForm
+from murkelhausen_info.gymbroich.main import Vertretungsplan
 from murkelhausen_info.models import PowerData
 from murkelhausen_info.tables import (
     DeparturesTable,
@@ -315,41 +316,49 @@ class MuellView(View):
 class VertretungsplanView(View):
     template_name = "murkelhausen_info/vertretungsplan.html"
 
+    @staticmethod
+    def _get_vertretungsplan(plan: Vertretungsplan) -> list[dict]:
+        plaene_transformed = [
+            {
+                "classes": ", ".join(event.classes),
+                "lessons": ", ".join(str(ele) for ele in event.lessons),
+                "previousSubject": event.previousSubject,
+                "subject": event.subject,
+                "previousRoom": event.previousRoom,
+                "room": event.room,
+                "vertretungstext": event.texts.text,
+                "cancelled": event.texts.cancelled,
+            }
+            for event in plan.events
+        ]
+        for i, event in enumerate(plaene_transformed):
+            if event["lessons"] == "0":
+                try:
+                    plaene_transformed[i - 1]["vertretungstext"] += (
+                        " " + plaene_transformed[i]["vertretungstext"]
+                    )
+                except IndexError:
+                    pass
+        plaene_transformed_cleaned = [
+            event for event in plaene_transformed if event["lessons"] != "0"
+        ]
+
+        return plaene_transformed_cleaned
+
     def get(self, request, *args, **kwargs):
         dates = gymbroich.get_vertretungsplan_dates()
 
         vertretungsplaene = []
-        for date in dates:
-            logger.info(f"Generating vertretungsplan table for {date=}.")
-            plan = gymbroich.get_vertretungsplan(date)
+        for this_date in dates:
+            logger.info(
+                f"Generating vertretungsplan table for {this_date.isoformat()}."
+            )
+            plan = gymbroich.get_vertretungsplan(this_date)
 
-            plaene_transformed = [
-                {
-                    "classes": ", ".join(event.classes),
-                    "lessons": ", ".join(str(ele) for ele in event.lessons),
-                    "previousSubject": event.previousSubject,
-                    "subject": event.subject,
-                    "previousRoom": event.previousRoom,
-                    "room": event.room,
-                    "vertretungstext": event.texts.text,
-                    "cancelled": event.texts.cancelled,
-                }
-                for event in plan.events
-            ]
-
-            for i, event in enumerate(plaene_transformed):
-                if event["lessons"] == "0":
-                    plaene_transformed[i + 1]["vertretungstext"] += (
-                        " " + plaene_transformed[i]["vertretungstext"]
-                    )
-
-            plaene_transformed_cleaned = [
-                event for event in plaene_transformed if event["lessons"] != "0"
-            ]
-
+            plaene_transformed_cleaned = self._get_vertretungsplan(plan)
             vertretungsplaene.append(
                 {
-                    "first_plan": True if date == dates[0] else False,
+                    "first_plan": True if this_date == dates[0] else False,
                     "date": plan.date,
                     "version": plan.version,
                     "infos": plan.infos,
