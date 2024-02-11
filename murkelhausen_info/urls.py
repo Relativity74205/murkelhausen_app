@@ -12,4 +12,5 @@ urlpatterns = [
         "vertretungsplan", views.VertretungsplanView.as_view(), name="vertretungsplan"
     ),
     path("muell/", views.MuellView.as_view(), name="muell"),
+    path("garmin/", views.GarminView.as_view(), name="garmin"),
 ]

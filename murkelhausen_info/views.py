@@ -14,7 +14,7 @@ from django.views.generic.edit import FormMixin
 from murkelhausen_info import gymbroich, mheg, ruhrbahn, weather
 from murkelhausen_info.forms import StationForm
 from murkelhausen_info.gymbroich.main import Vertretungsplan
-from murkelhausen_info.models import PowerData
+from murkelhausen_info import models_old, models
 from murkelhausen_info.tables import (
     DeparturesTable,
     MuellTable,
@@ -47,7 +47,7 @@ class PowerView(View):
         sensor_name: str, time_aggregate_callable: Callable
     ) -> list[dict]:
         power_data = (
-            PowerData.objects.filter(sensorname__icontains=sensor_name)
+            models_old.PowerData.objects.filter(sensorname__icontains=sensor_name)
             .annotate(tstamp_truncated=time_aggregate_callable("tstamp"))
             .values("tstamp_truncated")
             .annotate(power_current=Cast(Avg("power_current"), IntegerField()))
@@ -62,7 +62,7 @@ class PowerView(View):
     @cached(cache=TTLCache(maxsize=10, ttl=60 * 5))  # 5 minutes
     def _get_power_data_all_last_week(sensor_name: str) -> list[dict]:
         power_data = (
-            PowerData.objects.filter(sensorname__icontains=sensor_name)
+            models_old.PowerData.objects.filter(sensorname__icontains=sensor_name)
             .values("tstamp", "sensorname", "power_current", "power_total")
             .filter(tstamp__gte=(datetime.now() - timedelta(days=7)).date().isoformat())
             .annotate(tstamp_epoch=Extract("tstamp", "epoch") * 1000)
@@ -372,4 +372,25 @@ class VertretungsplanView(View):
             request,
             self.template_name,
             context={"vertretungsplaene": vertretungsplaene},
+        )
+
+
+class GarminView(View):
+    template_name = "murkelhausen_info/garmin.html"
+
+    def get(self, request, *args, **kwargs):
+        data = (
+            models.BodyBatteryDaily.objects.values(
+                "calendar_date", "charged", "drained"
+            )
+            .exclude(charged__isnull=True)
+            .exclude(drained__isnull=True)
+            .order_by("calendar_date")
+        )
+        logger.info(data)
+
+        return render(
+            request,
+            self.template_name,
+            context={"data": data},
         )
