@@ -10,7 +10,7 @@ REPORT_ROUTED_MODELS = [MurkelhausenStates, PowerData]
 #     for cls_name, cls_obj in inspect.getmembers(sys.modules["murkelhausen_info.models"])
 #     if inspect.isclass(cls_obj)
 # ]
-DATA_ROUTED_MODELS = [models.BodyBatteryDaily]
+DATA_ROUTED_MODELS = [models.BodyBatteryDaily, models.BodyBattery, models.Stress]
 
 
 class MurkelhausenInfoRouter:

@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from django.views.generic import TemplateView
 
 from . import views
 
@@ -13,4 +14,10 @@ urlpatterns = [
     ),
     path("muell/", views.MuellView.as_view(), name="muell"),
     path("garmin/", views.GarminView.as_view(), name="garmin"),
+    path(
+        "foo",
+        views.Foo.as_view(),
+        name="foo",
+    ),
+    path("get_superset_token/", views.get_superset_token, name="get_superset_token"),
 ]

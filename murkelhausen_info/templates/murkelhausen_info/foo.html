@@ -1,0 +1,41 @@
+{% extends 'murkelhausen_info/base.html' %}
+
+{% block content %}
+
+<div id="my-superset-container"></div>
+<script src="https://unpkg.com/@superset-ui/embedded-sdk"></script>
+
+<script>
+(async function() {
+    const url = "{% url 'murkelhausen_info:get_superset_token' %}";
+    const guestToken = await fetchGuestToken(url);
+
+    supersetEmbeddedSdk.embedDashboard({
+      id: "9f6ae4c4-733c-4a05-b714-78b17587f9a6", // given by the Superset embedding UI
+      supersetDomain: "http://beowulf.local:8088/",
+      mountPoint: document.getElementById("my-superset-container"), // any html element that can contain an iframe
+      fetchGuestToken: () => guestToken,
+      dashboardUiConfig: { // dashboard UI config: hideTitle, hideTab, hideChartControls, filters.visible, filters.expanded (optional)
+          hideTitle: true,
+          filters: {
+              expanded: true,
+          }
+      },
+    });
+
+    async function fetchGuestToken(url) {
+    // Fetch the guest token from your backend
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.guestToken;
+    }
+})();
+
+const container = document.getElementById("my-superset-container");
+if (container && container.children[0]) {
+  container.children[0].width = "100%";
+  container.children[0].height = "800px";
+};
+</script>
+
+{% endblock %}

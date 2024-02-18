@@ -1,11 +1,13 @@
+import json
 import logging
 from datetime import datetime, timedelta, date
 from typing import Callable
 
+import requests
 from cachetools import TTLCache, cached
 from django.db.models import Avg, IntegerField
 from django.db.models.functions import Cast, Extract, TruncHour
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from django.views import View
@@ -379,7 +381,7 @@ class GarminView(View):
     template_name = "murkelhausen_info/garmin.html"
 
     def get(self, request, *args, **kwargs):
-        data = (
+        data_body_battery_daily = (
             models.BodyBatteryDaily.objects.values(
                 "calendar_date", "charged", "drained"
             )
@@ -387,10 +389,76 @@ class GarminView(View):
             .exclude(drained__isnull=True)
             .order_by("calendar_date")
         )
-        logger.info(data)
+        data_body_battery = (
+            models.BodyBattery.objects.exclude(body_battery_level__isnull=True)
+            .annotate(tstamp_epoch=Extract("tstamp", "epoch") * 1000)
+            .values("tstamp_epoch", "body_battery_level")
+            .order_by("tstamp_epoch")
+        )
+        data_stress = (
+            models.Stress.objects.exclude(stress_level__isnull=True)
+            .annotate(tstamp_epoch=Extract("tstamp", "epoch") * 1000)
+            .values("tstamp_epoch", "stress_level")
+            .order_by("tstamp_epoch")
+        )
 
         return render(
             request,
             self.template_name,
-            context={"data": data},
+            context={
+                "data_body_battery_daily": data_body_battery_daily,
+                "data_body_battery": data_body_battery,
+                "data_stress": data_stress,
+            },
         )
+
+
+class Foo(View):
+    template_name = "murkelhausen_info/foo.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, "murkelhausen_info/foo.html")
+
+
+def superset_login() -> str:
+    payload = {
+        "password": "admin",
+        "provider": "db",
+        "refresh": True,
+        "username": "admin",
+    }
+
+    response = requests.post(
+        "http://beowulf.local:8088/api/v1/security/login",
+        json=payload,
+        headers={"Content-Type": "application/json"},
+        timeout=1,
+    )
+    return response.json()["access_token"]
+
+
+def get_superset_token(request):
+    access_token = superset_login()
+
+    # https://preset-io.github.io/embedded-beta-docs/v1
+    payload = {
+        "user": {
+            "username": "admin",
+            "first_name": "admin2",
+            "last_name": "user",
+        },
+        "resources": [
+            {"type": "dashboard", "id": "9f6ae4c4-733c-4a05-b714-78b17587f9a6"}
+        ],
+        "rls": [],
+    }
+
+    response = requests.post(
+        "http://beowulf.local:8088/api/v1/security/guest_token",
+        json=payload,
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    guest_token = response.json()["token"]
+
+    return JsonResponse({"guestToken": guest_token})

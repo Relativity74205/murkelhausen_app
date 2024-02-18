@@ -24,6 +24,7 @@
                 <a class="nav-link" href="{% url 'murkelhausen_info:muell' %}">Müllabfuhr</a>
                 <a class="nav-link" href="{% url 'murkelhausen_info:power' %}">Stromverbrauch</a>
                 <a class="nav-link" href="{% url 'murkelhausen_info:garmin' %}">Garmin</a>
+                <a class="nav-link" href="{% url 'murkelhausen_info:foo' %}">Foo</a>
             </div>
         </div>
     </div>
@@ -38,6 +39,13 @@
 <head>
     <title>Murkelhausen Infos</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/table_styles.css' %}">
+    <style>
+        iframe {
+            height: 100%;
+            width: 100%;
+            border: none;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
