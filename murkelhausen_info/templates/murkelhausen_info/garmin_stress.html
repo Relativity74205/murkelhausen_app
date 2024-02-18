@@ -1,0 +1,27 @@
+{% load datetags %}
+
+<div id="container_garmin_stress" style="width:100%; height:600px;"></div>
+<script>
+    let chart_garmin_stress;
+    document.addEventListener('DOMContentLoaded', function () {
+        chart_garmin_stress = Highcharts.stockChart('container_garmin_stress', {
+            rangeSelector: {
+                enabled: false
+            },
+            legend: {
+                enabled: true
+            },
+            yAxis: {
+                title: {text: 'Stress'},
+                opposite: false
+            },
+            series: [{
+                name: 'Stress Level',
+                data: [{% for row in data_stress %}[
+                    {{ row.tstamp_epoch }},{{ row.stress_level }}], {% endfor %}],
+                type: 'spline',
+            }
+            ],
+        });
+    });
+</script>

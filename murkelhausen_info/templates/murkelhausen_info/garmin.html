@@ -1,40 +1,44 @@
 {% extends 'murkelhausen_info/base.html' %}
-{% load datetags %}
+{% load django_bootstrap5 %}
 {% load static %}
 
 {% block content %}
 <script src="https://code.highcharts.com/11.2.0/highcharts.js"></script>
 <script src="https://code.highcharts.com/11.2.0/modules/stock.js"></script>
 
-<div id="container_garmin_daily_body_battery" style="width:100%; height:600px;"></div>
-<script>
-    let chart_garmin_daily_body_battery;
-    document.addEventListener('DOMContentLoaded', function () {
-        chart_garmin_daily_body_battery = Highcharts.stockChart('container_garmin_daily_body_battery', {
-            rangeSelector: {
-                enabled: false
-            },
-            legend: {
-                enabled: true
-            },
-            yAxis: {
-                title: {text: 'Body Battery'},
-                opposite: false
-            },
-            series: [{
-                name: 'charged',
-                data: [{% for day in data %}[
-                    {{ day.calendar_date|js_date }},{{ day.charged }}], {% endfor %}],
-                type: 'spline',
-            }, {
-                name: 'drained',
-                data: [{% for day in data %}[
-                    {{ day.calendar_date|js_date }},{{ day.drained }}], {% endfor %}],
-                type: 'spline',
-            }
-            ],
-        });
-    });
-</script>
+    <p><h2>Garmin Daten</h2>
+    <body>
+    <br>
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#body_battery" type="button"
+                    role="tab" aria-controls="body_battery" aria-selected="true">Body Battery
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#body_battery_daily"
+                    type="button"
+                    role="tab" aria-controls="body_battery_daily" aria-selected="false">Body Battery Daily
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#stress"
+                    type="button"
+                    role="tab" aria-controls="stress" aria-selected="false">Stress
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="body_battery" role="tabpanel" aria-labelledby="home-tab">
+            {% include "murkelhausen_info/garmin_body_battery.html" %}
+        </div>
+        <div class="tab-pane fade" id="body_battery_daily" role="tabpanel" aria-labelledby="profile-tab">
+            {% include "murkelhausen_info/garmin_daily_body_battery.html" %}
+        </div>
+        <div class="tab-pane fade" id="stress" role="tabpanel" aria-labelledby="profile-tab">
+            {% include "murkelhausen_info/garmin_stress.html" %}
+        </div>
+    </div>
+    </body>
 
 {% endblock %}
