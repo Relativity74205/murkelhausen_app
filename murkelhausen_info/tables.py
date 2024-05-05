@@ -149,9 +149,10 @@ class FussballDETableErik(tables.Table):
             # the text shall be striked through
             return "text-decoration: line-through;"
 
-        if datetime.strptime(
-            day.split(",")[1].strip(), "%d.%m.%Y"
-        ).date() == date.fromisoformat("2024-06-15"):
+        if (
+            datetime.strptime(day.split(",")[1].strip(), "%d.%m.%Y").date()
+            == date.today()
+        ):
             return "background-color: yellow;"
 
         return "background-color: white;"
