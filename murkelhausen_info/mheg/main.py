@@ -3,7 +3,7 @@ from datetime import date, timedelta
 
 import requests
 from babel.dates import format_date
-from cachetools import TTLCache, cached
+from cachetools import cached, TTLCache
 from dateutil.relativedelta import relativedelta
 from pydantic import BaseModel
 
@@ -49,7 +49,7 @@ class MuellTermine(BaseModel):
         return format_date(self.datum, format="EEE, d.M.yyyy", locale="de_DE")
 
 
-@cached(cache=TTLCache(maxsize=1, ttl=60 * 60 * 24 * 7))  # 7 days
+@cached(cache=TTLCache(maxsize=1, ttl=60))  # 1 minute
 def get_orte() -> list[dict]:
     """
     Request url: https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/orte
@@ -69,7 +69,7 @@ def get_muelheim_id() -> int:
     return muelheim_id
 
 
-@cached(cache=TTLCache(maxsize=1, ttl=60 * 60 * 24 * 7))  # 7 days
+@cached(cache=TTLCache(maxsize=1, ttl=60))  # 1 minute
 def get_strassen(muelheim_id: int) -> list[dict]:
     """
     Example request url: "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/orte/4546575/strassen"
@@ -121,7 +121,7 @@ def get_friedhofstrassen_id() -> int:
     return friedhofstrassen_id
 
 
-@cached(cache=TTLCache(maxsize=1, ttl=60 * 60 * 24 * 7))  # 7 days
+@cached(cache=TTLCache(maxsize=1, ttl=60))  # 1 minute
 def get_hausnummern(strassen_id: int) -> list[dict]:
     """
     Example request url: "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/strassen/4555127"
@@ -180,7 +180,7 @@ def get_friedhofstrassen_62_id() -> int:
     return friedhofstrassen_62_id
 
 
-@cached(cache=TTLCache(maxsize=1, ttl=60 * 60 * 24))  # 1 day
+@cached(cache=TTLCache(maxsize=1, ttl=60))  # 1 minute
 def get_termine(hausnummer_id: int) -> list[dict]:
     """
     Example request url: "https://muelheim-abfallapp.regioit.de/abfall-app-muelheim/rest/hausnummern/4112605/termine"

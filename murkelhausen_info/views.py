@@ -45,7 +45,7 @@ class IndexView(View):
 
 class PowerView(View):
     @staticmethod
-    @cached(cache=TTLCache(maxsize=10, ttl=60 * 5))  # 5 minutes
+    @cached(cache=TTLCache(maxsize=10, ttl=60))  # 1 minute
     def _get_power_data_complete(
         sensor_name: str, time_aggregate_callable: Callable
     ) -> list[dict]:
@@ -62,7 +62,7 @@ class PowerView(View):
         return list(power_data)
 
     @staticmethod
-    @cached(cache=TTLCache(maxsize=10, ttl=60 * 5))  # 5 minutes
+    @cached(cache=TTLCache(maxsize=10, ttl=60))  # 1 minute
     def _get_power_data_all_last_week(sensor_name: str) -> list[dict]:
         power_data = (
             models_old.PowerData.objects.filter(sensorname__icontains=sensor_name)

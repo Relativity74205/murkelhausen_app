@@ -73,7 +73,7 @@ def _query_owm(url: str, city: City, api_key: str, units: str) -> dict:
         )
 
 
-@cached(cache=TTLCache(maxsize=1, ttl=120))
+@cached(cache=TTLCache(maxsize=1, ttl=120))  # 2 minutes
 def get_weather_data_muelheim() -> OWMOneCall:
     owm_config = OWMConfig(
         url_weather="https://api.openweathermap.org/data/2.5/weather",

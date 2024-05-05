@@ -54,7 +54,7 @@ class Vertretungsplan(BaseModel):
     events: tuple[VertretungsplanEvent, ...]
 
 
-@cached(cache=TTLCache(maxsize=1, ttl=60))
+@cached(cache=TTLCache(maxsize=1, ttl=60))  # 1 minute
 def get_vertretungsplan_dates() -> tuple[date, ...]:
     url = "https://assets.gymnasium-broich.de/vplan/api/dates"
     data = requests.get(url).json()
@@ -65,7 +65,7 @@ def get_vertretungsplan_dates() -> tuple[date, ...]:
     return tuple(date.fromisoformat(d) for d in data)
 
 
-@cached(cache=TTLCache(maxsize=1, ttl=60))
+@cached(cache=TTLCache(maxsize=1, ttl=60))  # 1 minute
 def get_vertretungsplan(datum: date) -> Vertretungsplan:
     base_url = "https://assets.gymnasium-broich.de/vplan/api/"
     data: dict = requests.get(base_url + datum.isoformat()).json()
