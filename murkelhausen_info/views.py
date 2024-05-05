@@ -1,6 +1,5 @@
-import json
 import logging
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 from typing import Callable
 
 import requests
@@ -13,7 +12,7 @@ from django.utils.safestring import mark_safe
 from django.views import View
 from django.views.generic.edit import FormMixin
 
-from murkelhausen_info import gymbroich, mheg, ruhrbahn, weather
+from murkelhausen_info import gymbroich, mheg, ruhrbahn, weather, fussballde
 from murkelhausen_info.forms import StationForm
 from murkelhausen_info.gymbroich.main import Vertretungsplan
 from murkelhausen_info import models_old, models
@@ -23,6 +22,8 @@ from murkelhausen_info.tables import (
     TemperatureTable,
     VertretungsplanTable,
     WeatherTable,
+    FussballDETable,
+    FussballDETableErik,
 )
 
 logger = logging.getLogger(__name__)
@@ -418,6 +419,25 @@ class Foo(View):
 
     def get(self, request, *args, **kwargs):
         return render(request, "murkelhausen_info/foo.html")
+
+
+class Fussball(View):
+    template_name = "murkelhausen_info/fussball.html"
+
+    def get(self, request, *args, **kwargs):
+        speldorf_games = fussballde.get_speldorf_next_home_games()
+        erik_games = fussballde.get_erik_next_games()
+        speldorf_games_table = FussballDETable(speldorf_games)
+        erik_games_table = FussballDETableErik(erik_games)
+
+        return render(
+            request,
+            "murkelhausen_info/fussball.html",
+            {
+                "speldorf_games_table": speldorf_games_table,
+                "erik_games_table": erik_games_table,
+            },
+        )
 
 
 def superset_login() -> str:

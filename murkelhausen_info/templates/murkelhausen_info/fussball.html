@@ -1,0 +1,32 @@
+{% extends 'murkelhausen_info/base.html' %}
+{% load django_tables2 %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<body>
+<p><h2>VfB Speldorf Termine</h2>
+
+<br><br>
+
+<h3>Eriks Spiele</h3>
+
+<p>
+    <a href="https://www.fussball.de/mannschaft/vfb-speldorf-ii-vfb-speldorf-niederrhein/-/saison/2324/team-id/011MIBB3NK000000VTVG0001VTR8C1K7#!/">VfB Speldorf F2 Junioren</a>
+</p>
+
+
+{% render_table erik_games_table %}
+
+<br><br>
+
+<h3>Alle Speldorf Heimspiele</h3>
+
+<p>
+    <a href="https://www.fussball.de/verein/vfb-speldorf-niederrhein/-/id/00ES8GN8VS000030VV0AG08LVUPGND5I#!/">VfB Speldorf</a>
+</p>
+{% render_table speldorf_games_table %}
+
+</body>
+
+{% endblock %}

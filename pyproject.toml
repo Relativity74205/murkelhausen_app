@@ -24,6 +24,7 @@ openai = "^0.28.1"
 django-markdownify = "^0.9.3"
 babel = "^2.13.1"
 cachetools = "^5.3.2"
+beautifulsoup4 = "^4.12.3"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.13"

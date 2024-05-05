@@ -19,5 +19,10 @@ urlpatterns = [
         views.Foo.as_view(),
         name="foo",
     ),
+    path(
+        "fussball/",
+        views.Fussball.as_view(),
+        name="fussball",
+    ),
     path("get_superset_token/", views.get_superset_token, name="get_superset_token"),
 ]

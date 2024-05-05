@@ -1,3 +1,5 @@
+from datetime import datetime, date
+
 from django.utils.safestring import mark_safe
 from django_tables2 import Column, tables
 
@@ -122,3 +124,60 @@ class MuellTable(tables.Table):
             return "background-color: yellow;"
         else:
             return "background-color: white;"
+
+
+class FussballDETableErik(tables.Table):
+    day = Column(verbose_name="Datum")
+    time = Column(verbose_name="Uhrzeit")
+    team = Column(verbose_name="Spieltyp")
+    home_team = Column(verbose_name="Heim")
+    away_team = Column(verbose_name="Gast")
+    result = Column(verbose_name="Info")
+
+    class Meta:
+        template_name = "django_tables2/bootstrap5.html"
+        orderable = False
+        row_attrs = {
+            "style": lambda record: FussballDETableErik._get_style_row_attrs(
+                record["day"], record["result"]
+            )
+        }
+
+    @staticmethod
+    def _get_style_row_attrs(day: str, result: str) -> str:
+        if "Absetzung" == result:
+            # the text shall be striked through
+            return "text-decoration: line-through;"
+
+        if datetime.strptime(
+            day.split(",")[1].strip(), "%d.%m.%Y"
+        ).date() == date.fromisoformat("2024-06-15"):
+            return "background-color: yellow;"
+
+        return "background-color: white;"
+
+
+class FussballDETable(tables.Table):
+    day = Column(verbose_name="Datum")
+    time = Column(verbose_name="Uhrzeit")
+    team = Column(verbose_name="Mannschaft")
+    home_team = Column(verbose_name="Heim")
+    away_team = Column(verbose_name="Gast")
+    result = Column(verbose_name="Info")
+
+    class Meta:
+        template_name = "django_tables2/bootstrap5.html"
+        orderable = False
+        row_attrs = {
+            "style": lambda record: FussballDETable._get_background_color(record["day"])
+        }
+
+    @staticmethod
+    def _get_background_color(day: str) -> str:
+        if (
+            datetime.strptime(day.split(",")[1].strip(), "%d.%m.%Y").date()
+            == date.today()
+        ):
+            return "background-color: yellow;"
+
+        return "background-color: white;"
