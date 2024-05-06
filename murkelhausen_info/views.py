@@ -414,11 +414,11 @@ class GarminView(View):
         )
 
 
-class Foo(View):
-    template_name = "murkelhausen_info/foo.html"
+class SupersetBeowulf(View):
+    template_name = "murkelhausen_info/superset_beowulf.html"
 
     def get(self, request, *args, **kwargs):
-        return render(request, "murkelhausen_info/foo.html")
+        return render(request, self.template_name)
 
 
 class Fussball(View):
@@ -432,7 +432,7 @@ class Fussball(View):
 
         return render(
             request,
-            "murkelhausen_info/fussball.html",
+            self.template_name,
             {
                 "speldorf_games_table": speldorf_games_table,
                 "erik_games_table": erik_games_table,

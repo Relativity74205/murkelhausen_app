@@ -14,15 +14,7 @@ urlpatterns = [
     ),
     path("muell/", views.MuellView.as_view(), name="muell"),
     path("garmin/", views.GarminView.as_view(), name="garmin"),
-    path(
-        "foo",
-        views.Foo.as_view(),
-        name="foo",
-    ),
-    path(
-        "fussball/",
-        views.Fussball.as_view(),
-        name="fussball",
-    ),
+    path("beowulf/", views.SupersetBeowulf.as_view(), name="superset_beowulf"),
+    path("fussball/", views.Fussball.as_view(), name="fussball"),
     path("get_superset_token/", views.get_superset_token, name="get_superset_token"),
 ]
