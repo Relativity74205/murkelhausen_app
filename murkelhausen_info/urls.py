@@ -17,4 +17,5 @@ urlpatterns = [
     path("beowulf/", views.SupersetBeowulf.as_view(), name="superset_beowulf"),
     path("fussball/", views.Fussball.as_view(), name="fussball"),
     path("get_superset_token/", views.get_superset_token, name="get_superset_token"),
+    path("podcast_token/", views.get_podcast_token, name="podcast_token"),
 ]

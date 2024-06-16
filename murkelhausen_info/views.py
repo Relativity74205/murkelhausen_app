@@ -6,12 +6,13 @@ import requests
 from cachetools import TTLCache, cached
 from django.db.models import Avg, IntegerField
 from django.db.models.functions import Cast, Extract, TruncHour
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from django.views import View
 from django.views.generic.edit import FormMixin
 
+from murkelhausen_app import settings
 from murkelhausen_info import gymbroich, mheg, ruhrbahn, weather, fussballde
 from murkelhausen_info.forms import StationForm
 from murkelhausen_info.gymbroich.main import Vertretungsplan
@@ -482,3 +483,7 @@ def get_superset_token(request):
     guest_token = response.json()["token"]
 
     return JsonResponse({"guestToken": guest_token})
+
+
+def get_podcast_token(request):
+    return JsonResponse({"token": settings.PODCASTINDEX_API_KEY})
