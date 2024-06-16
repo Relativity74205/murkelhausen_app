@@ -8,8 +8,8 @@ from pydantic import BaseModel
 
 
 class Coords(BaseModel):
-    lat: str
-    long: str
+    lat: str | None
+    long: str | None
 
 
 class Elevator(BaseModel):
