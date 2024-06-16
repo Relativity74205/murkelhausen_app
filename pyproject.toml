@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "murkelhausen-app"
-version = "1.12.2"
+version = "1.12.3"
 description = ""
 authors = ["Arkadius Schuchhardt <arkadius@schuchhardt.com>"]
 readme = "README.md"
