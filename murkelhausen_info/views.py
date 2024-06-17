@@ -1,4 +1,6 @@
+import hashlib
 import logging
+import time
 from datetime import datetime, timedelta
 from typing import Callable
 
@@ -486,4 +488,21 @@ def get_superset_token(request):
 
 
 def get_podcast_token(request):
-    return JsonResponse({"token": settings.PODCASTINDEX_API_KEY})
+    """
+    https://github.com/tbowers/python-podcastindex-org-example/blob/master/podcasting-index.py
+    """
+    epoch_time = int(time.time())
+    data_to_hash = (
+        settings.PODCASTINDEX_API_KEY
+        + settings.PODCASTINDEX_API_SECRET
+        + str(epoch_time)
+    )
+    sha_1 = hashlib.sha1(data_to_hash.encode()).hexdigest()
+    headers = {
+        "X-Auth-Date": str(epoch_time),
+        "X-Auth-Key": settings.PODCASTINDEX_API_KEY,
+        "Authorization": sha_1,
+        "User-Agent": "postcasting-index-python-cli",
+        "Secret": settings.PODCASTINDEX_API_SECRET,
+    }
+    return JsonResponse(headers)
