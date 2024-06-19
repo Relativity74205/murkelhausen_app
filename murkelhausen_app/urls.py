@@ -21,6 +21,7 @@ import pages.views
 
 urlpatterns = [
     path("", pages.views.home_view, name="home"),
+    path("pihole-deactivate/", pages.views.pihole_deactivate, name="pihole-deactivate"),
     path("statements/", include("statements.urls")),
     path("murkelhausen_info/", include("murkelhausen_info.urls")),
     path("trainer/", include("trainer.urls")),

@@ -1,4 +1,5 @@
 import hashlib
+import json
 import logging
 import time
 from datetime import datetime, timedelta
@@ -491,6 +492,8 @@ def get_podcast_token(request):
     """
     https://github.com/tbowers/python-podcastindex-org-example/blob/master/podcasting-index.py
     """
+    query = "General"
+    url = "https://api.podcastindex.org/api/1.0/search/byterm?q=" + query
     epoch_time = int(time.time())
     data_to_hash = (
         settings.PODCASTINDEX_API_KEY
@@ -505,4 +508,6 @@ def get_podcast_token(request):
         "User-Agent": "postcasting-index-python-cli",
         "Secret": settings.PODCASTINDEX_API_SECRET,
     }
-    return JsonResponse(headers)
+    r = requests.post(url, headers=headers)
+    pretty_json = json.loads(r.text)
+    return HttpResponse(json.dumps(pretty_json, indent=2))

@@ -29,3 +29,17 @@
 </nav>
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 <script src="{% static 'js/navbar-active.js' %}"></script>
+
+
+<p>
+<div class="mt-3">
+    <form method="post" action="{% url 'pihole-deactivate' %}" class="mx-auto" style="width: fit-content;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Deactivate Pi Hole</button>
+    </form>
+</div>
+{% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+{% endfor %}
