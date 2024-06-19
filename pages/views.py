@@ -18,41 +18,41 @@ def home_view(request, *args, **kwargs):
 def pihole_deactivate(request, *args, **kwargs):
     if request.method == "POST":
         logger.info("Disabling PI-Hole for 5 minutes.")
-        base_url1 = "http://rasp1.local/admin/api.php"
-        base_url2 = "http://rasp2.local/admin/api.php"
-        token = settings.PI_HOLE_TOKEN
-        params = {
-            "auth": token,
-            "disable": 300,
-        }
-        try:
-            r1 = requests.get(base_url1, params=params)
-        except requests.exceptions.ConnectionError:
-            logger.error("Connection to rasp1 failed.")
-            r1 = None
-        else:
-            logger.info(f"Response from rasp1: {r1.text}; {r1.status_code}.")
-        try:
-            r2 = requests.get(base_url2, params=params)
-        except requests.exceptions.ConnectionError:
-            logger.error("Connection to rasp2 failed.")
-            r2 = None
-        else:
-            logger.info(f"Response from rasp2: {r2.text}; {r2.status_code}.")
+        base_url1 = "http://192.168.1.18/admin/api.php"  # rasp1.local
+        base_url2 = "http://192.168.1.28/admin/api.php"  # rasp2.local
 
-        if r1 and r1.status_code == 200 and r2 and r2.status_code == 200:
-            logger.info("Successfully disabled PI-Hole.")
-            messages.success(request, "Pi Hole has been deactivated for 5 minutes.")
-        else:
-            logger.error("Failed to disable PI-Hole.")
-            messages.error(
-                request,
-                f"Failed to deactivate Pi Hole. Contact Arkadius. ;)\n"
-                f"{r1.text=}; r1.status_code={r1.status_code=} \n"
-                f"{r2.text=}; r2.status_code={r2.status_code=}",
-            )
+        _deactivate_pihole(request, base_url1, 1)
+        _deactivate_pihole(request, base_url2, 2)
 
         return HttpResponseRedirect(reverse("home"))
+
+
+def _deactivate_pihole(request, base_url: str, pi_hole_number: int) -> str:
+    token = settings.PI_HOLE_TOKEN
+    params = {
+        "auth": token,
+        "disable": 300,
+    }
+    try:
+        r1 = requests.get(base_url, params=params)
+    except requests.exceptions.ConnectionError:
+        logger.error("Connection to rasp1 failed.")
+        messages.error(
+            request,
+            f"Failed to deactivate Pi Hole {pi_hole_number} due to a connection error. Contact Arkadius. ;)",
+        )
+    else:
+        logger.info(f"Response from rasp{pi_hole_number}: {r1.text}; {r1.status_code}.")
+        if r1.status_code == 200:
+            messages.success(
+                request, f"Pi Hole {pi_hole_number} has been deactivated for 5 minutes."
+            )
+        else:
+            messages.error(
+                request,
+                f"Failed to deactivate Pi Hole {pi_hole_number}. Contact Arkadius. ;)\n"
+                f"{r1.text=}; r1.status_code={r1.status_code=}",
+            )
 
 
 def get_murkelhausen_version(request) -> dict:
