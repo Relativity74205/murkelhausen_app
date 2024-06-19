@@ -12,6 +12,8 @@ F2_JUNIOREN = "011MIBB3NK000000VTVG0001VTR8C1K7"
 def parse_next_games(html_content: str) -> list[dict]:
     soup = BeautifulSoup(html_content, "html.parser")
     body = soup.find("tbody")
+    if body is None:
+        return []
     next_row = body.findNext("tr")
 
     games = []
