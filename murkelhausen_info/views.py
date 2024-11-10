@@ -84,11 +84,12 @@ class PowerView(View):
     def get(self, request, *args, **kwargs):
         logger.info("Getting haushalt power data complete.")
         power_data_haushalt_complete = self._get_power_data_complete(
-            "stromhaushalt", TruncHour
+            "stromhaushalt",
+            TruncHour,
         )
         logger.info("Getting haushalt power data last week minutely.")
         power_data_haushalt_last_week = self._get_power_data_all_last_week(
-            "stromhaushalt"
+            sensor_name="stromhaushalt"
         )
         logger.info("Getting waermepumpe power data complete.")
         power_data_waermepumpe_complete = self._get_power_data_complete(
@@ -429,17 +430,23 @@ class Fussball(View):
     template_name = "murkelhausen_info/fussball.html"
 
     def get(self, request, *args, **kwargs):
-        speldorf_games = fussballde.get_speldorf_next_home_games()
-        erik_games = fussballde.get_erik_next_games()
-        speldorf_games_table = FussballDETable(speldorf_games)
-        erik_games_table = FussballDETableErik(erik_games)
+        speldorf_games_table = FussballDETable(
+            fussballde.get_speldorf_next_home_games()
+        )
+        erik_f1_junioren_games_table = FussballDETableErik(
+            fussballde.get_erik_f1_junioren_next_games()
+        )
+        erik_f3_junioren_games_table = FussballDETableErik(
+            fussballde.get_erik_f3_junioren_next_games()
+        )
 
         return render(
             request,
             self.template_name,
             {
                 "speldorf_games_table": speldorf_games_table,
-                "erik_games_table": erik_games_table,
+                "erik_f1_junioren_games_table": erik_f1_junioren_games_table,
+                "erik_f3_junioren_games_table": erik_f3_junioren_games_table,
             },
         )
 
@@ -492,7 +499,7 @@ def get_podcast_token(request):
     """
     https://github.com/tbowers/python-podcastindex-org-example/blob/master/podcasting-index.py
     """
-    query = "General"
+    query = "Generally Spooky History"
     url = "https://api.podcastindex.org/api/1.0/search/byterm?q=" + query
     epoch_time = int(time.time())
     data_to_hash = (

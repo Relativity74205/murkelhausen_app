@@ -97,7 +97,7 @@ class VertretungsplanTable(tables.Table):
     @staticmethod
     def _get_background_color(value):
         # TODO: move class of Mattis to config
-        if "5B" in value:
+        if "6B" in value:
             return "background-color: yellow;"
 
         return None

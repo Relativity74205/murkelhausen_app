@@ -6,7 +6,8 @@ from bs4 import BeautifulSoup
 
 
 VFB_SPELDORF_ID = "00ES8GN8VS000030VV0AG08LVUPGND5I"
-F2_JUNIOREN = "011MIBB3NK000000VTVG0001VTR8C1K7"
+F1_JUNIOREN = "011MI9USJ8000000VTVG0001VTR8C1K7"
+F3_JUNIOREN = "02QRA8CDA4000000VS5489B2VUEKSRPC"
 
 
 def parse_next_games(html_content: str) -> list[dict]:
@@ -55,9 +56,17 @@ def get_speldorf_next_games() -> list[dict]:
     return parse_next_games(r.text)
 
 
-def get_erik_next_games() -> list[dict]:
+def get_erik_f1_junioren_next_games() -> list[dict]:
     r = requests.get(
-        f"https://www.fussball.de/ajax.team.next.games/-/mode/PAGE/team-id/{F2_JUNIOREN}"
+        f"https://www.fussball.de/ajax.team.next.games/-/mode/PAGE/team-id/{F1_JUNIOREN}"
+    )
+
+    return parse_next_games(r.text)
+
+
+def get_erik_f3_junioren_next_games() -> list[dict]:
+    r = requests.get(
+        f"https://www.fussball.de/ajax.team.next.games/-/mode/PAGE/team-id/{F3_JUNIOREN}"
     )
 
     return parse_next_games(r.text)
