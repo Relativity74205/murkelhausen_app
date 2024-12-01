@@ -9,6 +9,7 @@ curl -L \
   https://api.github.com/repos/Relativity74205/murkelhausen_app/actions/workflows/71455949/dispatches \
   -d '{"ref":"main"}'
 
+# use to get the workflow id
 # https://docs.github.com/en/rest/actions/workflows?apiVersion=2022-11-28#list-repository-workflows
 #curl -L \
 #  -H "Accept: application/vnd.github+json" \
